@@ -12,14 +12,16 @@ import {
   Switch,
   TimeCountdown,
   useDialog,
+  type Shortcut,
 } from '../../../common/components';
 import { nowISO, toTimestamp } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
 import { tendencyCrossoverTs } from '../domain/burndown';
-import { hasSchedule, type Goal } from '../domain/types';
+import { createSideTopic, hasSchedule, type Goal } from '../domain/types';
 import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
+import { DashboardShortcuts } from './DashboardShortcuts';
 import { DashboardSideTopics } from './DashboardSideTopics';
 import { useThresholdAlerts } from './useThresholdAlerts';
 import styles from './MeetingDashboard.module.css';
@@ -160,6 +162,46 @@ export function MeetingDashboard() {
       cancelButtonText: 'Not anymore',
     });
 
+  const completeCurrentGoal = () => {
+    if (!currentGoal) {
+      return;
+    }
+    void updateGoal(currentGoal.id, { finishedAt: nowISO() });
+    if (goals.every((goal) => goal.finishedAt || goal.id === currentGoal.id)) {
+      void onAllCompleted();
+    }
+  };
+
+  const shortcuts: Shortcut[] = [
+    {
+      key: 'd',
+      description: 'Mark the current milestone as done',
+      disabled: !active || !currentGoal,
+      onTrigger: completeCurrentGoal,
+    },
+    {
+      key: 'p',
+      description: 'Park a side topic',
+      onTrigger: () =>
+        void setSideTopics([
+          ...meeting.sideTopics,
+          createSideTopic(currentGoal?.name ?? ''),
+        ]),
+    },
+    {
+      key: 's',
+      description: 'Start the event',
+      disabled: active,
+      onTrigger: () => void onStart(),
+    },
+    {
+      key: 'f',
+      description: 'Finish the event',
+      disabled: !active,
+      onTrigger: () => void onFinish(),
+    },
+  ];
+
   return (
     <Container fullWidth className={styles.dashboard}>
       <header className={styles.head}>
@@ -237,9 +279,7 @@ export function MeetingDashboard() {
               goal={currentGoal}
               position={doneCount + 1}
               total={goals.length}
-              onComplete={() =>
-                currentGoal && void updateGoal(currentGoal.id, { finishedAt: nowISO() })
-              }
+              onComplete={completeCurrentGoal}
             />
           )}
           <GoalsDecisionCollector
@@ -263,6 +303,10 @@ export function MeetingDashboard() {
           />
         </Col>
       </Row>
+
+      <div className={styles.shortcutsRow}>
+        <DashboardShortcuts shortcuts={shortcuts} />
+      </div>
 
       <Footer justifyContent="space-between">
         {active ? (

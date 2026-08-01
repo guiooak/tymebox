@@ -42,6 +42,35 @@
   font-size: var(--tw-font-size-xs);
   color: var(--tw-text-muted);
 }
+.onboarding {
+  border-left: 3px solid var(--tw-primary);
+  margin-bottom: var(--tw-space-5);
+}
+.onboardingHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+  margin-bottom: var(--tw-space-3);
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--tw-space-3);
+  margin: 0 0 var(--tw-space-3);
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-1);
+}
+.stepIcon {
+  font-size: var(--tw-font-size-lg);
+}
+
 .templatesSection,
 .recentSection {
   display: flex;

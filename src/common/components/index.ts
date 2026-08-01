@@ -7,3 +7,5 @@ export * from './overlay';
 export * from './display';
 export * from './time';
 export * from './chart';
+export { useKeyboardShortcuts } from './useKeyboardShortcuts';
+export type { Shortcut } from './useKeyboardShortcuts';

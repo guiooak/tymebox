@@ -92,6 +92,49 @@
   color: var(--tw-text-muted);
 }
 
+/* Keyboard shortcuts */
+.shortcutsRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--tw-space-2);
+}
+.shortcutsHint {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--tw-text-muted);
+  font-family: inherit;
+  font-size: var(--tw-font-size-xs);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-2);
+  margin: 0;
+}
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+}
+.shortcutRow dd {
+  margin: 0;
+}
+.kbd {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+  padding: 2px 6px;
+  border: var(--tw-border);
+  border-bottom-width: 2px;
+  border-radius: var(--tw-radius-sm);
+  background: var(--tw-gray-ice);
+  font-family: var(--tw-font-mono);
+  font-size: var(--tw-font-size-sm);
+}
+
 /* Parking lot */
 .parkingLot {
   margin-top: var(--tw-gutter);

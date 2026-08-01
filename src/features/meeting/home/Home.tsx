@@ -16,6 +16,7 @@ import {
 import { paths, useNavigation } from '../../../common/services/router';
 import { useAuthStore } from '../../auth';
 import { useMeetingStore } from '../store';
+import { OnboardingCard } from './OnboardingCard';
 import { meetingTemplates } from './templates';
 import { useMeetingMetrics } from './useMeetingMetrics';
 import styles from './Home.module.css';
@@ -125,6 +126,18 @@ export function Home() {
             <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
           </div>
         </header>
+
+        {metrics.total === 0 && (
+          <OnboardingCard
+            onTrySample={() =>
+              void onTemplate('Sample event', [
+                'Look around the board',
+                'Add a milestone of your own',
+                'Finish and read the report',
+              ])
+            }
+          />
+        )}
 
         {resume && (
           <Box className={styles.resume}>
