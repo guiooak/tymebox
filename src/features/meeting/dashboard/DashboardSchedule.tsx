@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DatePicker } from '../../../common/components';
+import { Button, DatePicker } from '../../../common/components';
 import {
   diffMs,
   formatDuration,
@@ -33,17 +33,15 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
       : formatLong(value)
     : 'not set';
 
+  // Stays open across picks: the day grid and the time input are separate
+  // changes, so closing on the first one would mean reopening for the second.
   if (editing) {
     return (
       <span className={styles.chipEditor}>
-        <DatePicker
-          value={value}
-          onChange={(iso) => {
-            onChange(iso);
-            setEditing(false);
-          }}
-          onBlur={() => setEditing(false)}
-        />
+        <DatePicker value={value} onChange={onChange} />
+        <Button size="sm" onClick={() => setEditing(false)}>
+          Done
+        </Button>
       </span>
     );
   }
