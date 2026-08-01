@@ -29,7 +29,13 @@ function buildReportText(meeting: Meeting): string {
   const topics = meeting.sideTopics.filter((topic) => topic.value.trim());
   if (topics.length) {
     lines.push('', 'Side topics:');
-    topics.forEach((topic) => lines.push(`• ${topic.value}`));
+    topics.forEach((topic) =>
+      lines.push(
+        topic.goalName
+          ? `• ${topic.value} (during ${topic.goalName})`
+          : `• ${topic.value}`,
+      ),
+    );
   }
   lines.push('', `Happened ${formatLong(meeting.realStartTime)}.`);
   return lines.join('\n');

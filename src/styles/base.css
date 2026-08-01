@@ -48,3 +48,25 @@ button {
 :root {
   color-scheme: light;
 }
+
+/* "Print / PDF" on the report: drop the chrome and keep the content. */
+@media print {
+  aside,
+  footer,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  section,
+  article {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}
