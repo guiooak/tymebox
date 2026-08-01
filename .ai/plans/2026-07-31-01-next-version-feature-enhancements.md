@@ -1,21 +1,19 @@
-# Timebox Works — Next-Version UX/UI Brainstorm
+# Timebox Works — Next-Version Feature Enhancements Brainstorm
 
 ## Context
 
-Timebox Works already implements most of the requested feature set: a Home
-landing page with recent-meetings + metrics, a History page, a live Dashboard
-(countdown, burndown chart, goal notes, parking lot), and a Report page with
-timing cards. The ask now is not new features so much as making the *existing*
-flow feel obviously easy to pick up — sharper UX, more modern/branded UI, and
-closing a few real gaps against the stated requirements. Two areas called out
-as highest priority: **(1)** the upfront creation form, which currently
-front-loads far more than the "Trello-like, just title + description" flow
-described in requirement 7, and **(2)** visual polish/branding, which is
-still a fairly plain Bootstrap-era palette (`src/common/tokens/colors.css`)
-applied to boxy `Box`/`Card` components throughout.
+This is the functional/behavioral half of the next-version brainstorm —
+what the app *does*, not how it looks. (For palette, motion, layout, and
+branding, see the companion doc:
+`2026-07-31-02-next-version-ui-enhancements.md`.) It gap-checks the current
+Home / Events History / Event Dashboard / Report pages against the stated
+requirements and captures ideas for closing those gaps plus new
+capabilities. The single highest-priority thread here: reworking the
+creation flow into a true Trello-like "title + description first, fill in
+the rest on the board" experience, per requirement 7.
 
-This is an ideas document to react to and prioritize — nothing here should be
-built yet.
+This is an ideas document to react to and prioritize — nothing here should
+be built yet.
 
 ---
 
@@ -46,7 +44,7 @@ built yet.
 
 ---
 
-## Priority 1 — Rework the creation flow into a true Trello-like flow
+## Priority — Rework the creation flow into a true Trello-like flow
 
 Today `MeetingForm.tsx` asks for **name, start time, end time, and ≥1 goal**
 before the dashboard even opens — that's four decisions before the user sees
@@ -78,9 +76,9 @@ Ideas:
   goal instead of a column always in view (it's already conditionally shown
   in the report, so the pattern exists — bring it forward into the editing
   UI too).
-- **Per-goal overflow menu (⋮) with Edit / Delete / Duplicate.** Each row in
-  `GoalsDecisionCollector` gets a vertical-ellipsis menu next to the
-  checkbox/title:
+- **Per-goal overflow menu (⋮) with Edit / Delete / Duplicate (confirmed).**
+  Each row in `GoalsDecisionCollector` gets a vertical-ellipsis menu next to
+  the checkbox/title:
   - **Edit** opens a small modal (reusing `useDialog`/`Modal`) with two
     fields: the goal's **completed-at time** (via `FormDatetimePicker`,
     editable even after the box is checked) and its **weight** (a number
@@ -93,49 +91,21 @@ Ideas:
     milestones.
   - This menu is the more future-proof pick over a bare inline edit precisely
     *because* it now hosts three actions, not one.
+- **Inline, click-to-edit title and description on the dashboard
+  (confirmed).** Click the heading/paragraph to turn it into an
+  input/textarea in place, no separate edit form, matching how goal notes
+  and side topics already behave. Same treatment should extend to
+  start/end time, supporting requirement 8 literally.
 
-## Priority 2 — Visual polish & branding
-
-Current palette (`colors.css`) is literally the stock Bootstrap set
-(`#0d6efd`, `#28a745`, `#dc3545`, …) applied to plain white `Box`
-surfaces — functional but generic, and doesn't reinforce the "timebox /
-countdown" identity anywhere besides the emoji favicon and hourglass icon.
-
-Ideas:
-- **Give the product its own palette and type scale**, distinct from
-  default Bootstrap blues — something that can carry the countdown/urgency
-  metaphor (e.g., a signature accent color for "on track," reserving
-  red/amber purely for the time-pressure semantics so they stay meaningful
-  and don't compete visually with branding).
-- **Add real elevation/depth** — subtle shadows, softer radii, maybe a hairline
-  gradient on the primary countdown card — so the dashboard's most important
-  element (time left) visually dominates instead of sitting in a box the
-  same weight as the parking lot.
-- **Motion as a branding tool, not just a mechanism.** `Collapse`,
-  `PostIt` auto-grow, and the sidebar collapse already have transitions
-  (per recent commits) — extend that language to goal completion (a
-  satisfying check-off animation), countdown threshold crossings (a brief
-  pulse when it flips to warning/danger), and burndown line updates.
-- **Dark mode.** Nothing in `tokens/colors.css` suggests a dark variant yet;
-  worth deciding early since it affects how the palette is structured (semantic
-  tokens vs. hard-coded hex).
-- **A distinct empty/blank-slate illustration style** instead of plain text
-  paragraphs (`styles.blankSlate` appears in Home, History, parking lot) —
-  small SVG/icon treatments would make first-run moments feel designed
-  rather than unfinished.
-
----
-
-## Landing page — beyond what's already there
+## Landing page — feature ideas
 
 Current: header + resume-in-progress banner + 4 metric tiles + recent-5 list.
 
-Ideas for "what else":
 - **Explicit "View all history" CTA** on the page itself (closes the gap
   above — right now it's sidebar-only).
 - **Upcoming/scheduled events** — if start times become schedulable ahead of
-  time (see Priority 1), a "starting soon" section becomes valuable, not
-  just "recent finished."
+  time (see the creation-flow rework above), a "starting soon" section
+  becomes valuable, not just "recent finished."
 - **Streaks / consistency nudge** — "3 events this week," "on-budget streak:
   4 in a row" — turns the existing metrics into something motivating rather
   than just descriptive.
@@ -146,7 +116,7 @@ Ideas for "what else":
 - **Greeting/time-of-day personalization** using the user's display name
   already available via `useAuthStore`.
 
-## Events History page — beyond what's already there
+## Events History page — feature ideas
 
 - **Show all statuses**, not just finished — with a status chip
   (draft/active/cancelled/finished) and filter/tabs, so it's truly "all
@@ -157,17 +127,12 @@ Ideas for "what else":
   finished.
 - **Search/filter/sort** — by name, date range, or completion status —
   once the list grows past a handful of entries.
-- **Duration and outcome at a glance** in each row (e.g., a tiny inline
-  burndown sparkline or the same over/under-budget language used on the
-  landing page) so users can scan history without opening each report.
+- **Duration and outcome at a glance** in each row (e.g., the same
+  over/under-budget language used on the landing page) so users can scan
+  history without opening each report.
 
-## Event Dashboard — beyond what's already there
+## Event Dashboard — feature ideas
 
-- **Inline, click-to-edit title and description** at the top of the
-  dashboard (confirmed) — click the heading/paragraph to turn it into an
-  input/textarea in place, no separate edit form, matching how goal notes
-  and side topics already behave. Same treatment should extend to
-  start/end time, supporting Priority 1 and requirement 8 literally.
 - **A visible "what's next" focal point** — the currently-open goal is
   already auto-expanded in `GoalsDecisionCollector`; consider surfacing it
   even more prominently (e.g., pinned above the fold) since that's the one
@@ -175,10 +140,12 @@ Ideas for "what else":
 - **Tag parking-lot side topics to the current goal** (optionally attach the
   active goal name to a side topic when it's created) so a facilitator can
   trace which milestone a tangent came up during, when reviewing later.
-- **Sound/visual cue on threshold crossing**, not just a color change — a
-  meeting facilitator is rarely staring at the tab.
+- **Alert on threshold crossing**, not just a color change — e.g. an opt-in
+  browser notification or sound, since a facilitator is rarely staring at
+  the tab the whole time. (The accompanying visual pulse is covered in the
+  UI enhancements doc.)
 
-## Report page — beyond what's already there
+## Report page — feature ideas
 
 - **Email send** — already flagged as future, but worth scoping now: what
   fields matter (recipients, subject default = event name), and whether it
@@ -192,12 +159,8 @@ Ideas for "what else":
   connects a single report back to the landing-page metrics for a sense of
   progress over time.
 
-## Cross-cutting
+## Cross-cutting feature ideas
 
-- **Mobile/responsive pass.** The dashboard uses a two-column `Row`/`Col`
-  layout and a persistent sidebar — worth explicitly deciding whether the
-  next version targets phone-sized facilitation (e.g., someone running a
-  standup from their phone) or stays desktop-first by design.
 - **Onboarding for first-time users** — a lightweight walkthrough or sample
   event on first login, since the whole mental model (draft → live →
   report) isn't obvious from a blank Home page.
@@ -211,6 +174,6 @@ Ideas for "what else":
 ## Suggested next step
 
 Once you've reacted to these, a good follow-up would be to pick 2–3 threads
-(e.g., "lightweight creation flow" + "visual palette refresh") and turn
-*those* into a scoped implementation plan, rather than trying to tackle
-everything in this doc at once.
+(starting with the creation-flow rework, since it's the flagged priority)
+and turn *those* into a scoped implementation plan, rather than trying to
+tackle everything in this doc at once.
