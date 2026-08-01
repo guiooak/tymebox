@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { computeMeetingMetrics, onBudgetStreak, wasOnBudget } from './metrics';
+import {
+  computeMeetingMetrics,
+  onBudgetStreak,
+  summarizeMeeting,
+  wasOnBudget,
+} from './metrics';
 import type { Meeting } from './types';
 
 const meeting = (over: Partial<Meeting>): Meeting => ({
@@ -63,6 +68,42 @@ describe('onBudgetStreak', () => {
 
   it('is zero when the most recent event ran over', () => {
     expect(onBudgetStreak([finished('a', 3, 90), finished('b', 2, 50)])).toBe(0);
+  });
+});
+
+describe('summarizeMeeting', () => {
+  it('labels an over-budget finished event', () => {
+    const summary = summarizeMeeting(finished('a', 1, 90));
+
+    expect(summary.status.label).toBe('Finished');
+    expect(summary.durationLabel).toBe('1h 30m');
+    expect(summary.outcome).toEqual({ label: '50% over budget', theme: 'danger' });
+  });
+
+  it('labels an under-budget finished event', () => {
+    expect(summarizeMeeting(finished('a', 1, 30)).outcome).toEqual({
+      label: '50% under budget',
+      theme: 'success',
+    });
+  });
+
+  it('has no outcome for an event that never ran, and falls back to planned duration', () => {
+    const draft = meeting({
+      expectedStartTime: '2026-08-01T09:00:00.000Z',
+      expectedEndTime: '2026-08-01T09:45:00.000Z',
+    });
+    const summary = summarizeMeeting(draft);
+
+    expect(summary.outcome).toBeNull();
+    expect(summary.status.label).toBe('Draft');
+    expect(summary.durationLabel).toBe('45m 00s');
+  });
+
+  it('sorts by the latest thing the event did', () => {
+    const draft = meeting({ createdAt: '2026-08-01T09:00:00.000Z' });
+    const done = finished('a', 3, 50);
+
+    expect(summarizeMeeting(done).sortTs).toBeGreaterThan(summarizeMeeting(draft).sortTs);
   });
 });
 

@@ -1,5 +1,7 @@
+import type { Theme } from '../../../common/components';
 import {
   diffMs,
+  formatDuration,
   isSameMonth,
   isSameWeek,
   toTimestamp,
@@ -55,6 +57,55 @@ export function onBudgetStreak(finishedNewestFirst: Meeting[]): number {
     streak += 1;
   }
   return streak;
+}
+
+export type MeetingSummary = {
+  status: { label: string; theme: Theme };
+  /** Real duration once finished, planned duration before that; '' when unknown. */
+  durationLabel: string;
+  /** Over/under-budget phrasing — null when the two windows aren't comparable. */
+  outcome: { label: string; theme: Theme } | null;
+  /** Timestamp to sort a mixed-status list by: whatever the event last did. */
+  sortTs: number;
+};
+
+const STATUS_LABELS: Record<Meeting['status'], { label: string; theme: Theme }> = {
+  draft: { label: 'Draft', theme: 'secondary' },
+  active: { label: 'Live', theme: 'success' },
+  cancelled: { label: 'Cancelled', theme: 'warning' },
+  finished: { label: 'Finished', theme: 'primary' },
+};
+
+/** Row-level facts for the history list: status, how long it took, how it went. */
+export function summarizeMeeting(meeting: Meeting): MeetingSummary {
+  const expected = Math.abs(diffMs(meeting.expectedStartTime, meeting.expectedEndTime));
+  const real = Math.abs(diffMs(meeting.realStartTime, meeting.realEndTime));
+  const duration = real > 0 ? real : expected;
+
+  let outcome: MeetingSummary['outcome'] = null;
+  if (expected > 0 && real > 0) {
+    const overrun = real - expected;
+    const pct = Math.round((overrun / expected) * 100);
+    outcome =
+      pct > 0
+        ? { label: `${pct}% over budget`, theme: pct > 25 ? 'danger' : 'warning' }
+        : {
+            label: pct < 0 ? `${Math.abs(pct)}% under budget` : 'On budget',
+            theme: 'success',
+          };
+  }
+
+  return {
+    status: STATUS_LABELS[meeting.status] ?? STATUS_LABELS.draft,
+    durationLabel: duration > 0 ? formatDuration(duration) : '',
+    outcome,
+    sortTs: Math.max(
+      toTimestamp(meeting.realEndTime || 0) || 0,
+      toTimestamp(meeting.realStartTime || 0) || 0,
+      toTimestamp(meeting.expectedStartTime || 0) || 0,
+      toTimestamp(meeting.createdAt || 0) || 0,
+    ),
+  };
 }
 
 /** Landing-page metrics derived from the meetings already loaded in the store. */
