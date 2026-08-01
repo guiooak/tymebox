@@ -7,6 +7,7 @@ import {
   getHours,
   getMinutes,
   isSameMonth as isSameMonthFn,
+  isSameWeek as isSameWeekFn,
   setDate,
   setHours,
   setMinutes,
@@ -32,6 +33,10 @@ export function addMonths(view: DateInput, amount: number): Date {
 
 export function isSameMonth(a: DateInput, b: DateInput): boolean {
   return isSameMonthFn(toDate(a), toDate(b));
+}
+
+export function isSameWeek(a: DateInput, b: DateInput): boolean {
+  return isSameWeekFn(toDate(a), toDate(b));
 }
 
 /** Month + year title, e.g. "March 2026". */
