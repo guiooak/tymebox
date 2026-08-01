@@ -1,23 +1,27 @@
 import { useEffect, useRef } from 'react';
 import {
+  Badge,
   Box,
   Button,
   Col,
   Container,
   Footer,
-  Heading,
+  InlineEdit,
   Loader,
-  Paragraph,
   Row,
+  Switch,
   TimeCountdown,
   useDialog,
 } from '../../../common/components';
-import { toTimestamp } from '../../../common/services/datetime';
+import { nowISO, toTimestamp } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
-import { BurndownChart, GoalsDecisionCollector } from '../components';
+import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
 import { tendencyCrossoverTs } from '../domain/burndown';
+import { hasSchedule, type Goal } from '../domain/types';
 import { useMeetingStore } from '../store';
+import { DashboardSchedule } from './DashboardSchedule';
 import { DashboardSideTopics } from './DashboardSideTopics';
+import { useThresholdAlerts } from './useThresholdAlerts';
 import styles from './MeetingDashboard.module.css';
 
 export function MeetingDashboard() {
@@ -29,13 +33,42 @@ export function MeetingDashboard() {
   const startMeeting = useMeetingStore((state) => state.startMeeting);
   const cancelMeeting = useMeetingStore((state) => state.cancelMeeting);
   const finishMeeting = useMeetingStore((state) => state.finishMeeting);
+  const updateMeeting = useMeetingStore((state) => state.updateMeeting);
   const updateGoal = useMeetingStore((state) => state.updateGoal);
+  const addGoal = useMeetingStore((state) => state.addGoal);
+  const removeGoal = useMeetingStore((state) => state.removeGoal);
+  const duplicateGoal = useMeetingStore((state) => state.duplicateGoal);
+  const reorderGoals = useMeetingStore((state) => state.reorderGoals);
   const setSideTopics = useMeetingStore((state) => state.setSideTopics);
   const setAutomatic = useMeetingStore((state) => state.setAutomatic);
 
   const guarded = useRef(false);
 
   const active = !!meeting?.realStartTime;
+  const scheduled = !!meeting && hasSchedule(meeting);
+
+  const burndownItems = (meeting?.goals ?? []).map((goal) => ({
+    id: goal.id,
+    title: goal.name,
+    weight: goal.weight,
+    finishedAt: goal.finishedAt || null,
+  }));
+
+  // Yellow countdown once progress is trending above the tendency line.
+  const warnAfter = scheduled
+    ? tendencyCrossoverTs(
+        burndownItems,
+        toTimestamp(meeting.expectedStartTime),
+        toTimestamp(meeting.expectedEndTime),
+      )
+    : null;
+
+  const alerts = useThresholdAlerts({
+    active,
+    eventName: meeting?.name ?? '',
+    warnAfterTs: warnAfter,
+    endTs: scheduled ? toTimestamp(meeting.expectedEndTime) : null,
+  });
 
   useEffect(() => {
     if (loading || guarded.current) {
@@ -49,22 +82,9 @@ export function MeetingDashboard() {
       } else if (meeting.realEndTime) {
         await dialog.alert('This event is already completed.');
         navigation.replace(paths.report);
-      } else if (!meeting.realStartTime) {
-        const ready = await dialog.confirm({
-          text: 'Are you ready to start?',
-          confirmButtonTheme: 'success',
-          confirmButtonText: "Yes, let's go!",
-          cancelButtonText: 'Not yet',
-          disableCloseButton: true,
-        });
-        if (ready) {
-          await startMeeting();
-        } else {
-          navigation.replace(paths.newMeeting);
-        }
       }
     })();
-  }, [loading, meeting, dialog, navigation, startMeeting]);
+  }, [loading, meeting, dialog, navigation]);
 
   if (loading || !meeting) {
     return (
@@ -73,6 +93,34 @@ export function MeetingDashboard() {
       </div>
     );
   }
+
+  const goals = meeting.goals;
+  const currentGoal: Goal | null = goals.find((goal) => !goal.finishedAt) ?? null;
+  const doneCount = goals.filter((goal) => goal.finishedAt).length;
+
+  const onStart = async () => {
+    if (goals.length === 0) {
+      const anyway = await dialog.confirm({
+        text: 'This event has no milestones yet. Start it anyway?',
+        confirmButtonText: 'Start anyway',
+        cancelButtonText: 'Let me add some',
+      });
+      if (!anyway) {
+        return;
+      }
+    }
+    const ready = await dialog.confirm({
+      text: scheduled
+        ? 'Are you ready to start?'
+        : 'No schedule yet — we’ll box this to one hour starting now. You can change the end time from the board at any moment.',
+      confirmButtonTheme: 'success',
+      confirmButtonText: "Yes, let's go!",
+      cancelButtonText: 'Not yet',
+    });
+    if (ready) {
+      await startMeeting();
+    }
+  };
 
   const onCancel = async () => {
     const confirmed = await dialog.confirm({
@@ -83,7 +131,6 @@ export function MeetingDashboard() {
     });
     if (confirmed) {
       await cancelMeeting();
-      navigation.go(paths.newMeeting);
     }
   };
 
@@ -105,59 +152,113 @@ export function MeetingDashboard() {
     }
   };
 
-  const burndownItems = meeting.goals.map((goal) => ({
-    id: goal.id,
-    title: goal.name,
-    weight: goal.weight,
-    finishedAt: goal.finishedAt || null,
-  }));
-
-  // Yellow countdown once progress is trending above the tendency line.
-  const warnAfter = tendencyCrossoverTs(
-    burndownItems,
-    toTimestamp(meeting.expectedStartTime),
-    toTimestamp(meeting.expectedEndTime),
-  );
+  const onConfirmRemoveGoal = (goal: Goal) =>
+    dialog.confirm({
+      text: `Remove “${goal.name}” and its notes?`,
+      confirmButtonTheme: 'danger',
+      confirmButtonText: 'Yes, do it',
+      cancelButtonText: 'Not anymore',
+    });
 
   return (
     <Container fullWidth className={styles.dashboard}>
       <header className={styles.head}>
-        <Heading size="md" level={1}>
-          {meeting.name}
-        </Heading>
-        {meeting.description && <Paragraph text={meeting.description} />}
+        <div className={styles.headTop}>
+          <InlineEdit
+            value={meeting.name}
+            label="event name"
+            placeholder="Name this event"
+            size="lg"
+            onChange={(name) => name && void updateMeeting({ name })}
+          />
+          <Badge theme={active ? 'success' : 'secondary'}>
+            {active ? 'Live' : 'Setting up'}
+          </Badge>
+        </div>
+        <InlineEdit
+          value={meeting.description}
+          label="event description"
+          placeholder="Add a description"
+          size="sm"
+          multiline
+          className={styles.description}
+          onChange={(description) => void updateMeeting({ description })}
+        />
+        <DashboardSchedule
+          expectedStartTime={meeting.expectedStartTime}
+          expectedEndTime={meeting.expectedEndTime}
+          onChange={(patch) => void updateMeeting(patch)}
+        />
       </header>
 
       <Row>
         <Col grow={1}>
           <Box className={styles.block}>
             <TimeCountdown
-              timeFrom={meeting.expectedStartTime}
-              timeTarget={meeting.expectedEndTime}
+              timeFrom={meeting.expectedStartTime || null}
+              timeTarget={meeting.expectedEndTime || null}
               disabled={!active}
               warnAfter={warnAfter}
+              unscheduledHint="set an end time to start the clock"
             />
+            <div className={styles.alertsRow}>
+              <Switch
+                checked={alerts.enabled}
+                onChange={() => void alerts.toggle()}
+                label="Notify me when time runs out"
+              />
+              <span className={styles.alertsLabel}>
+                {alerts.permission === 'unsupported'
+                  ? 'Notifications unavailable in this browser'
+                  : alerts.permission === 'denied'
+                    ? 'Notifications blocked — enable them in your browser'
+                    : 'Notify me on threshold crossings'}
+              </span>
+            </div>
           </Box>
           <Box className={styles.block}>
-            <BurndownChart
-              startTime={meeting.expectedStartTime}
-              endTime={meeting.expectedEndTime}
-              items={burndownItems}
-              showProjection={active}
-            />
+            {scheduled ? (
+              <BurndownChart
+                startTime={meeting.expectedStartTime}
+                endTime={meeting.expectedEndTime}
+                items={burndownItems}
+                showProjection={active}
+              />
+            ) : (
+              <p className={styles.blankSlate}>
+                Set a start and end time to see the burndown chart.
+              </p>
+            )}
           </Box>
         </Col>
         <Col grow={1}>
+          {active && (
+            <GoalFocusCard
+              goal={currentGoal}
+              position={doneCount + 1}
+              total={goals.length}
+              onComplete={() =>
+                currentGoal && void updateGoal(currentGoal.id, { finishedAt: nowISO() })
+              }
+            />
+          )}
           <GoalsDecisionCollector
-            goals={meeting.goals}
+            goals={goals}
             disabled={!active}
+            editable
             automatic={automatic}
             onToggleAutomatic={(value) => void setAutomatic(value)}
             onChangeGoal={(goalId, patch) => void updateGoal(goalId, patch)}
             onAllCompleted={() => void onAllCompleted()}
+            onAddGoal={(name) => void addGoal(name)}
+            onRemoveGoal={(goalId) => void removeGoal(goalId)}
+            onDuplicateGoal={(goalId) => void duplicateGoal(goalId)}
+            onReorderGoals={(from, to) => void reorderGoals(from, to)}
+            onConfirmRemove={onConfirmRemoveGoal}
           />
           <DashboardSideTopics
             items={meeting.sideTopics}
+            activeGoalName={currentGoal?.name ?? ''}
             onChange={(items) => void setSideTopics(items)}
           />
         </Col>
@@ -169,17 +270,19 @@ export function MeetingDashboard() {
             Cancel event
           </Button>
         ) : (
-          <Button
-            theme="secondary"
-            outline
-            onClick={() => navigation.go(paths.newMeeting)}
-          >
+          <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
             Go back
           </Button>
         )}
-        <Button theme="success" disabled={!active} onClick={() => void onFinish()}>
-          Finish event
-        </Button>
+        {active ? (
+          <Button theme="success" onClick={() => void onFinish()}>
+            Finish event
+          </Button>
+        ) : (
+          <Button theme="success" onClick={() => void onStart()}>
+            Start event
+          </Button>
+        )}
       </Footer>
     </Container>
   );

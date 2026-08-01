@@ -4,19 +4,14 @@ import {
   Footer,
   Form,
   FormField,
-  FormDatetimePicker,
   FormInput,
-  FormInputsList,
   FormResetButton,
   FormSubmitButton,
   FormTextarea,
   Heading,
   Page,
   Paragraph,
-  newInputsListItem,
-  type InputsListItem,
 } from '../../../common/components';
-import { addHours, nowISO, toISO, toTimestamp } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { useMeetingStore } from '../store';
 import styles from './MeetingForm.module.css';
@@ -24,14 +19,11 @@ import styles from './MeetingForm.module.css';
 export function MeetingForm() {
   const navigation = useNavigation();
   const currentMeeting = useMeetingStore((state) => state.currentMeeting);
-  const saveFromForm = useMeetingStore((state) => state.saveFromForm);
+  const saveDraft = useMeetingStore((state) => state.saveDraft);
   const discardCurrent = useMeetingStore((state) => state.discardCurrent);
 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [start, setStart] = useState(() => nowISO());
-  const [end, setEnd] = useState(() => toISO(addHours(new Date(), 1)));
-  const [goals, setGoals] = useState<InputsListItem[]>([newInputsListItem()]);
   const [submitted, setSubmitted] = useState(false);
   const prefilled = useRef(false);
 
@@ -55,49 +47,16 @@ export function MeetingForm() {
     prefilled.current = true;
     setName(currentMeeting.name);
     setDescription(currentMeeting.description);
-    setStart(currentMeeting.expectedStartTime || nowISO());
-    setEnd(currentMeeting.expectedEndTime || toISO(addHours(new Date(), 1)));
-    setGoals(
-      currentMeeting.goals.length
-        ? currentMeeting.goals.map((goal) => ({
-            id: goal.id,
-            name: goal.name,
-            weight: goal.weight === 1 ? '' : String(goal.weight),
-          }))
-        : [newInputsListItem()],
-    );
   }, [currentMeeting]);
 
-  const filledGoals = goals.filter((goal) => goal.name.trim());
   const nameError = submitted && !name.trim() ? 'Event name is required' : null;
-  const timeError =
-    submitted && start && end && toTimestamp(start) >= toTimestamp(end)
-      ? 'Start time should be before End time'
-      : null;
-
-  const someWeight = filledGoals.some((goal) => goal.weight);
-  const totalWeight = someWeight
-    ? filledGoals.reduce((acc, goal) => acc + (Number(goal.weight) || 1), 0)
-    : 0;
 
   const onSubmit = async () => {
     setSubmitted(true);
-    const validName = !!name.trim();
-    const validTime = !!start && !!end && toTimestamp(start) < toTimestamp(end);
-    if (!validName || !validTime || filledGoals.length === 0) {
+    if (!name.trim()) {
       return;
     }
-    await saveFromForm({
-      name: name.trim(),
-      description,
-      expectedStartTime: start,
-      expectedEndTime: end,
-      goals: filledGoals.map((goal) => ({
-        id: goal.id,
-        name: goal.name.trim(),
-        weight: Number(goal.weight) || 1,
-      })),
-    });
+    await saveDraft({ name: name.trim(), description });
     navigation.go(paths.liveMeeting);
   };
 
@@ -105,9 +64,6 @@ export function MeetingForm() {
     await discardCurrent();
     setName('');
     setDescription('');
-    setStart(nowISO());
-    setEnd(toISO(addHours(new Date(), 1)));
-    setGoals([newInputsListItem()]);
     setSubmitted(false);
   };
 
@@ -116,8 +72,12 @@ export function MeetingForm() {
       <Page>
         <Form onSubmit={() => void onSubmit()} onReset={() => void onReset()}>
           <Heading size="md" level={1}>
-            Event Setup
+            New event
           </Heading>
+          <Paragraph className={styles.lede}>
+            Name it and go — milestones, timings and everything else are added on the
+            board.
+          </Paragraph>
 
           <FormField label="Event name">
             <FormInput
@@ -129,24 +89,6 @@ export function MeetingForm() {
             {nameError && <span className={styles.error}>{nameError}</span>}
           </FormField>
 
-          <div className={styles.times}>
-            <FormField label="Start time">
-              <FormDatetimePicker value={start} onChange={setStart} error={timeError} />
-            </FormField>
-            <FormField label="End time">
-              <FormDatetimePicker value={end} onChange={setEnd} error={timeError} />
-            </FormField>
-          </div>
-
-          <FormInputsList
-            label="Goals"
-            value={goals}
-            onChange={setGoals}
-            placeholder="Goal"
-            required
-            showErrors={submitted}
-          />
-
           <FormField label="Description">
             <FormTextarea
               name="description"
@@ -156,11 +98,10 @@ export function MeetingForm() {
             />
           </FormField>
 
-          <Footer justifyContent="space-between">
-            <div>{someWeight && <Paragraph>Total weight: {totalWeight}</Paragraph>}</div>
+          <Footer justifyContent="flex-end">
             <div className={styles.actions}>
               <FormResetButton>Clean form</FormResetButton>
-              <FormSubmitButton>Open dashboard</FormSubmitButton>
+              <FormSubmitButton>Create event</FormSubmitButton>
             </div>
           </Footer>
         </Form>

@@ -1,3 +1,4 @@
+export { Badge } from './Badge';
 export { Collapse } from './Collapse';
 export { PostIt } from './PostIt';
 export { List } from './List';

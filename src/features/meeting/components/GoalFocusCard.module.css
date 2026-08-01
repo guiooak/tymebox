@@ -1,0 +1,30 @@
+.focus {
+  border-left: 3px solid var(--tw-primary);
+  margin-bottom: var(--tw-gutter);
+}
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-2);
+  margin-bottom: var(--tw-space-2);
+}
+.progress {
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
+.title {
+  font-size: var(--tw-font-size-lg);
+  font-weight: var(--tw-font-weight-medium);
+  color: var(--tw-text);
+  word-break: break-word;
+}
+.notes {
+  margin-top: var(--tw-space-2);
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+  white-space: pre-wrap;
+}
+.action {
+  margin-top: var(--tw-space-3);
+}

@@ -1,0 +1,51 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tw-space-1);
+  padding: 2px 10px;
+  border-radius: var(--tw-radius-pill);
+  border: 1px solid transparent;
+  font-size: var(--tw-font-size-xs);
+  font-weight: var(--tw-font-weight-medium);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.primary {
+  background: rgba(13, 110, 253, 0.12);
+  border-color: rgba(13, 110, 253, 0.24);
+  color: var(--tw-primary);
+}
+.secondary {
+  background: var(--tw-gray-ice);
+  border-color: var(--tw-gray-light);
+  color: var(--tw-text-muted);
+}
+.success {
+  background: rgba(40, 167, 69, 0.12);
+  border-color: rgba(40, 167, 69, 0.24);
+  color: #1c7430;
+}
+.info {
+  background: rgba(23, 162, 184, 0.12);
+  border-color: rgba(23, 162, 184, 0.24);
+  color: #10707f;
+}
+.warning {
+  background: rgba(255, 193, 7, 0.18);
+  border-color: rgba(255, 193, 7, 0.35);
+  color: #8a6100;
+}
+.danger {
+  background: rgba(220, 53, 69, 0.12);
+  border-color: rgba(220, 53, 69, 0.24);
+  color: var(--tw-danger);
+}
+.light {
+  background: var(--tw-light);
+  border-color: var(--tw-gray-light);
+  color: var(--tw-text);
+}
+.dark {
+  background: var(--tw-dark);
+  color: var(--tw-white);
+}

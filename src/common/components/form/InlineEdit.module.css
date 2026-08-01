@@ -1,0 +1,59 @@
+.text {
+  display: block;
+  width: 100%;
+  text-align: left;
+  color: var(--tw-text);
+  font-family: inherit;
+  line-height: var(--tw-line-height);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.trigger {
+  border: 1px solid transparent;
+  border-radius: var(--tw-radius-sm);
+  background: none;
+  padding: 2px 6px;
+  margin-left: -6px;
+  cursor: text;
+  transition: background var(--tw-transition);
+}
+.trigger:hover {
+  background: var(--tw-gray-ice);
+  border-color: var(--tw-border-color);
+}
+.trigger:focus-visible {
+  outline: 2px solid var(--tw-primary);
+  outline-offset: 1px;
+}
+.empty {
+  color: var(--tw-text-muted);
+  font-style: italic;
+}
+
+.field {
+  width: 100%;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border: 1px solid var(--tw-primary);
+  border-radius: var(--tw-radius-sm);
+  background: var(--tw-surface);
+  color: var(--tw-text);
+  font-family: inherit;
+  line-height: var(--tw-line-height);
+  resize: none;
+  overflow: hidden;
+}
+.field:focus {
+  outline: none;
+}
+
+.sm {
+  font-size: var(--tw-font-size-sm);
+}
+.md {
+  font-size: var(--tw-font-size-md);
+}
+.lg {
+  font-size: var(--tw-font-size-lg);
+  font-weight: var(--tw-font-weight-bold);
+}
