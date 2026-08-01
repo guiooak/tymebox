@@ -12,8 +12,11 @@ capabilities. The single highest-priority thread here: reworking the
 creation flow into a true Trello-like "title + description first, fill in
 the rest on the board" experience, per requirement 7.
 
-This is an ideas document to react to and prioritize — nothing here should
-be built yet.
+> **Status (2026-08-01):** this document was written as an ideas list, and has
+> since been implemented on `feat/next-version-feature-enhancements`. The gap
+> table below is updated to the post-implementation state. The two items that
+> need infrastructure this app doesn't have — email send and shareable links —
+> are scoped instead in `2026-08-01-01-report-delivery-scoping.md`.
 
 ---
 
@@ -23,24 +26,24 @@ be built yet.
 |---|---|---|
 | Landing: last 5 meetings | ✅ Done | `useMeetingMetrics` caps `recent` at 5 |
 | Landing: Create New event button | ✅ Done | `Home.tsx` header |
-| Landing: Events log button | ⚠️ Partial | Only reachable via the sidebar's "History" link — no CTA on the landing page itself |
-| History: list all events | ⚠️ Partial | `MeetingsHistory` only lists `status === 'finished'` — drafts/cancelled events are invisible, so "all events history" isn't literally true |
-| History: reopen into Dashboard | ❌ Missing | The single "Reopen" button always routes to `paths.report`, never `paths.liveMeeting`. Two distinct requirements collapsed into one button. |
-| History: reopen into Report | ✅ Done | Same button, but only this path exists |
+| Landing: Events log button | ✅ Done | "View all history" CTA in the header plus a per-section "View all" |
+| History: list all events | ✅ Done | Every status listed, with chips, status tabs, search and sort |
+| History: reopen into Dashboard | ✅ Done | "Open dashboard" per row (`reopenInDashboard`), separate from "View report" |
+| History: reopen into Report | ✅ Done | "View report", disabled for events that never finished |
 | Dashboard: agenda/milestones list | ✅ Done | `GoalsDecisionCollector` |
 | Dashboard: per-milestone notes | ✅ Done | `decisions` textarea per goal |
 | Dashboard: countdown w/ time left | ✅ Done | `TimeCountdown` |
 | Dashboard: countdown color thresholds | ✅ Done | primary → warning (tendency crossover) → danger (overdue) |
 | Dashboard: burndown w/ tendency + reality | ✅ Done | `BurndownChart` (tendency, progress, projection) |
 | Dashboard: parking lot | ✅ Done | `DashboardSideTopics` + `PostIt` |
-| Dashboard: form has only Title + Description upfront | ❌ Missing (priority) | `MeetingForm` also requires start/end time and at least one goal before you can open the dashboard |
-| Dashboard: everything editable anytime | ⚠️ Partial | Goal notes/completion and side topics are editable live; start/end time is not editable from inside the dashboard at all |
+| Dashboard: form has only Title + Description upfront | ✅ Done | `MeetingForm` is one input, one textarea, one "Create event" button |
+| Dashboard: everything editable anytime | ✅ Done | Title, description, schedule and milestones are all click-to-edit on the board |
 | Report: title/description | ✅ Done | |
 | Report: milestones + notes + resolved time | ✅ Done | |
 | Report: burndown snapshot | ✅ Done | |
 | Report: parking lot | ✅ Done | |
 | Report: performance cards w/ color | ✅ Done | `TimeCardsGrid` + `timeDisplayFeedbackRules` |
-| Report: send by email | ❌ Not built (explicitly future) | Currently there's a "Copy report" → clipboard/preview modal (`TemplatePreviewModal`) instead |
+| Report: send by email | ❌ Not built (needs a backend) | Scoped in `2026-08-01-01-report-delivery-scoping.md`; "Copy report", "Download chart" and "Print / PDF" ship instead |
 
 ---
 
@@ -171,9 +174,23 @@ Current: header + resume-in-progress banner + 4 metric tiles + recent-5 list.
 
 ---
 
-## Suggested next step
+## What shipped, and what didn't
 
-Once you've reacted to these, a good follow-up would be to pick 2–3 threads
-(starting with the creation-flow rework, since it's the flagged priority)
-and turn *those* into a scoped implementation plan, rather than trying to
-tackle everything in this doc at once.
+Everything above is implemented on `feat/next-version-feature-enhancements`
+except the two report-delivery items, with these deliberate readings:
+
+- **Drag-to-reorder** ships alongside keyboard-accessible "Move up"/"Move down"
+  entries in the ⋮ menu, since a drag-only affordance isn't reachable without a
+  pointer.
+- **"The active goal"** — used by the focus card and the parking-lot tag — is
+  defined as the first milestone without a completion time, which is the same
+  rule the collector already used to auto-expand a row.
+- **`cancelled` status** is added to the model, the status chip and the history
+  filters, but "Cancel event" still returns an event to `draft` as it always
+  did; changing that flow was outside what this document asked for.
+- **Threshold alerts** cover browser notifications only; no sound.
+- **Email send and shareable links** are scoped in
+  `2026-08-01-01-report-delivery-scoping.md`. Both need infrastructure the app
+  doesn't have (a Functions project; the data-model migration already specified
+  in plan 3), and a parallel sharing mechanism built on today's per-user silo
+  would have to be unpicked when that plan lands.
