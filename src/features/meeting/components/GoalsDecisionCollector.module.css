@@ -17,15 +17,6 @@
   flex-direction: column;
   gap: var(--tw-space-2);
 }
-.blankSlate {
-  text-align: center;
-  color: var(--tw-text-muted);
-  padding: var(--tw-space-5) var(--tw-space-3);
-  border: 1px dashed var(--tw-border-color);
-  border-radius: var(--tw-radius);
-  margin-bottom: var(--tw-space-2);
-}
-
 .titleRow {
   display: flex;
   align-items: center;

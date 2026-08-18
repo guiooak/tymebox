@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
   Badge,
+  BlankSlate,
   Box,
   Button,
   Col,
@@ -268,9 +269,12 @@ export function MeetingDashboard() {
                 showProjection={active}
               />
             ) : (
-              <p className={styles.blankSlate}>
-                Set a start and end time to see the burndown chart.
-              </p>
+              <BlankSlate
+                art="chart"
+                compact
+                title="No burndown yet"
+                description="Set a start and end time and the chart starts tracking."
+              />
             )}
           </Box>
         </Col>

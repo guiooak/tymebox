@@ -1,5 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Badge, Box, Button, Container, Heading, Page } from '../../../common/components';
+import {
+  Badge,
+  BlankSlate,
+  Box,
+  Button,
+  Container,
+  Heading,
+  Page,
+} from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { summarizeMeeting } from '../domain/metrics';
@@ -146,11 +154,17 @@ export function MeetingsHistory() {
         </div>
 
         {visible.length === 0 ? (
-          <p className={styles.blankSlate}>
-            {meetings.length === 0
-              ? 'No events yet. Create one and it will show up here.'
-              : 'Nothing matches those filters.'}
-          </p>
+          <BlankSlate
+            art={meetings.length === 0 ? 'events' : 'search'}
+            title={
+              meetings.length === 0 ? 'No events yet' : 'Nothing matches those filters'
+            }
+            description={
+              meetings.length === 0
+                ? 'Create one and it will show up here.'
+                : 'Try a different status, or clear the search.'
+            }
+          />
         ) : (
           <div className={styles.list}>
             {visible.map((meeting) => {

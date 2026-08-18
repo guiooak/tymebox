@@ -131,11 +131,3 @@
   gap: var(--tw-space-2);
   flex-wrap: wrap;
 }
-.blankSlate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--tw-space-3);
-  text-align: center;
-  padding: var(--tw-space-7) 0;
-}

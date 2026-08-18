@@ -1,11 +1,11 @@
 import {
   Badge,
+  BlankSlate,
   Box,
   Button,
   Container,
   Heading,
   Page,
-  Paragraph,
 } from '../../../common/components';
 import {
   formatDuration,
@@ -216,11 +216,17 @@ export function Home() {
         )}
 
         {metrics.total === 0 ? (
-          <Box className={styles.blankSlate}>
-            <Paragraph>
-              No events yet. Plan your first one and it’ll come to life here.
-            </Paragraph>
-            <Button onClick={() => navigation.go(paths.newMeeting)}>Plan an event</Button>
+          <Box>
+            <BlankSlate
+              art="events"
+              title="No events yet"
+              description="Plan your first one and it’ll come to life here."
+              action={
+                <Button onClick={() => navigation.go(paths.newMeeting)}>
+                  Plan an event
+                </Button>
+              }
+            />
           </Box>
         ) : (
           <>

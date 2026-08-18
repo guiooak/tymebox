@@ -1,4 +1,11 @@
-import { Badge, Box, Button, PostIt, useDialog } from '../../../common/components';
+import {
+  Badge,
+  BlankSlate,
+  Box,
+  Button,
+  PostIt,
+  useDialog,
+} from '../../../common/components';
 import { createSideTopic, type SideTopic } from '../domain/types';
 import styles from './MeetingDashboard.module.css';
 
@@ -52,7 +59,12 @@ export function DashboardSideTopics({
         </Button>
       </div>
       {items.length === 0 ? (
-        <p className={styles.blankSlate}>Have a side topic? Park it here. :)</p>
+        <BlankSlate
+          art="parking"
+          compact
+          title="Nothing parked yet"
+          description="Tangents go here, so the meeting can keep moving."
+        />
       ) : (
         <div className={styles.notes}>
           {items.map((item, index) => (

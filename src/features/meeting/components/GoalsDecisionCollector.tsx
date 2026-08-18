@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import {
+  BlankSlate,
   Box,
   Button,
   Collapse,
@@ -173,9 +174,12 @@ export function GoalsDecisionCollector({
       </div>
 
       {goals.length === 0 && (
-        <p className={styles.blankSlate}>
-          No milestones yet. Add the first thing this event needs to land.
-        </p>
+        <BlankSlate
+          art="milestones"
+          compact
+          title="No milestones yet"
+          description="Add the first thing this event needs to land."
+        />
       )}
 
       <div className={styles.list}>
