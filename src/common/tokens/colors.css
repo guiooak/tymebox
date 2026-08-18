@@ -1,38 +1,121 @@
+/* Colour tokens, in two layers.
+ *
+ * Layer 1 — the raw Tymebox palette. Hues only; nothing in the app should
+ * reference these directly.
+ * Layer 2 — semantic roles. Components reference *only* these, so a palette
+ * change or a dark variant (see dark.css) never requires touching component
+ * CSS.
+ *
+ * The signature violet carries the brand and the "on track" countdown state.
+ * Amber and red are reserved for time pressure — they mean "running late" and
+ * "overdue" and nothing else, so they keep their urgency.
+ */
+
 :root {
-  /* Brand + status palette (ported & lightly modernized from legacy) */
-  --tw-blue: #0d6efd;
-  --tw-indigo: #6610f2;
-  --tw-purple: #6f42c1;
-  --tw-pink: #d63384;
-  --tw-red: #dc3545;
-  --tw-orange: #fd7e14;
-  --tw-yellow: #ffc107;
-  --tw-green: #28a745;
-  --tw-teal: #20c997;
-  --tw-cyan: #17a2b8;
+  /* ---------- Layer 1: raw palette ---------- */
 
-  --tw-white: #fff;
-  --tw-white-ice: #fcfcfc;
+  /* Signature violet */
+  --tw-violet-50: #f2f0ff;
+  --tw-violet-100: #e4e0fb;
+  --tw-violet-200: #cbc4f6;
+  --tw-violet-300: #a79dee;
+  --tw-violet-400: #8175e2;
+  --tw-violet-500: #5a4fcf;
+  --tw-violet-600: #4a3fb4;
+  --tw-violet-700: #3a3190;
+  --tw-violet-800: #2a2468;
 
-  --tw-gray-dark: #343a40;
-  --tw-gray: #6c757d;
-  --tw-gray-light: #dee2e6;
-  --tw-gray-ice: #f1f3f5;
+  /* Neutrals, warmed very slightly toward the violet so greys feel related */
+  --tw-slate-50: #f7f7fb;
+  --tw-slate-100: #eeeef5;
+  --tw-slate-200: #dfdfea;
+  --tw-slate-300: #c6c6d7;
+  --tw-slate-400: #9a9ab0;
+  --tw-slate-500: #6e6e88;
+  --tw-slate-600: #55556c;
+  --tw-slate-700: #3e3e52;
+  --tw-slate-800: #2b2b3a;
+  --tw-slate-900: #1c1c27;
+  --tw-slate-950: #14141d;
 
-  /* Semantic themes */
-  --tw-primary: #0d6efd;
-  --tw-secondary: #6c757d;
-  --tw-success: #28a745;
-  --tw-info: #17a2b8;
-  --tw-warning: #ffc107;
-  --tw-danger: #dc3545;
-  --tw-light: #f8f9fa;
-  --tw-dark: #343a40;
+  /* Time-pressure ramp + supporting hues */
+  --tw-green-400: #4fbc80;
+  --tw-green-500: #2f9e5f;
+  --tw-green-600: #217a48;
+  --tw-amber-400: #edb457;
+  --tw-amber-500: #dd9a2b;
+  --tw-amber-600: #a8720f;
+  --tw-red-400: #e8696d;
+  --tw-red-500: #d4484c;
+  --tw-red-600: #a8353a;
+  --tw-sky-400: #4ea3d1;
+  --tw-sky-500: #2f83b0;
+  --tw-sky-600: #216686;
+
+  --tw-butter-100: #fff8c5;
+  --tw-butter-200: #f6eba8;
+
+  --tw-white: #ffffff;
+  --tw-black: #000000;
+
+  /* ---------- Layer 2: semantic roles ---------- */
+
+  /* Theme colours. Each pairs with an --tw-on-* foreground that is guaranteed
+   * readable on top of it. */
+  --tw-primary: var(--tw-violet-500);
+  --tw-primary-strong: var(--tw-violet-600);
+  --tw-secondary: var(--tw-slate-500);
+  --tw-success: var(--tw-green-500);
+  --tw-info: var(--tw-sky-500);
+  --tw-warning: var(--tw-amber-500);
+  --tw-danger: var(--tw-red-500);
+  --tw-light: var(--tw-slate-50);
+  --tw-dark: var(--tw-slate-800);
+
+  --tw-on-primary: var(--tw-white);
+  --tw-on-secondary: var(--tw-white);
+  --tw-on-success: var(--tw-white);
+  --tw-on-info: var(--tw-white);
+  --tw-on-warning: var(--tw-slate-900);
+  --tw-on-danger: var(--tw-white);
+  --tw-on-light: var(--tw-slate-800);
+  --tw-on-dark: var(--tw-white);
+
+  /* Readable text versions of each hue, for tinted (pastel) fills where the
+   * base colour itself would be too light to read. */
+  --tw-primary-text: var(--tw-violet-600);
+  --tw-success-text: var(--tw-green-600);
+  --tw-info-text: var(--tw-sky-600);
+  --tw-warning-text: var(--tw-amber-600);
+  --tw-danger-text: var(--tw-red-600);
 
   /* Surfaces + text */
-  --tw-text: #2b2f33;
-  --tw-text-muted: #6c757d;
-  --tw-bg: #f6f8fa;
-  --tw-surface: #ffffff;
-  --tw-border-color: var(--tw-gray-light);
+  --tw-text: var(--tw-slate-800);
+  --tw-text-muted: var(--tw-slate-500);
+  --tw-text-subtle: var(--tw-slate-400);
+  --tw-bg: var(--tw-slate-50);
+  --tw-surface: var(--tw-white);
+  --tw-surface-raised: var(--tw-white);
+  --tw-surface-sunken: var(--tw-slate-100);
+  --tw-border-color: var(--tw-slate-200);
+  --tw-border-strong: var(--tw-slate-300);
+
+  /* What pastel tints are mixed *into*. Swapping this one token is what makes
+   * every color-mix() tint in the app work in dark mode. */
+  --tw-tint-base: var(--tw-white);
+  --tw-overlay: rgba(20, 20, 29, 0.45);
+
+  /* Component-specific roles */
+  --tw-postit-bg: var(--tw-butter-100);
+  --tw-postit-text: var(--tw-slate-900);
+  --tw-focus-ring: color-mix(in srgb, var(--tw-primary) 45%, transparent);
+
+  /* Chart series. Kept here rather than inline in BurndownChart so the chart
+   * follows the palette and the dark variant like everything else. */
+  --tw-chart-tendency: var(--tw-slate-400);
+  --tw-chart-progress: var(--tw-primary);
+  --tw-chart-projection: var(--tw-success);
+  --tw-chart-grid: color-mix(in srgb, var(--tw-text) 10%, transparent);
+  --tw-chart-axis: var(--tw-text-muted);
+  --tw-chart-bg: var(--tw-surface);
 }

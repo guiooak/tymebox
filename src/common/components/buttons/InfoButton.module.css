@@ -11,5 +11,5 @@
   line-height: 1;
 }
 .info:hover {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
 }

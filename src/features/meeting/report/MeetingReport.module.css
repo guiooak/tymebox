@@ -80,7 +80,7 @@
 }
 .previewText {
   white-space: pre-wrap;
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   border-radius: var(--tw-radius-sm);
   padding: var(--tw-space-3);
   font-family: var(--tw-font-mono);

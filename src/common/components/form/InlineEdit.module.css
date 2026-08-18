@@ -18,7 +18,7 @@
   transition: background var(--tw-transition);
 }
 .trigger:hover {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   border-color: var(--tw-border-color);
 }
 .trigger:focus-visible {

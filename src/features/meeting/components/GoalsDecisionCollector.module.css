@@ -50,7 +50,7 @@
 }
 
 .dragHandle {
-  color: var(--tw-gray-light);
+  color: var(--tw-border-color);
   cursor: grab;
   padding: 0 var(--tw-space-1);
   user-select: none;
@@ -79,7 +79,7 @@
   transition: all var(--tw-transition);
 }
 .addTrigger:hover {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   color: var(--tw-text);
   border-color: var(--tw-primary);
 }

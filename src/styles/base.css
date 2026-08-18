@@ -58,7 +58,7 @@ button {
   }
 
   body {
-    background: #fff;
+    background: var(--tw-white);
   }
 
   section,
