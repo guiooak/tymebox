@@ -5,3 +5,10 @@
   padding: var(--tw-space-6);
   margin: var(--tw-space-5) 0;
 }
+
+@media (max-width: 640px) {
+  .page {
+    padding: var(--tw-space-4) var(--tw-space-3);
+    margin: var(--tw-space-3) 0;
+  }
+}

@@ -97,6 +97,6 @@
 }
 .actions {
   display: flex;
-  gap: var(--tw-space-2);
   flex-wrap: wrap;
+  gap: var(--tw-space-2);
 }

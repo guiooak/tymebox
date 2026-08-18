@@ -9,8 +9,12 @@
   --tw-font-size-sm: 0.875rem;
   --tw-font-size-md: 1rem;
   --tw-font-size-lg: 1.25rem;
-  --tw-font-size-xl: 1.75rem;
-  --tw-font-size-xxl: 2.5rem;
+  /* Display sizes scale with the viewport: at 4.5rem fixed, a running
+   * countdown ("1:23:45") is wider than a 360px phone. */
+  --tw-font-size-xl: clamp(1.5rem, 1.2rem + 1.4vw, 1.75rem);
+  --tw-font-size-xxl: clamp(2rem, 1.4rem + 3vw, 2.5rem);
+  --tw-font-size-display: clamp(2.75rem, 1.5rem + 6vw, 4.5rem);
+  --tw-font-size-display-sm: clamp(2rem, 1.2rem + 4vw, 3rem);
 
   --tw-font-weight-light: 300;
   --tw-font-weight-normal: 400;

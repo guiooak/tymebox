@@ -14,4 +14,14 @@
 
   /* Layout */
   --tw-container-max: 960px;
+
+  /* Breakpoints. Media queries can't read custom properties, so these are
+   * documentation for the literals used in stylesheets — keep them in step.
+   *   phone:  max-width 640px  — sidebar becomes a top bar, columns stack
+   *   tablet: max-width 960px  — container stops being the limiting factor
+   * Tymebox is desktop-first (facilitating is a lean-in, two-window task) but
+   * stays fully usable on a phone, since running a standup from one is a real
+   * case. */
+  --tw-bp-phone: 640px;
+  --tw-bp-tablet: 960px;
 }

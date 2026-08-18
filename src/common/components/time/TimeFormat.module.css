@@ -12,8 +12,8 @@
   font-size: var(--tw-font-size-xl);
 }
 .lg {
-  font-size: 3rem;
+  font-size: var(--tw-font-size-display-sm);
 }
 .xl {
-  font-size: 4.5rem;
+  font-size: var(--tw-font-size-display);
 }

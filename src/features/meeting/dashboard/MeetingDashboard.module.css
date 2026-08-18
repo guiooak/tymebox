@@ -80,6 +80,8 @@
   align-items: flex-start;
   gap: var(--tw-space-2);
   min-width: 260px;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 .chipEditor > :first-child {
   flex: 1;
