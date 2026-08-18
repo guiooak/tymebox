@@ -1,3 +1,5 @@
+export { Menu } from './Menu';
+export type { MenuItem } from './Menu';
 export { Modal } from './Modal';
 export { Loader } from './Loader';
 export { DialogProvider } from './DialogProvider';

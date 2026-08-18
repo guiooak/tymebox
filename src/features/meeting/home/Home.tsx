@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   Container,
@@ -6,9 +7,17 @@ import {
   Page,
   Paragraph,
 } from '../../../common/components';
-import { formatDuration, formatLong } from '../../../common/services/datetime';
+import {
+  formatDuration,
+  formatLong,
+  hoursOf,
+  now,
+} from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
+import { useAuthStore } from '../../auth';
 import { useMeetingStore } from '../store';
+import { OnboardingCard } from './OnboardingCard';
+import { meetingTemplates } from './templates';
 import { useMeetingMetrics } from './useMeetingMetrics';
 import styles from './Home.module.css';
 
@@ -25,12 +34,24 @@ function budgetLabel(ratio: number | null): { value: string; note: string } {
     : { value: `${Math.abs(pct)}% under`, note: 'Beat the clock' };
 }
 
+function greeting(): string {
+  const hour = hoursOf(now());
+  if (hour < 12) {
+    return 'Good morning';
+  }
+  return hour < 18 ? 'Good afternoon' : 'Good evening';
+}
+
 export function Home() {
   const navigation = useNavigation();
+  const user = useAuthStore((state) => state.user);
   const current = useMeetingStore((state) => state.currentMeeting);
   const reopen = useMeetingStore((state) => state.reopen);
   const clone = useMeetingStore((state) => state.clone);
+  const createFromTemplate = useMeetingStore((state) => state.createFromTemplate);
   const metrics = useMeetingMetrics();
+
+  const firstName = user?.displayName?.split(' ')[0];
 
   const onReopen = async (id: string) => {
     await reopen(id);
@@ -40,7 +61,14 @@ export function Home() {
   const onClone = async (id: string) => {
     const newId = await clone(id);
     if (newId) {
-      navigation.go(paths.newMeeting);
+      navigation.go(paths.liveMeeting);
+    }
+  };
+
+  const onTemplate = async (name: string, goals: string[]) => {
+    const newId = await createFromTemplate(name, goals);
+    if (newId) {
+      navigation.go(paths.liveMeeting);
     }
   };
 
@@ -60,22 +88,56 @@ export function Home() {
       : current
         ? {
             label: 'Continue planning',
-            to: paths.newMeeting,
+            to: paths.liveMeeting,
             hint: 'You have a draft in the works.',
           }
         : null;
 
   const budget = budgetLabel(metrics.budgetRatio);
+  const lastFinished = metrics.recent[0];
 
   return (
     <Container className={styles.home}>
       <Page>
         <header className={styles.head}>
-          <Heading size="md" level={1}>
-            Overview
-          </Heading>
-          <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
+          <div>
+            <Heading size="md" level={1}>
+              {greeting()}
+              {firstName ? `, ${firstName}` : ''}
+            </Heading>
+            {metrics.thisWeek > 0 && (
+              <p className={styles.meta}>
+                {metrics.thisWeek} event{metrics.thisWeek === 1 ? '' : 's'} finished this
+                week
+                {metrics.onBudgetStreak > 1
+                  ? ` · ${metrics.onBudgetStreak} in a row on budget 🔥`
+                  : ''}
+              </p>
+            )}
+          </div>
+          <div className={styles.actions}>
+            <Button
+              theme="secondary"
+              outline
+              onClick={() => navigation.go(paths.meetings)}
+            >
+              View all history
+            </Button>
+            <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
+          </div>
         </header>
+
+        {metrics.total === 0 && (
+          <OnboardingCard
+            onTrySample={() =>
+              void onTemplate('Sample event', [
+                'Look around the board',
+                'Add a milestone of your own',
+                'Finish and read the report',
+              ])
+            }
+          />
+        )}
 
         {resume && (
           <Box className={styles.resume}>
@@ -87,6 +149,70 @@ export function Home() {
               {resume.label}
             </Button>
           </Box>
+        )}
+
+        <section className={styles.templatesSection}>
+          <Heading size="sm" level={2}>
+            Start something
+          </Heading>
+          <div className={styles.templates}>
+            {lastFinished && (
+              <button
+                type="button"
+                className={styles.template}
+                onClick={() => void onClone(lastFinished.id)}
+              >
+                <strong>Repeat “{lastFinished.name}”</strong>
+                <span className={styles.meta}>
+                  {lastFinished.goals.length} milestones · your last event
+                </span>
+              </button>
+            )}
+            {meetingTemplates.map((template) => (
+              <button
+                key={template.id}
+                type="button"
+                className={styles.template}
+                onClick={() => void onTemplate(template.name, template.goals)}
+              >
+                <strong>{template.label}</strong>
+                <span className={styles.meta}>{template.hint}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {metrics.upcoming.length > 0 && (
+          <section className={styles.recentSection}>
+            <Heading size="sm" level={2}>
+              Starting soon
+            </Heading>
+            <div className={styles.list}>
+              {metrics.upcoming.map((meeting) => (
+                <Box key={meeting.id} className={styles.item}>
+                  <div>
+                    <strong>{meeting.name}</strong>
+                    <div className={styles.meta}>
+                      {formatLong(meeting.expectedStartTime)}
+                    </div>
+                  </div>
+                  <div className={styles.actions}>
+                    <Badge theme="info">Scheduled</Badge>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        void reopen(meeting.id).then(() =>
+                          navigation.go(paths.liveMeeting),
+                        );
+                      }}
+                    >
+                      Open board
+                    </Button>
+                  </div>
+                </Box>
+              ))}
+            </div>
+          </section>
         )}
 
         {metrics.total === 0 ? (
@@ -122,17 +248,31 @@ export function Home() {
               </Box>
               <Box className={styles.metric}>
                 <span className={styles.metricValue}>
-                  {metrics.totalSpentMs > 0 ? formatDuration(metrics.totalSpentMs) : '—'}
+                  {metrics.onBudgetStreak > 0 ? `${metrics.onBudgetStreak} 🔥` : '—'}
                 </span>
-                <span className={styles.metricLabel}>Total time</span>
-                <span className={styles.metricNote}>Spent in finished events</span>
+                <span className={styles.metricLabel}>On-budget streak</span>
+                <span className={styles.metricNote}>
+                  {metrics.totalSpentMs > 0
+                    ? `${formatDuration(metrics.totalSpentMs)} spent in total`
+                    : 'Finish an event on time to start one'}
+                </span>
               </Box>
             </div>
 
             <section className={styles.recentSection}>
-              <Heading size="sm" level={2}>
-                Recent events
-              </Heading>
+              <div className={styles.sectionHead}>
+                <Heading size="sm" level={2}>
+                  Recent events
+                </Heading>
+                <Button
+                  size="sm"
+                  theme="secondary"
+                  outline
+                  onClick={() => navigation.go(paths.meetings)}
+                >
+                  View all
+                </Button>
+              </div>
               {metrics.recent.length === 0 ? (
                 <p className={styles.meta}>Finish an event to see it here.</p>
               ) : (

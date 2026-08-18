@@ -11,11 +11,9 @@ export function isValidMeeting(
   if (!meeting) {
     return false;
   }
-  const hasCore =
-    isNonEmptyString(meeting.id) &&
-    isNonEmptyString(meeting.name) &&
-    isNonEmptyString(meeting.expectedStartTime) &&
-    isNonEmptyString(meeting.expectedEndTime);
+  // Expected times stay optional until the event is started — a draft is valid
+  // with just an id and a title.
+  const hasCore = isNonEmptyString(meeting.id) && isNonEmptyString(meeting.name);
   if (!hasCore) {
     return false;
   }

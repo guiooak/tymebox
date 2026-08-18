@@ -25,7 +25,7 @@
             "expectedEndTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
             "realStartTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
             "realEndTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "status": { ".validate": "newData.val() === 'draft' || newData.val() === 'active' || newData.val() === 'finished'" },
+            "status": { ".validate": "newData.val() === 'draft' || newData.val() === 'active' || newData.val() === 'cancelled' || newData.val() === 'finished'" },
             "createdAt": { ".validate": "newData.isString() && newData.val().length <= 64" },
             "updatedAt": { ".validate": "newData.isString() && newData.val().length <= 64" },
 
@@ -44,6 +44,7 @@
               "$topicIndex": {
                 "id": { ".validate": "newData.isString() && newData.val().length <= 128" },
                 "value": { ".validate": "newData.isString() && newData.val().length <= 2000" },
+                "goalName": { ".validate": "newData.isString() && newData.val().length <= 500" },
                 "$other": { ".validate": false }
               }
             },

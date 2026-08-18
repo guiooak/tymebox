@@ -1,16 +1,22 @@
-import { Box, Button, PostIt, useDialog } from '../../../common/components';
+import { Badge, Box, Button, PostIt, useDialog } from '../../../common/components';
 import { createSideTopic, type SideTopic } from '../domain/types';
 import styles from './MeetingDashboard.module.css';
 
 export type DashboardSideTopicsProps = {
   items: SideTopic[];
   onChange: (items: SideTopic[]) => void;
+  /** Milestone open when a topic is parked — recorded so tangents stay traceable. */
+  activeGoalName?: string;
 };
 
-export function DashboardSideTopics({ items, onChange }: DashboardSideTopicsProps) {
+export function DashboardSideTopics({
+  items,
+  onChange,
+  activeGoalName = '',
+}: DashboardSideTopicsProps) {
   const dialog = useDialog();
 
-  const add = () => onChange([...items, createSideTopic()]);
+  const add = () => onChange([...items, createSideTopic(activeGoalName)]);
   const update = (id: string, value: string) =>
     onChange(items.map((item) => (item.id === id ? { ...item, value } : item)));
   const removeById = (id: string) => onChange(items.filter((item) => item.id !== id));
@@ -50,14 +56,18 @@ export function DashboardSideTopics({ items, onChange }: DashboardSideTopicsProp
       ) : (
         <div className={styles.notes}>
           {items.map((item, index) => (
-            <PostIt
-              key={item.id}
-              prefix={`${index + 1}.`}
-              value={item.value}
-              onChange={(value) => update(item.id, value)}
-              onBlur={() => onBlur(item)}
-              onDelete={() => void onDelete(item)}
-            />
+            <div key={item.id} className={styles.note}>
+              <PostIt
+                prefix={`${index + 1}.`}
+                value={item.value}
+                onChange={(value) => update(item.id, value)}
+                onBlur={() => onBlur(item)}
+                onDelete={() => void onDelete(item)}
+              />
+              {item.goalName && (
+                <Badge className={styles.noteTag}>during “{item.goalName}”</Badge>
+              )}
+            </div>
           ))}
         </div>
       )}

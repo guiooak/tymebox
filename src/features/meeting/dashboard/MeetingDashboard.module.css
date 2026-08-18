@@ -10,9 +10,138 @@
 .head {
   margin-bottom: var(--tw-space-4);
 }
+.headTop {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+}
+.headTop > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.description {
+  margin-top: var(--tw-space-1);
+  color: var(--tw-text-muted);
+}
 .block {
   margin-bottom: var(--tw-gutter);
 }
+
+/* Schedule chips */
+.schedule {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--tw-space-2);
+  margin-top: var(--tw-space-3);
+}
+.chip,
+.chipStatic {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+  padding: 4px 12px;
+  border-radius: var(--tw-radius-pill);
+  border: var(--tw-border);
+  background: var(--tw-surface);
+  font-size: var(--tw-font-size-sm);
+  font-family: inherit;
+  color: var(--tw-text);
+}
+.chip {
+  cursor: pointer;
+  transition: all var(--tw-transition);
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--tw-primary);
+  background: var(--tw-gray-ice);
+}
+.chip:disabled {
+  cursor: default;
+}
+.chipLabel {
+  color: var(--tw-text-muted);
+}
+.chipEmpty {
+  color: var(--tw-text-muted);
+  font-style: italic;
+  font-weight: var(--tw-font-weight-normal);
+}
+.chipStatic {
+  color: var(--tw-text-muted);
+}
+.chipEditor {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--tw-space-2);
+  min-width: 260px;
+}
+.chipEditor > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.scheduleError {
+  color: var(--tw-danger);
+  font-size: var(--tw-font-size-xs);
+}
+
+/* Threshold alerts opt-in */
+.alertsRow {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+  margin-top: var(--tw-space-3);
+  justify-content: center;
+}
+.alertsLabel {
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
+
+/* Keyboard shortcuts */
+.shortcutsRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--tw-space-2);
+}
+.shortcutsHint {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--tw-text-muted);
+  font-family: inherit;
+  font-size: var(--tw-font-size-xs);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-2);
+  margin: 0;
+}
+.shortcutRow {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+}
+.shortcutRow dd {
+  margin: 0;
+}
+.kbd {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+  padding: 2px 6px;
+  border: var(--tw-border);
+  border-bottom-width: 2px;
+  border-radius: var(--tw-radius-sm);
+  background: var(--tw-gray-ice);
+  font-family: var(--tw-font-mono);
+  font-size: var(--tw-font-size-sm);
+}
+
+/* Parking lot */
 .parkingLot {
   margin-top: var(--tw-gutter);
 }
@@ -31,4 +160,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--tw-space-2);
+}
+.note {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-1);
+}
+.noteTag {
+  align-self: flex-start;
 }

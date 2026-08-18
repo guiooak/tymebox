@@ -2,11 +2,12 @@
 
 > Improve your meeting time with focus only on what matters.
 
-A tool for running **timeboxed meetings**: set up an event (name, start/end time,
-weighted goals, description), run a live dashboard (countdown + burndown chart +
-goal decision collector + side‑topic parking lot), then get a shareable report.
-A React rewrite of the original Vue app, with Google sign‑in and Firebase
-Realtime Database persistence (including a per‑user history of past meetings).
+A tool for running **timeboxed meetings**: name an event, fill in the board as
+you go (milestones, start/end time, weights — all editable at any moment), run
+it live (countdown + burndown chart + goal decision collector + side‑topic
+parking lot), then get a report you can copy, print or export. A React rewrite
+of the original Vue app, with Google sign‑in and Firebase Realtime Database
+persistence (including a per‑user history of past meetings).
 
 ## Stack
 
@@ -26,7 +27,8 @@ Two layers, with a build‑time boundary between them:
     overlay/dialogs, time, datepicker, chart surface, …).
   - `services/<lib>/` — one folder per wrapped external library, each exposing
     **our own interface**. A feature imports `common/services/datetime`, never
-    `date-fns`.
+    `date-fns`. Browser APIs get the same treatment where they're worth
+    isolating (`notifications`, `download`).
   - `tokens/` — design‑system CSS custom properties.
 - **`src/features/`** + **`src/app/`** — the Timebox Works application, depending
   only on `common/`.
@@ -85,3 +87,7 @@ Yarn release is pinned in‑repo (`yarnPath`).
 
 PWA support and the full unit/integration test suite are planned as a follow‑up
 (see `.ai/plans/2026-06-03-02-timebox-works-pwa-and-tests.md`).
+
+Sending a report **by email** and **shareable read‑only report links** are
+scoped but unbuilt — both need infrastructure the app doesn't have yet. See
+`.ai/plans/2026-08-01-01-report-delivery-scoping.md`.

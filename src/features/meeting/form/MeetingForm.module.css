@@ -1,7 +1,6 @@
-.times {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--tw-gutter);
+.lede {
+  color: var(--tw-text-muted);
+  margin-bottom: var(--tw-space-4);
 }
 .actions {
   display: flex;

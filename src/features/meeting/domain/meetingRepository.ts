@@ -44,6 +44,14 @@ function normalizeGoal(goal: Partial<Goal>): Goal {
   };
 }
 
+function normalizeSideTopic(topic: Partial<SideTopic>): SideTopic {
+  return {
+    id: topic.id ?? '',
+    value: topic.value ?? '',
+    goalName: topic.goalName ?? '',
+  };
+}
+
 function normalizeMeeting(raw: Partial<Meeting>): Meeting {
   return {
     id: raw.id ?? '',
@@ -54,7 +62,7 @@ function normalizeMeeting(raw: Partial<Meeting>): Meeting {
     realStartTime: raw.realStartTime ?? '',
     realEndTime: raw.realEndTime ?? '',
     goals: toArray<Partial<Goal>>(raw.goals).map(normalizeGoal),
-    sideTopics: toArray<SideTopic>(raw.sideTopics),
+    sideTopics: toArray<Partial<SideTopic>>(raw.sideTopics).map(normalizeSideTopic),
     status: raw.status ?? 'draft',
     createdAt: raw.createdAt ?? '',
     updatedAt: raw.updatedAt ?? '',

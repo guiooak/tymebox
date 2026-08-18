@@ -22,6 +22,20 @@
   font-size: var(--tw-font-size-md);
   color: var(--tw-text);
 }
+.caretButton {
+  background: none;
+  border: none;
+  padding: 0 var(--tw-space-1);
+  cursor: pointer;
+  line-height: 1;
+}
+.titleSlot {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--tw-font-size-md);
+  font-weight: var(--tw-font-weight-medium);
+  color: var(--tw-text);
+}
 .caret {
   color: var(--tw-text-muted);
   display: inline-block;

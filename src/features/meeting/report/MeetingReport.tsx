@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Article,
+  Badge,
   Box,
   Button,
   Container,
@@ -12,12 +13,23 @@ import {
 } from '../../../common/components';
 import { svgElementToPngDataUrl } from '../../../common/services/chart';
 import { formatLong, formatTime, isSameDay } from '../../../common/services/datetime';
+import { downloadUrl, printPage, toFileStem } from '../../../common/services/download';
 import { paths, useNavigation } from '../../../common/services/router';
 import { BurndownChart } from '../components';
 import { useMeetingStore } from '../store';
+import { useReportTrend } from './useReportTrend';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
 import { TimeCardsGrid } from './TimeCardsGrid';
 import styles from './MeetingReport.module.css';
+
+/** "3rd event in a row under budget" — ordinal for a small, human-sized count. */
+function ordinal(value: number): string {
+  const suffix =
+    value % 100 >= 11 && value % 100 <= 13
+      ? 'th'
+      : (['th', 'st', 'nd', 'rd'][value % 10] ?? 'th');
+  return `${value}${suffix}`;
+}
 
 export function MeetingReport() {
   const navigation = useNavigation();
@@ -31,6 +43,7 @@ export function MeetingReport() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [chartImage, setChartImage] = useState<string | null>(null);
   const guarded = useRef(false);
+  const trend = useReportTrend(meeting);
 
   useEffect(() => {
     if (loading || guarded.current) {
@@ -48,6 +61,11 @@ export function MeetingReport() {
     })();
   }, [loading, meeting, dialog, navigation]);
 
+  const sideTopics = useMemo(
+    () => (meeting?.sideTopics ?? []).filter((topic) => topic.value.trim()),
+    [meeting],
+  );
+
   if (loading || !meeting?.realEndTime) {
     return (
       <div className={styles.loading}>
@@ -63,12 +81,24 @@ export function MeetingReport() {
     weight: goal.weight,
     finishedAt: goal.finishedAt || null,
   }));
-  const sideTopics = meeting.sideTopics.filter((topic) => topic.value.trim());
+
+  const renderChartImage = async (): Promise<string | null> => {
+    const svg = chartRef.current?.querySelector('svg');
+    return svg ? await svgElementToPngDataUrl(svg as SVGSVGElement) : null;
+  };
 
   const onCopyReport = async () => {
-    const svg = chartRef.current?.querySelector('svg');
-    setChartImage(svg ? await svgElementToPngDataUrl(svg as SVGSVGElement) : null);
+    setChartImage(await renderChartImage());
     setPreviewOpen(true);
+  };
+
+  const onDownloadChart = async () => {
+    const dataUrl = await renderChartImage();
+    if (!dataUrl) {
+      await dialog.alert('The chart is not ready to export yet.');
+      return;
+    }
+    downloadUrl(dataUrl, `${toFileStem(meeting.name)}-burndown.png`);
   };
 
   const onBackToDashboard = async () => {
@@ -109,6 +139,13 @@ export function MeetingReport() {
             </>
           )}
           {meeting.description && <Article text={meeting.description} />}
+          {trend >= 2 && (
+            <div className={styles.trend}>
+              <Badge theme="success">
+                🔥 {ordinal(trend)} event in a row finishing on budget
+              </Badge>
+            </div>
+          )}
         </header>
 
         <section className={styles.section}>
@@ -140,7 +177,15 @@ export function MeetingReport() {
             </Heading>
             <ul className={styles.topics}>
               {sideTopics.map((topic) => (
-                <li key={topic.id}>{topic.value}</li>
+                <li key={topic.id}>
+                  {topic.value}
+                  {topic.goalName && (
+                    <span className={styles.sideTopicTag}>
+                      {' '}
+                      — during “{topic.goalName}”
+                    </span>
+                  )}
+                </li>
               ))}
             </ul>
           </section>
@@ -172,6 +217,12 @@ export function MeetingReport() {
             Back to dashboard
           </Button>
           <div className={styles.actions}>
+            <Button theme="info" outline onClick={() => void onDownloadChart()}>
+              Download chart
+            </Button>
+            <Button theme="info" outline onClick={printPage}>
+              Print / PDF
+            </Button>
             <Button theme="info" outline onClick={() => void onCopyReport()}>
               Copy report
             </Button>

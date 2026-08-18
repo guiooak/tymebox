@@ -5,6 +5,7 @@ export { FormTextarea } from './FormTextarea';
 export { TextArea } from './TextArea';
 export type { TextAreaProps } from './TextArea';
 export { FormDatetimePicker } from './FormDatetimePicker';
+export { InlineEdit } from './InlineEdit';
 export { FormInputsList, newInputsListItem } from './FormInputsList';
 export { FormSubmitButton } from './FormSubmitButton';
 export { FormResetButton } from './FormResetButton';
