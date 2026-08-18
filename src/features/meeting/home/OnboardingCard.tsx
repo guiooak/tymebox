@@ -51,7 +51,7 @@ export function OnboardingCard({ onTrySample }: OnboardingCardProps) {
     <Box className={styles.onboarding}>
       <div className={styles.onboardingHead}>
         <Heading size="sm" level={2}>
-          How Timebox Works works
+          How Tymebox works
         </Heading>
         <Button size="sm" theme="secondary" outline onClick={dismiss}>
           Got it

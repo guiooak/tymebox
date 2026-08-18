@@ -27,7 +27,7 @@ export function AppShell() {
   if (status === 'loading') {
     return (
       <div className={styles.loading}>
-        <Loader label="Starting Timebox Works…" />
+        <Loader label="Starting Tymebox…" />
       </div>
     );
   }

@@ -27,7 +27,7 @@ export function Login() {
           ⏳
         </div>
         <Heading size="md" level={1}>
-          Timebox Works
+          Tymebox
         </Heading>
         <Paragraph className={styles.tagline}>
           Improve your meeting time with focus only on what matters.

@@ -29,7 +29,7 @@ export function AppSidebar() {
     <aside
       className={collapsed ? `${styles.sidebar} ${styles.collapsed}` : styles.sidebar}
     >
-      <NavLink to={paths.home} className={styles.brand} aria-label="Timebox Works home">
+      <NavLink to={paths.home} className={styles.brand} aria-label="Tymebox home">
         {collapsed ? (
           <span className={styles.brandIcon} aria-hidden="true">
             ⏳
