@@ -2,6 +2,7 @@
   border-radius: var(--tw-radius);
   padding: var(--tw-space-4);
   border: var(--tw-border);
+  box-shadow: var(--tw-shadow-sm);
 }
 .primary {
   background: var(--tw-primary);

@@ -235,13 +235,14 @@ export function MeetingDashboard() {
 
       <Row>
         <Col grow={1}>
-          <Box className={styles.block}>
+          <div className={styles.countdownBlock}>
             <TimeCountdown
               timeFrom={meeting.expectedStartTime || null}
               timeTarget={meeting.expectedEndTime || null}
               disabled={!active}
               warnAfter={warnAfter}
               unscheduledHint="set an end time to start the clock"
+              prominent
             />
             <div className={styles.alertsRow}>
               <Switch
@@ -257,7 +258,7 @@ export function MeetingDashboard() {
                     : 'Notify me on threshold crossings'}
               </span>
             </div>
-          </Box>
+          </div>
           <Box className={styles.block}>
             {scheduled ? (
               <BurndownChart

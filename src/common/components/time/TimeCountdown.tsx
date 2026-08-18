@@ -21,6 +21,8 @@ export type TimeCountdownProps = {
   warnAfter?: number | null;
   /** Footer copy shown while there's nothing to count down to. */
   unscheduledHint?: string;
+  /** Hero treatment — used by the dashboard, where time left is the point. */
+  prominent?: boolean;
 };
 
 export function TimeCountdown({
@@ -30,6 +32,7 @@ export function TimeCountdown({
   size = 'xl',
   warnAfter,
   unscheduledHint = 'not scheduled yet',
+  prominent,
 }: TimeCountdownProps) {
   const [nowTs, setNowTs] = useState(() => Date.now());
   const scheduled = !!timeTarget;
@@ -48,6 +51,7 @@ export function TimeCountdown({
         theme="secondary"
         header="time left"
         footer={<small>{unscheduledHint}</small>}
+        prominent={prominent}
       >
         <TimeFormat value="--:--" size={size} />
       </TimeDisplay>
@@ -76,6 +80,7 @@ export function TimeCountdown({
       theme={theme}
       header={isNegative ? 'overdue time' : 'time left'}
       footer={<small>should be finished at {endLabel}</small>}
+      prominent={prominent}
     >
       <TimeFormat
         value={disabled ? '--:--' : formatDuration(Math.abs(remaining))}
