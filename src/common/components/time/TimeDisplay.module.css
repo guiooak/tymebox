@@ -1,6 +1,50 @@
 .display {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  transition: background var(--tw-transition);
+  transition:
+    background var(--tw-transition),
+    box-shadow var(--tw-transition);
+}
+
+/* Hero treatment for the dashboard countdown. Everything on that board is a
+ * Box or a Card of equal weight; this is the one element a facilitator needs
+ * to read from across a room, so it gets its own object language: deeper
+ * elevation, a lit top edge, and a soft wash of its own theme colour. */
+.prominent {
+  border-radius: var(--tw-radius-xl);
+  padding: var(--tw-space-6) var(--tw-space-5);
+  box-shadow: var(--tw-shadow-lg), var(--tw-hairline);
+}
+.prominent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0) 46%
+  );
+}
+:root[data-theme='dark'] .prominent::before {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0) 46%
+  );
+}
+.prominent > * {
+  position: relative;
+}
+.prominent .header {
+  font-size: var(--tw-font-size-md);
+  letter-spacing: 0.08em;
+  opacity: 1;
+  font-weight: var(--tw-font-weight-medium);
+}
+.prominent .footer {
+  font-size: var(--tw-font-size-md);
 }
 
 /* Pastel backgrounds — lighter tints of each theme colour, with dark text.

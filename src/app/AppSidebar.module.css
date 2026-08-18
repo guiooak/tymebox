@@ -33,7 +33,7 @@
   line-height: 1;
 }
 .toggle:hover {
-  background: var(--tw-surface);
+  background: var(--tw-surface-sunken);
 }
 .collapsed .toggle {
   justify-content: center;
@@ -83,7 +83,7 @@
 .link:hover,
 .signOut:hover,
 .brand:hover {
-  background: var(--tw-surface);
+  background: var(--tw-surface-sunken);
   text-decoration: none;
 }
 .brand:hover {

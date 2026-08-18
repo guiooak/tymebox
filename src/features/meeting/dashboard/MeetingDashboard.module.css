@@ -26,6 +26,11 @@
 .block {
   margin-bottom: var(--tw-gutter);
 }
+/* The countdown is its own panel now — wrapping it in a Box would frame a
+ * card inside a card and flatten the hierarchy the hero treatment buys. */
+.countdownBlock {
+  margin-bottom: var(--tw-gutter);
+}
 
 /* Schedule chips */
 .schedule {
