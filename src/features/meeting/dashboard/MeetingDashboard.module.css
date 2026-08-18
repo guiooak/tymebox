@@ -54,7 +54,7 @@
 }
 .chip:hover:not(:disabled) {
   border-color: var(--tw-primary);
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
 }
 .chip:disabled {
   cursor: default;
@@ -136,7 +136,7 @@
   border: var(--tw-border);
   border-bottom-width: 2px;
   border-radius: var(--tw-radius-sm);
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   font-family: var(--tw-font-mono);
   font-size: var(--tw-font-size-sm);
 }

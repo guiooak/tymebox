@@ -15,22 +15,22 @@
   border-color: transparent;
 }
 .display.primary {
-  background: color-mix(in srgb, var(--tw-primary) 18%, white);
+  background: color-mix(in srgb, var(--tw-primary) 18%, var(--tw-tint-base));
 }
 .display.secondary {
-  background: color-mix(in srgb, var(--tw-secondary) 20%, white);
+  background: color-mix(in srgb, var(--tw-secondary) 20%, var(--tw-tint-base));
 }
 .display.success {
-  background: color-mix(in srgb, var(--tw-success) 20%, white);
+  background: color-mix(in srgb, var(--tw-success) 20%, var(--tw-tint-base));
 }
 .display.info {
-  background: color-mix(in srgb, var(--tw-info) 22%, white);
+  background: color-mix(in srgb, var(--tw-info) 22%, var(--tw-tint-base));
 }
 .display.warning {
-  background: color-mix(in srgb, var(--tw-warning) 38%, white);
+  background: color-mix(in srgb, var(--tw-warning) 38%, var(--tw-tint-base));
 }
 .display.danger {
-  background: color-mix(in srgb, var(--tw-danger) 30%, white);
+  background: color-mix(in srgb, var(--tw-danger) 30%, var(--tw-tint-base));
 }
 .header {
   text-transform: uppercase;

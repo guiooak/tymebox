@@ -14,7 +14,7 @@
   transition: background var(--tw-transition);
 }
 .trigger:hover {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   color: var(--tw-text);
 }
 .list {
@@ -44,7 +44,7 @@
   white-space: nowrap;
 }
 .item:hover:not(:disabled) {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
 }
 .item:disabled {
   color: var(--tw-text-muted);
