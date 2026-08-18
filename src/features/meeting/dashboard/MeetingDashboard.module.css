@@ -156,11 +156,6 @@
   justify-content: space-between;
   margin-bottom: var(--tw-space-3);
 }
-.blankSlate {
-  text-align: center;
-  color: var(--tw-text-muted);
-  padding: var(--tw-space-5) 0;
-}
 .notes {
   display: flex;
   flex-direction: column;
