@@ -1,4 +1,4 @@
-# Timebox Works ⏳
+# Tymebox ⏳
 
 > Improve your meeting time with focus only on what matters.
 
@@ -30,7 +30,7 @@ Two layers, with a build‑time boundary between them:
     `date-fns`. Browser APIs get the same treatment where they're worth
     isolating (`notifications`, `download`).
   - `tokens/` — design‑system CSS custom properties.
-- **`src/features/`** + **`src/app/`** — the Timebox Works application, depending
+- **`src/features/`** + **`src/app/`** — the Tymebox application, depending
   only on `common/`.
 
 **Enforcement:** ESLint `no-restricted-imports` bans every wrapped library
