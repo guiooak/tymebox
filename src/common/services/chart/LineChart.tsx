@@ -52,6 +52,7 @@ export function LineChart({
   showLegend,
   gridColor = 'rgba(0, 0, 0, 0.06)',
   axisColor = 'currentColor',
+  animationDuration = 0,
 }: LineChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -89,7 +90,9 @@ export function LineChart({
             strokeDasharray={line.dashed ? '6 4' : undefined}
             connectNulls={line.connectNulls ?? true}
             dot={false}
-            isAnimationActive={false}
+            isAnimationActive={animationDuration > 0}
+            animationDuration={animationDuration}
+            animationEasing="ease-out"
           />
         ))}
       </RechartsLineChart>

@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Chart, InfoButton, type ChartSeries } from '../../../common/components';
 import { useDialog } from '../../../common/components';
 import { formatTime, toTimestamp } from '../../../common/services/datetime';
+import { usePrefersReducedMotion } from '../../../common/services/motion';
 import { useCssVars } from '../../../common/services/theme';
 import {
   buildProgress,
@@ -23,6 +24,9 @@ export type BurndownChartProps = {
 export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
   function BurndownChart({ startTime, endTime, items, showProjection, height }, ref) {
     const dialog = useDialog();
+    // Recharts animates in JS, so the global prefers-reduced-motion rule in
+    // base.css can't reach it — the preference has to be read here.
+    const reduceMotion = usePrefersReducedMotion();
     const palette = useCssVars({
       tendency: '--tw-chart-tendency',
       progress: '--tw-chart-progress',
@@ -104,6 +108,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
           xDomain={xDomain}
           gridColor={palette.grid}
           axisColor={palette.axis}
+          animationDuration={reduceMotion ? 0 : 320}
           showLegend
           xTickFormatter={(value) => formatTime(value)}
           renderTooltip={(entries) => (

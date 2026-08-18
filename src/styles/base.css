@@ -50,6 +50,19 @@ button {
   color-scheme: light;
 }
 
+/* Motion is decorative here — every animation is a state echo, never the only
+ * signal — so it can be switched off wholesale. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* "Print / PDF" on the report: drop the chrome and keep the content. */
 @media print {
   aside,
