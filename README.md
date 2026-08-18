@@ -17,6 +17,7 @@ persistence (including a per‑user history of past meetings).
   **React Router** (routing) — all hidden behind `src/common/services/*`
 - **Firebase** Auth (Google) + Realtime Database
 - Plain CSS via **CSS Modules**; design tokens in `src/common/tokens/`
+  (raw hues + semantic roles, with a dark variant that redefines only the roles)
 
 ## Architecture
 
