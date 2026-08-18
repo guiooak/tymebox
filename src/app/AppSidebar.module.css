@@ -76,6 +76,10 @@
 .signOut {
   color: var(--tw-primary);
 }
+.themeToggle {
+  composes: signOut;
+  color: var(--tw-text-muted);
+}
 .link:hover,
 .signOut:hover,
 .brand:hover {
@@ -87,7 +91,7 @@
 }
 .active {
   background: var(--tw-primary);
-  color: var(--tw-white);
+  color: var(--tw-on-primary);
   font-weight: var(--tw-font-weight-medium);
 }
 .active:hover {

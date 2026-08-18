@@ -2,3 +2,5 @@
 @import './spacing.css';
 @import './typography.css';
 @import './radius.css';
+/* Last: only overrides layer-2 roles, so it must win over colors.css. */
+@import './dark.css';

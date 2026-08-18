@@ -3,6 +3,7 @@ import { NavLink, paths } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
 import { useMeetingStore } from '../features/meeting/store';
 import { Logo } from './Logo';
+import { ThemeToggle } from './ThemeToggle';
 import styles from './AppSidebar.module.css';
 
 const STORAGE_KEY = 'tw-sidebar-collapsed';
@@ -69,6 +70,11 @@ export function AppSidebar() {
       </nav>
 
       <div className={styles.user}>
+        <ThemeToggle
+          className={styles.themeToggle}
+          iconClassName={styles.icon}
+          labelClassName={styles.label}
+        />
         {user?.photoURL && <img className={styles.avatar} src={user.photoURL} alt="" />}
         <span className={styles.name}>{user?.displayName ?? user?.email}</span>
         <button
