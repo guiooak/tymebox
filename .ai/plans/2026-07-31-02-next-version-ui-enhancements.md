@@ -13,11 +13,10 @@ surfaces — functional but generic, and it doesn't reinforce the
 hourglass icon. This is the highest-priority visual thread for the next
 version.
 
-> **Status (2026-08-17):** implemented on
-> `feat/next-version-ui-enhancements`. This was written as an ideas list and
-> closed with the suggested next step overtaken — all six threads shipped
-> rather than the 2–3 it proposed scoping first. The readings taken along the
-> way are recorded at the bottom.
+> **Status (2026-08-17):** this document was written as an ideas list, and has
+> since been implemented in full on `feat/next-version-ui-enhancements`. All
+> six threads shipped. The readings taken wherever it asked a question rather
+> than describing a change are recorded at the bottom.
 
 ---
 
@@ -77,8 +76,8 @@ version.
 
 ## What shipped, and the readings taken
 
-All six threads are implemented. Where this document asked a question rather
-than describing a change, the answer taken was:
+Where this document asked a question rather than describing a change, the
+answer taken was:
 
 - **Palette.** The signature accent is a violet (`--tw-violet-500`), chosen
   from the cool half so amber and red stay unambiguously about time pressure.
