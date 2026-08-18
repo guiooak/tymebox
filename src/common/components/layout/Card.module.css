@@ -2,35 +2,36 @@
   border-radius: var(--tw-radius);
   padding: var(--tw-space-4);
   border: var(--tw-border);
+  box-shadow: var(--tw-shadow-sm);
 }
 .primary {
   background: var(--tw-primary);
-  color: #fff;
+  color: var(--tw-on-primary);
   border-color: transparent;
 }
 .secondary {
   background: var(--tw-secondary);
-  color: #fff;
+  color: var(--tw-on-secondary);
   border-color: transparent;
 }
 .success {
   background: var(--tw-success);
-  color: #fff;
+  color: var(--tw-on-success);
   border-color: transparent;
 }
 .info {
   background: var(--tw-info);
-  color: #fff;
+  color: var(--tw-on-info);
   border-color: transparent;
 }
 .warning {
   background: var(--tw-warning);
-  color: #1f2326;
+  color: var(--tw-on-warning);
   border-color: transparent;
 }
 .danger {
   background: var(--tw-danger);
-  color: #fff;
+  color: var(--tw-on-danger);
   border-color: transparent;
 }
 .light {
@@ -39,6 +40,6 @@
 }
 .dark {
   background: var(--tw-dark);
-  color: #fff;
+  color: var(--tw-on-dark);
   border-color: transparent;
 }

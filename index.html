@@ -9,6 +9,22 @@
       content="Improve your meeting time with focus only on what matters."
     />
     <title>Tymebox</title>
+    <script>
+      // Stamp the theme before first paint so a dark-mode reload doesn't flash
+      // white. Mirrors applyTheme() in src/common/services/theme/themeStore.ts.
+      (function () {
+        try {
+          var mode = localStorage.getItem('tw-theme') || 'system';
+          var dark =
+            mode === 'dark' ||
+            (mode === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

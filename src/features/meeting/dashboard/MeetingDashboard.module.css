@@ -26,6 +26,11 @@
 .block {
   margin-bottom: var(--tw-gutter);
 }
+/* The countdown is its own panel now — wrapping it in a Box would frame a
+ * card inside a card and flatten the hierarchy the hero treatment buys. */
+.countdownBlock {
+  margin-bottom: var(--tw-gutter);
+}
 
 /* Schedule chips */
 .schedule {
@@ -54,7 +59,7 @@
 }
 .chip:hover:not(:disabled) {
   border-color: var(--tw-primary);
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
 }
 .chip:disabled {
   cursor: default;
@@ -75,6 +80,8 @@
   align-items: flex-start;
   gap: var(--tw-space-2);
   min-width: 260px;
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 .chipEditor > :first-child {
   flex: 1;
@@ -136,7 +143,7 @@
   border: var(--tw-border);
   border-bottom-width: 2px;
   border-radius: var(--tw-radius-sm);
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   font-family: var(--tw-font-mono);
   font-size: var(--tw-font-size-sm);
 }
@@ -150,11 +157,6 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--tw-space-3);
-}
-.blankSlate {
-  text-align: center;
-  color: var(--tw-text-muted);
-  padding: var(--tw-space-5) 0;
 }
 .notes {
   display: flex;

@@ -1,6 +1,7 @@
 .postIt {
   position: relative;
-  background: #fff8c5;
+  background: var(--tw-postit-bg);
+  color: var(--tw-postit-text);
   border-radius: var(--tw-radius-sm);
   padding: var(--tw-space-2);
   box-shadow: var(--tw-shadow-sm);

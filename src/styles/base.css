@@ -46,7 +46,41 @@ button {
 }
 
 :root {
+  /* The dark variant flips this; see common/tokens/dark.css. */
   color-scheme: light;
+}
+
+/* Touch input, not screen size: a small tablet with a mouse doesn't need
+ * bigger hit areas, and a large touchscreen does. 44px is the smallest target
+ * that stays reliably tappable. */
+@media (pointer: coarse) {
+  button,
+  [role='tab'],
+  a[href],
+  input[type='checkbox'],
+  select {
+    min-height: 44px;
+  }
+
+  /* Icon-only controls need the width too, but text buttons shouldn't be
+   * stretched into slabs. */
+  button:empty,
+  button > svg:only-child {
+    min-width: 44px;
+  }
+}
+
+/* Motion is decorative here — every animation is a state echo, never the only
+ * signal — so it can be switched off wholesale. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* "Print / PDF" on the report: drop the chrome and keep the content. */
@@ -58,7 +92,7 @@ button {
   }
 
   body {
-    background: #fff;
+    background: var(--tw-white);
   }
 
   section,

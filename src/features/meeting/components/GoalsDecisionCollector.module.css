@@ -17,15 +17,6 @@
   flex-direction: column;
   gap: var(--tw-space-2);
 }
-.blankSlate {
-  text-align: center;
-  color: var(--tw-text-muted);
-  padding: var(--tw-space-5) var(--tw-space-3);
-  border: 1px dashed var(--tw-border-color);
-  border-radius: var(--tw-radius);
-  margin-bottom: var(--tw-space-2);
-}
-
 .titleRow {
   display: flex;
   align-items: center;
@@ -50,7 +41,7 @@
 }
 
 .dragHandle {
-  color: var(--tw-gray-light);
+  color: var(--tw-border-color);
   cursor: grab;
   padding: 0 var(--tw-space-1);
   user-select: none;
@@ -79,7 +70,7 @@
   transition: all var(--tw-transition);
 }
 .addTrigger:hover {
-  background: var(--tw-gray-ice);
+  background: var(--tw-surface-sunken);
   color: var(--tw-text);
   border-color: var(--tw-primary);
 }
@@ -126,4 +117,30 @@
 .error {
   color: var(--tw-danger);
   font-size: var(--tw-font-size-xs);
+}
+
+/* Check-off reward. The row lifts and washes with the success tint, then
+ * settles — enough to feel like landing something, short enough not to sit
+ * between a facilitator and the next milestone. */
+.celebrate {
+  animation: celebrate var(--tw-duration-celebrate) var(--tw-ease-spring);
+  border-radius: var(--tw-radius);
+}
+
+@keyframes celebrate {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--tw-success) 45%, transparent);
+    background: color-mix(in srgb, var(--tw-success) 22%, transparent);
+  }
+  35% {
+    transform: scale(1.018);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--tw-success) 18%, transparent);
+    background: color-mix(in srgb, var(--tw-success) 16%, transparent);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+    background: transparent;
+  }
 }

@@ -1,0 +1,74 @@
+/* The dark variant.
+ *
+ * Only layer-2 semantic roles are redefined — never a component rule, and
+ * never a raw hue. Anything built out of those roles (including every
+ * color-mix() tint, which mixes into --tw-tint-base) follows automatically.
+ *
+ * There is exactly one dark block because "system" is resolved in JS: the
+ * theme store always stamps a concrete data-theme onto <html>, so the CSS
+ * never has to repeat itself for prefers-color-scheme.
+ */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Hues lift a step: the saturated light-mode values go muddy on a dark
+   * ground, and the 400s hold their meaning at low luminance. */
+  --tw-primary: var(--tw-violet-400);
+  --tw-primary-strong: var(--tw-violet-300);
+  --tw-secondary: var(--tw-slate-400);
+  --tw-success: var(--tw-green-400);
+  --tw-info: var(--tw-sky-400);
+  --tw-warning: var(--tw-amber-400);
+  --tw-danger: var(--tw-red-400);
+  --tw-light: var(--tw-slate-800);
+  --tw-dark: var(--tw-slate-950);
+
+  /* Solid themed surfaces are light-on-dark-hue in both variants except the
+   * ones that are now bright enough to need dark ink. */
+  --tw-on-primary: var(--tw-slate-950);
+  --tw-on-secondary: var(--tw-slate-950);
+  --tw-on-success: var(--tw-slate-950);
+  --tw-on-info: var(--tw-slate-950);
+  --tw-on-warning: var(--tw-slate-950);
+  --tw-on-danger: var(--tw-slate-950);
+  --tw-on-light: var(--tw-slate-50);
+  --tw-on-dark: var(--tw-slate-50);
+
+  /* On tinted fills the text sits on a *dark* mix, so it wants the light end
+   * of each hue rather than the readable-on-white end. */
+  --tw-primary-text: var(--tw-violet-300);
+  --tw-success-text: var(--tw-green-400);
+  --tw-info-text: var(--tw-sky-400);
+  --tw-warning-text: var(--tw-amber-400);
+  --tw-danger-text: var(--tw-red-400);
+
+  --tw-text: var(--tw-slate-100);
+  --tw-text-muted: var(--tw-slate-400);
+  --tw-text-subtle: var(--tw-slate-500);
+  --tw-bg: var(--tw-slate-950);
+  --tw-surface: var(--tw-slate-900);
+  --tw-surface-raised: var(--tw-slate-800);
+  --tw-surface-sunken: #191922;
+  --tw-border-color: #32323f;
+  --tw-border-strong: var(--tw-slate-600);
+
+  /* The single token that turns every pastel in the app into a dark tint. */
+  --tw-tint-base: var(--tw-slate-900);
+  --tw-overlay: rgba(0, 0, 0, 0.62);
+
+  /* A lit post-it would glare on a dark board; keep the paper metaphor but
+   * drop it to a dim amber. */
+  --tw-postit-bg: #4a4326;
+  --tw-postit-text: var(--tw-butter-200);
+
+  --tw-chart-tendency: var(--tw-slate-500);
+  --tw-chart-bg: var(--tw-surface);
+
+  /* Shadows can't darken a dark ground — deepen them and let the raised
+   * surface token carry most of the elevation instead. */
+  --tw-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --tw-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  --tw-shadow-lg: 0 14px 34px rgba(0, 0, 0, 0.55);
+  --tw-hairline: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}

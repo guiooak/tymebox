@@ -97,11 +97,6 @@
 }
 .actions {
   display: flex;
-  gap: var(--tw-space-2);
   flex-wrap: wrap;
-}
-.blankSlate {
-  text-align: center;
-  color: var(--tw-text-muted);
-  padding: var(--tw-space-7) 0;
+  gap: var(--tw-space-2);
 }

@@ -1,6 +1,50 @@
 .display {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  transition: background var(--tw-transition);
+  transition:
+    background var(--tw-transition),
+    box-shadow var(--tw-transition);
+}
+
+/* Hero treatment for the dashboard countdown. Everything on that board is a
+ * Box or a Card of equal weight; this is the one element a facilitator needs
+ * to read from across a room, so it gets its own object language: deeper
+ * elevation, a lit top edge, and a soft wash of its own theme colour. */
+.prominent {
+  border-radius: var(--tw-radius-xl);
+  padding: var(--tw-space-6) var(--tw-space-5);
+  box-shadow: var(--tw-shadow-lg), var(--tw-hairline);
+}
+.prominent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0) 46%
+  );
+}
+:root[data-theme='dark'] .prominent::before {
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0) 46%
+  );
+}
+.prominent > * {
+  position: relative;
+}
+.prominent .header {
+  font-size: var(--tw-font-size-md);
+  letter-spacing: 0.08em;
+  opacity: 1;
+  font-weight: var(--tw-font-weight-medium);
+}
+.prominent .footer {
+  font-size: var(--tw-font-size-md);
 }
 
 /* Pastel backgrounds — lighter tints of each theme colour, with dark text.
@@ -15,22 +59,22 @@
   border-color: transparent;
 }
 .display.primary {
-  background: color-mix(in srgb, var(--tw-primary) 18%, white);
+  background: color-mix(in srgb, var(--tw-primary) 18%, var(--tw-tint-base));
 }
 .display.secondary {
-  background: color-mix(in srgb, var(--tw-secondary) 20%, white);
+  background: color-mix(in srgb, var(--tw-secondary) 20%, var(--tw-tint-base));
 }
 .display.success {
-  background: color-mix(in srgb, var(--tw-success) 20%, white);
+  background: color-mix(in srgb, var(--tw-success) 20%, var(--tw-tint-base));
 }
 .display.info {
-  background: color-mix(in srgb, var(--tw-info) 22%, white);
+  background: color-mix(in srgb, var(--tw-info) 22%, var(--tw-tint-base));
 }
 .display.warning {
-  background: color-mix(in srgb, var(--tw-warning) 38%, white);
+  background: color-mix(in srgb, var(--tw-warning) 38%, var(--tw-tint-base));
 }
 .display.danger {
-  background: color-mix(in srgb, var(--tw-danger) 30%, white);
+  background: color-mix(in srgb, var(--tw-danger) 30%, var(--tw-tint-base));
 }
 .header {
   text-transform: uppercase;
@@ -44,4 +88,30 @@
 .footer {
   font-size: var(--tw-font-size-sm);
   opacity: 0.85;
+}
+
+/* Threshold-crossing pulse. The card is overflow:hidden so the ring is drawn
+ * inset rather than expanding outward, and it rides on top of the background
+ * transition instead of replacing it — the colour still changes underneath. */
+.pulse {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  animation: pulse var(--tw-duration-celebrate) var(--tw-ease-out);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: inset 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent);
+    background: color-mix(in srgb, currentColor 16%, transparent);
+  }
+  55% {
+    box-shadow: inset 0 0 0 5px color-mix(in srgb, currentColor 22%, transparent);
+    background: color-mix(in srgb, currentColor 4%, transparent);
+  }
+  100% {
+    box-shadow: inset 0 0 0 12px transparent;
+    background: transparent;
+  }
 }

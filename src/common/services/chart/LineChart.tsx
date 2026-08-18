@@ -50,24 +50,29 @@ export function LineChart({
   yTickFormatter,
   renderTooltip,
   showLegend,
+  gridColor = 'rgba(0, 0, 0, 0.06)',
+  axisColor = 'currentColor',
+  animationDuration = 0,
 }: LineChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <RechartsLineChart margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
         <XAxis
           dataKey="x"
           type="number"
           domain={xDomain ?? ['dataMin', 'dataMax']}
           tickFormatter={xTickFormatter}
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: axisColor }}
+          stroke={axisColor}
           allowDuplicatedCategory={false}
         />
         <YAxis
           type="number"
           domain={yDomain}
           tickFormatter={yTickFormatter}
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: axisColor }}
+          stroke={axisColor}
           allowDecimals={false}
         />
         {renderTooltip ? <Tooltip content={buildTooltip(renderTooltip)} /> : null}
@@ -85,7 +90,9 @@ export function LineChart({
             strokeDasharray={line.dashed ? '6 4' : undefined}
             connectNulls={line.connectNulls ?? true}
             dot={false}
-            isAnimationActive={false}
+            isAnimationActive={animationDuration > 0}
+            animationDuration={animationDuration}
+            animationEasing="ease-out"
           />
         ))}
       </RechartsLineChart>

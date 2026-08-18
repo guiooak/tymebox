@@ -2,6 +2,8 @@ import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Chart, InfoButton, type ChartSeries } from '../../../common/components';
 import { useDialog } from '../../../common/components';
 import { formatTime, toTimestamp } from '../../../common/services/datetime';
+import { usePrefersReducedMotion } from '../../../common/services/motion';
+import { useCssVars } from '../../../common/services/theme';
 import {
   buildProgress,
   buildProjection,
@@ -22,6 +24,16 @@ export type BurndownChartProps = {
 export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
   function BurndownChart({ startTime, endTime, items, showProjection, height }, ref) {
     const dialog = useDialog();
+    // Recharts animates in JS, so the global prefers-reduced-motion rule in
+    // base.css can't reach it — the preference has to be read here.
+    const reduceMotion = usePrefersReducedMotion();
+    const palette = useCssVars({
+      tendency: '--tw-chart-tendency',
+      progress: '--tw-chart-progress',
+      projection: '--tw-chart-projection',
+      grid: '--tw-chart-grid',
+      axis: '--tw-chart-axis',
+    });
 
     // While the projection is live it extends to "now"; re-tick so it keeps
     // moving even when nothing else changes.
@@ -44,7 +56,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         {
           id: 'tendency',
           name: 'Tendency',
-          color: '#adb5bd',
+          color: palette.tendency,
           data: buildTendency(startTs, endTs, total),
           strokeWidth: 1,
           dashed: true,
@@ -52,7 +64,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         {
           id: 'progress',
           name: 'Your progress',
-          color: '#0d6efd',
+          color: palette.progress,
           data: progress,
           strokeWidth: 2,
         },
@@ -64,7 +76,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
           result.push({
             id: 'projection',
             name: 'Projection',
-            color: '#28a745',
+            color: palette.projection,
             data: projection,
             strokeWidth: 2,
             dashed: true,
@@ -72,7 +84,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         }
       }
       return result;
-    }, [startTime, endTime, items, showProjection, now]);
+    }, [startTime, endTime, items, showProjection, now, palette]);
 
     const xDomain = useMemo<[number, number]>(
       () => [toTimestamp(startTime), toTimestamp(endTime)],
@@ -94,6 +106,9 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
           series={series}
           height={height}
           xDomain={xDomain}
+          gridColor={palette.grid}
+          axisColor={palette.axis}
+          animationDuration={reduceMotion ? 0 : 320}
           showLegend
           xTickFormatter={(value) => formatTime(value)}
           renderTooltip={(entries) => (

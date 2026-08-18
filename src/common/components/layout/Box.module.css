@@ -3,4 +3,5 @@
   border: var(--tw-border);
   border-radius: var(--tw-radius);
   padding: var(--tw-space-4);
+  box-shadow: var(--tw-shadow-sm);
 }

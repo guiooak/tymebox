@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import {
+  BlankSlate,
   Box,
   Button,
   Collapse,
@@ -10,6 +11,7 @@ import {
   Menu,
   Switch,
 } from '../../../common/components';
+import { cx } from '../../../common/components/cx';
 import { formatTime, nowISO } from '../../../common/services/datetime';
 import type { Goal } from '../domain/types';
 import { GoalEditModal } from './GoalEditModal';
@@ -57,6 +59,8 @@ export function GoalsDecisionCollector({
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [handleArmed, setHandleArmed] = useState<string | null>(null);
+  const [celebrating, setCelebrating] = useState<string | null>(null);
+  const celebrateTimer = useRef<number | undefined>(undefined);
   const addRef = useRef<HTMLInputElement>(null);
 
   const isOpen = (goalId: string) => allOpen || openId === goalId;
@@ -69,6 +73,13 @@ export function GoalsDecisionCollector({
   }, [adding]);
 
   const onCheck = (goal: Goal, checked: boolean) => {
+    if (checked) {
+      // One-shot reward on the row that was just landed. Cleared by a timer
+      // rather than animationend so a re-check mid-animation restarts it.
+      setCelebrating(goal.id);
+      window.clearTimeout(celebrateTimer.current);
+      celebrateTimer.current = window.setTimeout(() => setCelebrating(null), 700);
+    }
     onChangeGoal(goal.id, { finishedAt: checked ? nowISO() : '' });
     const updated = goals.map((item) =>
       item.id === goal.id ? { ...item, finishedAt: checked ? nowISO() : '' } : item,
@@ -82,6 +93,8 @@ export function GoalsDecisionCollector({
       onAllCompleted();
     }
   };
+
+  useEffect(() => () => window.clearTimeout(celebrateTimer.current), []);
 
   const submitNewGoal = () => {
     const name = draftName.trim();
@@ -161,9 +174,12 @@ export function GoalsDecisionCollector({
       </div>
 
       {goals.length === 0 && (
-        <p className={styles.blankSlate}>
-          No milestones yet. Add the first thing this event needs to land.
-        </p>
+        <BlankSlate
+          art="milestones"
+          compact
+          title="No milestones yet"
+          description="Add the first thing this event needs to land."
+        />
       )}
 
       <div className={styles.list}>
@@ -171,7 +187,10 @@ export function GoalsDecisionCollector({
           <div
             key={goal.id}
             draggable={canEdit && handleArmed === goal.id}
-            className={dragOverIndex === index ? styles.dropTarget : undefined}
+            className={cx(
+              dragOverIndex === index && styles.dropTarget,
+              celebrating === goal.id && styles.celebrate,
+            )}
             onDragStart={() => setDragIndex(index)}
             onDragOver={(event) => {
               if (dragIndex == null) {

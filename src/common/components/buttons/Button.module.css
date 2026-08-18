@@ -10,7 +10,7 @@
   transition:
     filter var(--tw-transition),
     background var(--tw-transition);
-  color: #fff;
+  color: var(--tw-on-primary);
 }
 .button:disabled {
   opacity: 0.55;
@@ -51,14 +51,14 @@
 }
 .warning {
   background: var(--tw-warning);
-  color: #1f2326;
+  color: var(--tw-on-warning);
 }
 .danger {
   background: var(--tw-danger);
 }
 .light {
   background: var(--tw-light);
-  color: var(--tw-text);
+  color: var(--tw-on-light);
   border-color: var(--tw-border-color);
 }
 .dark {
@@ -70,7 +70,7 @@
   border-color: currentColor;
 }
 .outline.primary {
-  color: var(--tw-primary);
+  color: var(--tw-primary-text);
 }
 .outline.secondary {
   color: var(--tw-secondary);
@@ -82,7 +82,7 @@
   color: var(--tw-info);
 }
 .outline.warning {
-  color: #b8860b;
+  color: var(--tw-warning-text);
 }
 .outline.danger {
   color: var(--tw-danger);

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import {
   Badge,
+  BlankSlate,
   Box,
   Button,
   Col,
@@ -235,13 +236,14 @@ export function MeetingDashboard() {
 
       <Row>
         <Col grow={1}>
-          <Box className={styles.block}>
+          <div className={styles.countdownBlock}>
             <TimeCountdown
               timeFrom={meeting.expectedStartTime || null}
               timeTarget={meeting.expectedEndTime || null}
               disabled={!active}
               warnAfter={warnAfter}
               unscheduledHint="set an end time to start the clock"
+              prominent
             />
             <div className={styles.alertsRow}>
               <Switch
@@ -257,7 +259,7 @@ export function MeetingDashboard() {
                     : 'Notify me on threshold crossings'}
               </span>
             </div>
-          </Box>
+          </div>
           <Box className={styles.block}>
             {scheduled ? (
               <BurndownChart
@@ -267,9 +269,12 @@ export function MeetingDashboard() {
                 showProjection={active}
               />
             ) : (
-              <p className={styles.blankSlate}>
-                Set a start and end time to see the burndown chart.
-              </p>
+              <BlankSlate
+                art="chart"
+                compact
+                title="No burndown yet"
+                description="Set a start and end time and the chart starts tracking."
+              />
             )}
           </Box>
         </Col>

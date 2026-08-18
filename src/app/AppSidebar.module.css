@@ -33,7 +33,7 @@
   line-height: 1;
 }
 .toggle:hover {
-  background: var(--tw-white-ice);
+  background: var(--tw-surface-sunken);
 }
 .collapsed .toggle {
   justify-content: center;
@@ -76,10 +76,14 @@
 .signOut {
   color: var(--tw-primary);
 }
+.themeToggle {
+  composes: signOut;
+  color: var(--tw-text-muted);
+}
 .link:hover,
 .signOut:hover,
 .brand:hover {
-  background: var(--tw-white-ice);
+  background: var(--tw-surface-sunken);
   text-decoration: none;
 }
 .brand:hover {
@@ -87,7 +91,7 @@
 }
 .active {
   background: var(--tw-primary);
-  color: var(--tw-white);
+  color: var(--tw-on-primary);
   font-weight: var(--tw-font-weight-medium);
 }
 .active:hover {
