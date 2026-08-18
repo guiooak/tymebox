@@ -1,14 +1,31 @@
 import { useCallback, useEffect, useState } from 'react';
 
-/** Resolve a CSS custom property to its concrete value on the document root. */
+/**
+ * Resolve a colour token to a concrete `rgb()` string.
+ *
+ * Reading the custom property directly would hand back its *declared* value —
+ * `color-mix(in srgb, …)` for the tinted tokens, since custom properties are
+ * substituted but not evaluated. That string is fine in a stylesheet and a
+ * liability everywhere else, so the value is resolved by letting the engine
+ * compute it as a real colour on a throwaway element.
+ */
 export function readCssVar(name: string, fallback = ''): string {
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
     return fallback;
   }
-  const value = getComputedStyle(document.documentElement)
+  const probe = document.createElement('span');
+  probe.style.display = 'none';
+  probe.style.color = `var(${name})`;
+  document.body.appendChild(probe);
+  const resolved = getComputedStyle(probe).color;
+  probe.remove();
+
+  // An unset token leaves `color` at its inherited value rather than empty, so
+  // fall back when the property isn't declared at all.
+  const declared = getComputedStyle(document.documentElement)
     .getPropertyValue(name)
     .trim();
-  return value || fallback;
+  return declared ? resolved : fallback;
 }
 
 /**
