@@ -46,6 +46,7 @@ button {
 }
 
 :root {
+  /* The dark variant flips this; see common/tokens/dark.css. */
   color-scheme: light;
 }
 
