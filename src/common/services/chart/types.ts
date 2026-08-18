@@ -34,4 +34,6 @@ export type LineChartProps = {
   /** Concrete colours — the chart service stays agnostic of app tokens. */
   gridColor?: string;
   axisColor?: string;
+  /** Milliseconds to tween line changes over. 0 disables animation. */
+  animationDuration?: number;
 };

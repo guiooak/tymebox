@@ -1,0 +1,11 @@
+:root {
+  /* Durations. "Quick" is for state echoes the eye should barely register;
+   * "celebrate" is the one-shot reward on completing something. */
+  --tw-duration-quick: 160ms;
+  --tw-duration-medium: 320ms;
+  --tw-duration-celebrate: 620ms;
+
+  /* Decelerating ease — motion arrives rather than stops. */
+  --tw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --tw-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
