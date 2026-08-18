@@ -1,9 +1,4 @@
-export type BlankSlateArtName =
-  | 'events'
-  | 'milestones'
-  | 'parking'
-  | 'chart'
-  | 'search';
+export type BlankSlateArtName = 'events' | 'milestones' | 'parking' | 'chart' | 'search';
 
 /**
  * One drawing language across every empty state: a 64px square, 1.5px round

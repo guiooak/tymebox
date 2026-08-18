@@ -28,9 +28,7 @@ export function TimeDisplay({
 }: TimeDisplayProps) {
   // Owns its own pastel backgrounds (lighter than Card's solid themes).
   return (
-    <Card
-      className={cx(styles.display, styles[theme], prominent && styles.prominent)}
-    >
+    <Card className={cx(styles.display, styles[theme], prominent && styles.prominent)}>
       {pulseKey > 0 && (
         <span key={pulseKey} className={styles.pulse} aria-hidden="true" />
       )}
