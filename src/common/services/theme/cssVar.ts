@@ -39,15 +39,18 @@ export function readCssVar(name: string, fallback = ''): string {
 export function useCssVars<K extends string>(
   names: Record<K, string>,
 ): Record<K, string> {
+  // The token map is a literal at every call site; keying on its serialized
+  // form keeps `read` stable without asking callers to memoize.
+  const namesKey = JSON.stringify(names);
   const read = useCallback(
     () =>
       Object.fromEntries(
-        Object.entries(names).map(([key, prop]) => [key, readCssVar(prop as string)]),
+        Object.entries(JSON.parse(namesKey) as Record<K, string>).map(([key, prop]) => [
+          key,
+          readCssVar(prop as string),
+        ]),
       ) as Record<K, string>,
-    // The token map is a literal at every call site; keying on the resolved
-    // property names keeps this stable without asking callers to memoize.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(names)],
+    [namesKey],
   );
 
   const [values, setValues] = useState(read);
