@@ -7,16 +7,30 @@
   align-items: center;
   justify-content: center;
 }
+/* Title block: the name, then when it happened, then the description and
+ * the streak badge, each with room to breathe. */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-1);
+}
+.description {
+  margin-top: var(--tw-space-3);
+  max-width: 65ch;
+}
 .section {
-  margin-top: var(--tw-space-6);
+  margin-top: var(--tw-space-7);
+}
+.sectionTitle {
+  margin-bottom: var(--tw-space-4);
 }
 .goals {
   display: flex;
   flex-direction: column;
-  gap: var(--tw-space-2);
+  gap: var(--tw-space-3);
 }
 .goal {
-  padding: var(--tw-space-3);
+  padding: var(--tw-space-4) var(--tw-space-5);
 }
 .goalHead {
   display: flex;
@@ -30,7 +44,7 @@
   color: var(--tw-text-muted);
 }
 .decisions {
-  margin-top: var(--tw-space-2);
+  margin-top: var(--tw-space-3);
   white-space: pre-wrap;
   color: var(--tw-text);
 }
@@ -45,7 +59,7 @@
   flex-wrap: wrap;
 }
 .trend {
-  margin-top: var(--tw-space-3);
+  margin-top: var(--tw-space-4);
 }
 .sideTopicTag {
   color: var(--tw-text-muted);

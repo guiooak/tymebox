@@ -130,7 +130,7 @@ export function MeetingReport() {
   return (
     <Container className={styles.report}>
       <Page>
-        <header>
+        <header className={styles.header}>
           <Heading size="lg" level={1} title={meeting.name} />
           {sameDay ? (
             <Heading size="xxs" level={2}>
@@ -147,7 +147,9 @@ export function MeetingReport() {
               </Heading>
             </>
           )}
-          {meeting.description && <Article text={meeting.description} />}
+          {meeting.description && (
+            <Article className={styles.description} text={meeting.description} />
+          )}
           {trend >= 2 && (
             <div className={styles.trend}>
               <Badge theme="success">
@@ -158,7 +160,7 @@ export function MeetingReport() {
         </header>
 
         <section className={styles.section}>
-          <Heading size="sm" level={2}>
+          <Heading size="sm" level={2} className={styles.sectionTitle}>
             Goals
           </Heading>
           <div className={styles.goals}>
@@ -181,7 +183,7 @@ export function MeetingReport() {
 
         {sideTopics.length > 0 && (
           <section className={styles.section}>
-            <Heading size="sm" level={2}>
+            <Heading size="sm" level={2} className={styles.sectionTitle}>
               Side topics
             </Heading>
             <ul className={styles.topics}>
@@ -201,7 +203,7 @@ export function MeetingReport() {
         )}
 
         <section className={styles.section}>
-          <Heading size="sm" level={2}>
+          <Heading size="sm" level={2} className={styles.sectionTitle}>
             Performance
           </Heading>
           <BurndownChart
