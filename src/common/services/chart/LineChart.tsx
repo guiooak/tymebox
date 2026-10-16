@@ -7,35 +7,32 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  type TooltipContentProps,
+  type TooltipValueType,
 } from 'recharts';
-import type { ChartTooltipEntry, LineChartProps } from './types';
-
-type TooltipPayloadItem = {
-  name?: string;
-  color?: string;
-  stroke?: string;
-  payload?: { x: number; y: number | null; label?: string };
-};
+import type { ChartPoint, ChartTooltipEntry, LineChartProps } from './types';
 
 function buildTooltip(renderTooltip: LineChartProps['renderTooltip']) {
-  return function TooltipContent(props: {
-    active?: boolean;
-    payload?: TooltipPayloadItem[];
-  }) {
+  return function TooltipContent(
+    props: TooltipContentProps<TooltipValueType, string | number>,
+  ) {
     if (!props.active || !props.payload?.length || !renderTooltip) {
       return null;
     }
-    const entries: ChartTooltipEntry[] = props.payload
-      .filter((item) => item.payload)
-      .map((item) => ({
-        name: item.name ?? '',
-        color: item.color ?? item.stroke ?? '#000',
-        point: {
-          x: item.payload!.x,
-          y: item.payload!.y,
-          label: item.payload!.label,
+    const entries: ChartTooltipEntry[] = props.payload.flatMap((item) => {
+      // Each series' data is ChartPoint[], so that's what Recharts hands back.
+      const point = item.payload as ChartPoint | undefined;
+      if (!point) {
+        return [];
+      }
+      return [
+        {
+          name: String(item.name ?? ''),
+          color: item.color ?? (item as { stroke?: string }).stroke ?? '#000',
+          point: { x: point.x, y: point.y, label: point.label },
         },
-      }));
+      ];
+    });
     return <>{renderTooltip(entries)}</>;
   };
 }

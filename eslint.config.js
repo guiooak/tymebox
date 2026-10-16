@@ -2,7 +2,6 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
-import importPlugin from 'eslint-plugin-import';
 import globals from 'globals';
 
 /**
@@ -46,14 +45,17 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    plugins: { 'react-hooks': reactHooks, import: importPlugin },
+    plugins: { 'react-hooks': reactHooks },
     languageOptions: {
       globals: { ...globals.browser },
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'import/no-default-export': 'error',
+      'no-restricted-exports': [
+        'error',
+        { restrictDefaultExports: { direct: true, named: true, defaultFrom: true } },
+      ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': [
@@ -98,7 +100,7 @@ export default tseslint.config(
     files: ['**/*.d.ts'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'off',
-      'import/no-default-export': 'off',
+      'no-restricted-exports': 'off',
     },
   },
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, FormDatetimePicker, FormField, Modal } from '../../../common/components';
 import type { Goal } from '../domain/types';
 import styles from './GoalsDecisionCollector.module.css';
@@ -14,15 +14,19 @@ export type GoalEditModalProps = {
  * milestone was actually completed, and how much it weighs in the burndown.
  */
 export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
-  const [finishedAt, setFinishedAt] = useState('');
-  const [weight, setWeight] = useState('1');
+  const [finishedAt, setFinishedAt] = useState(goal?.finishedAt ?? '');
+  const [weight, setWeight] = useState(String(goal?.weight ?? 1));
 
-  useEffect(() => {
+  // Reset the fields whenever a different goal is opened (adjusting state
+  // during render instead of in an effect avoids a stale first frame).
+  const [shownGoal, setShownGoal] = useState(goal);
+  if (goal !== shownGoal) {
+    setShownGoal(goal);
     if (goal) {
       setFinishedAt(goal.finishedAt);
       setWeight(String(goal.weight));
     }
-  }, [goal]);
+  }
 
   const parsedWeight = Number(weight);
   const weightError =

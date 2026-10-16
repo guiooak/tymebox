@@ -1,9 +1,6 @@
 /** Our interface over the browser Notification API. */
 export type NotificationPermissionState =
-  | 'unsupported'
-  | 'default'
-  | 'granted'
-  | 'denied';
+  'unsupported' | 'default' | 'granted' | 'denied';
 
 export function notificationsSupported(): boolean {
   return typeof window !== 'undefined' && 'Notification' in window;

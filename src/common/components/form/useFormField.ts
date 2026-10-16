@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { uid } from '../../services/uid';
 import { FormContext } from './formContext';
 
@@ -55,14 +55,17 @@ export function useFormField(options: UseFormFieldOptions): UseFormFieldResult {
 
   const value = controlled ? (options.value as string) : internal;
 
+  // Read by the form's register callbacks, which run outside render.
   const optionsRef = useRef(options);
-  optionsRef.current = options;
   const valueRef = useRef(value);
-  valueRef.current = value;
+  useLayoutEffect(() => {
+    optionsRef.current = options;
+    valueRef.current = value;
+  });
 
   const setValue = (next: string) => {
     if (controlled) {
-      optionsRef.current.onChange?.(next);
+      options.onChange?.(next);
     } else {
       setInternal(next);
     }

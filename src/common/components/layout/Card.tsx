@@ -3,14 +3,7 @@ import { cx } from '../cx';
 import styles from './Card.module.css';
 
 export type Theme =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'info'
-  | 'warning'
-  | 'danger'
-  | 'light'
-  | 'dark';
+  'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'danger' | 'light' | 'dark';
 
 export type CardProps = {
   children: ReactNode;

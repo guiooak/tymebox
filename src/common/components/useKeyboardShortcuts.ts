@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 
 export type Shortcut = {
   /** Single character, matched case-insensitively (e.g. 'd', '?'). */
@@ -24,31 +24,25 @@ function isTypingTarget(target: EventTarget | null): boolean {
  * the browser, and keystrokes inside form fields are ignored.
  */
 export function useKeyboardShortcuts(shortcuts: Shortcut[], enabled = true): void {
-  const latest = useRef(shortcuts);
-  latest.current = shortcuts;
+  // Always sees the latest shortcuts without re-subscribing on every render.
+  const onKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+      return;
+    }
+    const match = shortcuts.find(
+      (shortcut) =>
+        !shortcut.disabled && shortcut.key.toLowerCase() === event.key.toLowerCase(),
+    );
+    if (match) {
+      event.preventDefault();
+      match.onTrigger();
+    }
+  });
 
   useEffect(() => {
     if (!enabled) {
       return;
     }
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.metaKey ||
-        event.ctrlKey ||
-        event.altKey ||
-        isTypingTarget(event.target)
-      ) {
-        return;
-      }
-      const match = latest.current.find(
-        (shortcut) =>
-          !shortcut.disabled && shortcut.key.toLowerCase() === event.key.toLowerCase(),
-      );
-      if (match) {
-        event.preventDefault();
-        match.onTrigger();
-      }
-    };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [enabled]);
