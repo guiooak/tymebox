@@ -20,6 +20,9 @@ body {
   color: var(--tw-text);
   background: var(--tw-bg);
   -webkit-font-smoothing: antialiased;
+  /* Times, counts and durations change in place; equal-width digits keep them
+   * from jittering (manual §06). */
+  font-variant-numeric: tabular-nums;
 }
 
 h1,

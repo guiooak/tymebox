@@ -1,9 +1,13 @@
 :root {
+  /* Brand manual §06. Plus Jakarta Sans for the interface; JetBrains Mono only
+   * for time (countdowns, durations, report times). Both are self-hosted via
+   * @fontsource-variable, imported in main.tsx. */
   --tw-font-sans:
-    'Inter', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', system-ui, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji';
+    'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --tw-font-mono:
-    SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 
   --tw-font-size-xs: 0.75rem;
   --tw-font-size-sm: 0.875rem;
@@ -12,14 +16,20 @@
   /* Display sizes scale with the viewport: at 4.5rem fixed, a running
    * countdown ("1:23:45") is wider than a 360px phone. */
   --tw-font-size-xl: clamp(1.5rem, 1.2rem + 1.4vw, 1.75rem);
-  --tw-font-size-xxl: clamp(2rem, 1.4rem + 3vw, 2.5rem);
+  --tw-font-size-xxl: clamp(2rem, 1.6rem + 2vw, 2.25rem);
   --tw-font-size-display: clamp(2.75rem, 1.5rem + 6vw, 4.5rem);
   --tw-font-size-display-sm: clamp(2rem, 1.2rem + 4vw, 3rem);
 
   --tw-font-weight-light: 300;
   --tw-font-weight-normal: 400;
   --tw-font-weight-medium: 500;
+  --tw-font-weight-semibold: 600;
   --tw-font-weight-bold: 700;
+  --tw-font-weight-extrabold: 800;
+
+  /* Headings tighten; uppercase captions open up. */
+  --tw-tracking-tight: -0.02em;
+  --tw-tracking-caps: 0.08em;
 
   --tw-line-height: 1.5;
 }

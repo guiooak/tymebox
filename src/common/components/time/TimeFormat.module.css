@@ -1,5 +1,7 @@
 .time {
+  font-family: var(--tw-font-mono);
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   font-weight: var(--tw-font-weight-bold);
 }
 .xs {

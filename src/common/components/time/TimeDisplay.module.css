@@ -39,7 +39,7 @@
 }
 .prominent .header {
   font-size: var(--tw-font-size-md);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tw-tracking-caps);
   opacity: 1;
   font-weight: var(--tw-font-weight-medium);
 }

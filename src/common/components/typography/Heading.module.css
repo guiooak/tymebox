@@ -1,6 +1,8 @@
 .heading {
   font-weight: var(--tw-font-weight-bold);
   line-height: 1.2;
+  letter-spacing: var(--tw-tracking-tight);
+  text-wrap: balance;
 }
 .xxs {
   font-size: var(--tw-font-size-sm);
@@ -21,4 +23,5 @@
 }
 .xl {
   font-size: var(--tw-font-size-xxl);
+  font-weight: var(--tw-font-weight-extrabold);
 }
