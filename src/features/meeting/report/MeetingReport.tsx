@@ -11,7 +11,7 @@ import {
   Page,
   useDialog,
 } from '../../../common/components';
-import { svgElementToPngDataUrl } from '../../../common/services/chart';
+import { findChartSvg, svgElementToPngDataUrl } from '../../../common/services/chart';
 import { readCssVar } from '../../../common/services/theme';
 import { formatLong, formatTime, isSameDay } from '../../../common/services/datetime';
 import { downloadUrl, printPage, toFileStem } from '../../../common/services/download';
@@ -84,14 +84,14 @@ export function MeetingReport() {
   }));
 
   const renderChartImage = async (): Promise<string | null> => {
-    const svg = chartRef.current?.querySelector('svg');
+    const svg = findChartSvg(chartRef.current);
     if (!svg) {
       return null;
     }
     // The chart draws itself in theme colours, so the flattened PNG has to be
     // filled with the same surface — a white plate would swallow dark-mode
     // strokes and labels.
-    return await svgElementToPngDataUrl(svg as SVGSVGElement, {
+    return await svgElementToPngDataUrl(svg, {
       background: readCssVar('--tw-chart-bg', '#ffffff'),
     });
   };

@@ -1,4 +1,13 @@
 /**
+ * Find the plot <svg> of a chart rendered inside `container`. Charts also draw
+ * small SVGs (legend swatches) that can come first in the DOM, so taking the
+ * first <svg> is not enough.
+ */
+export function findChartSvg(container: Element | null): SVGSVGElement | null {
+  return container?.querySelector<SVGSVGElement>('.recharts-wrapper > svg') ?? null;
+}
+
+/**
  * Serialize an in-DOM <svg> (e.g. a rendered chart) to a base64 PNG data URL.
  * Used by the meeting report's "copy to clipboard" feature.
  */
@@ -14,6 +23,12 @@ export function svgElementToPngDataUrl(
   const clone = svg.cloneNode(true) as SVGSVGElement;
   clone.setAttribute('width', String(width));
   clone.setAttribute('height', String(height));
+  // Rasterized on its own, the SVG can't see the page's stylesheets or web
+  // fonts; name a sans-serif stack so labels don't fall back to Times.
+  clone.setAttribute(
+    'font-family',
+    `${getComputedStyle(svg).fontFamily}, system-ui, -apple-system, 'Segoe UI', sans-serif`,
+  );
   const serialized = new XMLSerializer().serializeToString(clone);
   const svgBlob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(svgBlob);
