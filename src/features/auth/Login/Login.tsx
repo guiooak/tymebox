@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Heading, Paragraph } from '../../../common/components';
+import { Button, Paragraph } from '../../../common/components';
+import { Logo } from '../../brand';
 import { useAuthStore } from '../authStore';
 import styles from './Login.module.css';
 
@@ -23,12 +24,9 @@ export function Login() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>
-        <div className={styles.logo} aria-hidden="true">
-          ⏳
-        </div>
-        <Heading size="md" level={1}>
-          Tymebox
-        </Heading>
+        <h1 className={styles.brand}>
+          <Logo size={72} layout="vertical" />
+        </h1>
         <Paragraph className={styles.tagline}>
           Improve your meeting time with focus only on what matters.
         </Paragraph>

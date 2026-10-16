@@ -47,11 +47,6 @@
   justify-content: center;
   min-height: 28px;
 }
-.brandIcon {
-  font-size: var(--tw-font-size-xl);
-  line-height: 1;
-}
-
 .nav {
   display: flex;
   flex-direction: column;

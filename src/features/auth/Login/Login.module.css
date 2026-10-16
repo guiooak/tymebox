@@ -18,8 +18,8 @@
   align-items: center;
   gap: var(--tw-space-3);
 }
-.logo {
-  font-size: 48px;
+.brand {
+  margin: 0 0 var(--tw-space-2);
 }
 .tagline {
   color: var(--tw-text-muted);

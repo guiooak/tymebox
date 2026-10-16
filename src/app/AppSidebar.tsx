@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, paths } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
 import { useMeetingStore } from '../features/meeting/store';
-import { Logo } from './Logo';
+import { Logo, TymeboxSymbol } from '../features/brand';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './AppSidebar.module.css';
 
@@ -31,13 +31,7 @@ export function AppSidebar() {
       className={collapsed ? `${styles.sidebar} ${styles.collapsed}` : styles.sidebar}
     >
       <NavLink to={paths.home} className={styles.brand} aria-label="Tymebox home">
-        {collapsed ? (
-          <span className={styles.brandIcon} aria-hidden="true">
-            ⏳
-          </span>
-        ) : (
-          <Logo />
-        )}
+        {collapsed ? <TymeboxSymbol size={28} /> : <Logo size={28} />}
       </NavLink>
 
       <nav className={styles.nav}>

@@ -1,0 +1,22 @@
+/* Lockups from the brand manual §03, sized from the symbol height. */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logo-h) * 0.28);
+  color: var(--tw-text);
+}
+.wordmark {
+  font-family: var(--tw-font-sans);
+  font-weight: var(--tw-font-weight-extrabold);
+  font-size: calc(var(--logo-h) * 0.6);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.vertical {
+  flex-direction: column;
+  gap: calc(var(--logo-h) * 0.16);
+}
+.vertical .wordmark {
+  font-size: calc(var(--logo-h) * 0.34);
+}

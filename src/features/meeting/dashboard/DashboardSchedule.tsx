@@ -93,7 +93,7 @@ export function DashboardSchedule({
         readOnly={readOnly}
       />
       {duration > 0 && (
-        <span className={styles.chipStatic}>⏳ {formatDuration(duration)} box</span>
+        <span className={styles.chipStatic}>{formatDuration(duration)} box</span>
       )}
       {invalid && (
         <span className={styles.scheduleError}>End time should be after start time</span>
