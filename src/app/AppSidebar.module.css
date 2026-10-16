@@ -102,18 +102,55 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--tw-space-2);
+  gap: var(--tw-space-1);
+  padding-top: var(--tw-space-3);
+  border-top: var(--tw-border);
 }
-.avatar {
-  width: 32px;
-  height: 32px;
+
+/* Avatar + name share the rows' grid: same padding as the links, the avatar
+ * centred on the 1.25rem icon column, the name lined up with the labels. */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+  padding: var(--tw-space-2) var(--tw-space-3);
+  min-width: 0;
+}
+.avatarSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+.avatar,
+.avatarFallback {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
   border-radius: 50%;
 }
+.avatar {
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--tw-border-color);
+}
+.avatarFallback {
+  display: grid;
+  place-items: center;
+  background: var(--tw-surface-sunken);
+  color: var(--tw-primary-text);
+  font-size: var(--tw-font-size-xs);
+  font-weight: var(--tw-font-weight-bold);
+}
 .name {
+  min-width: 0;
   font-size: var(--tw-font-size-sm);
-  color: var(--tw-text-muted);
-  word-break: break-word;
+  font-weight: var(--tw-font-weight-medium);
+  color: var(--tw-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Collapsed rail: icons only. */
@@ -127,8 +164,10 @@
   padding-left: var(--tw-space-2);
   padding-right: var(--tw-space-2);
 }
-.collapsed .user {
-  align-items: center;
+.collapsed .identity {
+  justify-content: center;
+  padding-left: var(--tw-space-2);
+  padding-right: var(--tw-space-2);
 }
 
 /* Collapse to a horizontal top bar on narrow screens. */
@@ -164,6 +203,20 @@
     margin-left: auto;
     flex-direction: row;
     align-items: center;
+    padding-top: 0;
+    border-top: none;
+  }
+  .identity {
+    padding: 0 var(--tw-space-1);
+  }
+  .user .signOut,
+  .user .themeToggle {
+    width: auto;
+    white-space: nowrap;
+  }
+  /* The toggle keeps its aria-label; the text would wrap in the top bar. */
+  .themeToggle .label {
+    display: none;
   }
   .name {
     display: none;

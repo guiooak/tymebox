@@ -26,6 +26,8 @@ export function AppSidebar() {
   }, [collapsed]);
 
   const live = !!current?.realStartTime && !current?.realEndTime;
+  const displayName = user?.displayName ?? user?.email ?? '';
+  const initial = displayName.trim().charAt(0).toUpperCase() || '?';
 
   return (
     <aside
@@ -62,8 +64,21 @@ export function AppSidebar() {
           iconClassName={styles.icon}
           labelClassName={styles.label}
         />
-        {user?.photoURL && <img className={styles.avatar} src={user.photoURL} alt="" />}
-        <span className={styles.name}>{user?.displayName ?? user?.email}</span>
+        <div className={styles.identity} title={displayName}>
+          <span className={styles.avatarSlot} aria-hidden="true">
+            {user?.photoURL ? (
+              <img
+                className={styles.avatar}
+                src={user.photoURL}
+                alt=""
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <span className={styles.avatarFallback}>{initial}</span>
+            )}
+          </span>
+          <span className={styles.name}>{displayName}</span>
+        </div>
         <button
           className={styles.signOut}
           onClick={() => void signOut()}
