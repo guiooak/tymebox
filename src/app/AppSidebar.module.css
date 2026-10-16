@@ -140,16 +140,25 @@
     height: auto;
     flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
     gap: var(--tw-space-3);
-    overflow-x: auto;
     border-right: none;
     border-bottom: var(--tw-border);
   }
   .toggle {
     display: none;
   }
+  /* Brand and user share the first row; the links get a full row of their own
+   * so none of them is clipped. */
   .nav {
+    order: 1;
     flex-direction: row;
+    width: 100%;
+  }
+  .nav .link {
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
   }
   .user {
     margin-top: 0;
