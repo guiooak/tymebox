@@ -2,14 +2,14 @@
   position: relative;
   background: var(--tw-postit-bg);
   color: var(--tw-postit-text);
-  border-radius: var(--tw-radius-sm);
-  padding: var(--tw-space-2);
-  box-shadow: var(--tw-shadow-sm);
+  border: var(--tw-border);
+  border-radius: var(--tw-radius);
+  padding: var(--tw-space-3) var(--tw-space-4);
 }
 .close {
   position: absolute;
-  top: var(--tw-space-1);
-  right: var(--tw-space-1);
+  top: var(--tw-space-2);
+  right: var(--tw-space-2);
 }
 .row {
   display: flex;

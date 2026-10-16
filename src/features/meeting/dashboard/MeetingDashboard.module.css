@@ -160,17 +160,20 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--tw-space-3);
+  gap: var(--tw-space-3);
+  margin-bottom: var(--tw-space-4);
 }
+/* Each topic and its "during …" tag form one group: tight inside, clearly
+ * apart from the next topic. */
 .notes {
   display: flex;
   flex-direction: column;
-  gap: var(--tw-space-2);
+  gap: var(--tw-space-4);
 }
 .note {
   display: flex;
   flex-direction: column;
-  gap: var(--tw-space-1);
+  gap: 6px;
 }
 .noteTag {
   align-self: flex-start;
