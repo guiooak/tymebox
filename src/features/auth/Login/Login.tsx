@@ -28,7 +28,7 @@ export function Login() {
           <Logo size={72} layout="vertical" />
         </h1>
         <Paragraph className={styles.tagline}>
-          Improve your meeting time with focus only on what matters.
+          Timebox your events and focus only on what matters.
         </Paragraph>
         <Button block onClick={onSignIn} disabled={busy}>
           {busy ? 'Signing in…' : 'Continue with Google'}

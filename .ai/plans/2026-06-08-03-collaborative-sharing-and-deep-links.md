@@ -2,9 +2,9 @@
 
 ## Context
 
-Follow-up to the UX pass (Home/Overview landing page, left sidebar nav, noun/lifecycle routes `/meetings/new|live|report`) and builds on the hardened RTDB rules in `database.rules.json`. It introduces **deep-linkable meeting routes** and turns meetings from per-user-private documents into **shareable, optionally collaborative boards** with three visibility modes and per-guest edit/view permissions.
+Follow-up to the UX pass (Home/Overview landing page, left sidebar nav, noun/lifecycle routes `/events/new|live|report`, renamed from `/meetings/*` on 2026-10-16) and builds on the hardened RTDB rules in `database.rules.json`. It introduces **deep-linkable meeting routes** and turns meetings from per-user-private documents into **shareable, optionally collaborative boards** with three visibility modes and per-guest edit/view permissions.
 
-This reverses a deliberate shortcut from the UX pass: those routes were kept **ID-less** (`/meetings/live`) reading the single `currentMeeting` slot. Sharing requires addressing a *specific* meeting by id for a *specific* viewer, so **deep-link, load-by-id routing is the prerequisite** and is section A here.
+This reverses a deliberate shortcut from the UX pass: those routes were kept **ID-less** (`/events/live`) reading the single `currentMeeting` slot. Sharing requires addressing a *specific* meeting by id for a *specific* viewer, so **deep-link, load-by-id routing is the prerequisite** and is section A here.
 
 > ⚠️ **This plan breaks the current data model and security rules on purpose.** Today meetings live at `users/$uid/meetings/$id`, siloed and readable only by their owner (the rules we just deployed: `.read/.write = auth.uid === $uid`). Sharing means a non-owner must read/write someone else's meeting — which the per-user silo cannot express. The core of this plan is migrating meetings to a **top-level collection with an explicit membership ACL**, plus the rule rewrite that comes with it.
 
@@ -14,10 +14,10 @@ It also revisits the **client-only vs Cloud Functions** decision from the metric
 
 ## A. Deep-link routing (prerequisite)
 
-1. **Routes** — add `/meetings/:id` (detail/report), `/meetings/:id/live`, `/meetings/:id/report`. Extend `router/paths.ts` from string constants to **builders** (e.g. `paths.meeting(id)`, `paths.liveMeeting(id)`, `paths.report(id)`) while keeping the static ones (`home`, `newMeeting`, `meetings`).
+1. **Routes** — add `/events/:id` (detail/report), `/events/:id/live`, `/events/:id/report` (URLs say "event", like the UI; the database keeps `meetings`). Extend `router/paths.ts` from string constants to **builders** (e.g. `paths.meeting(id)`, `paths.liveMeeting(id)`, `paths.report(id)`) while keeping the static ones (`home`, `newMeeting`, `meetings`).
 2. **Load-by-id** — the meeting store gains `subscribeMeeting(id)` that reads a single meeting from the new top-level collection (section B) instead of depending on `currentMeetingId`. Live/report pages read `:id` via `useRouteParams` and subscribe to that board.
 3. **Guarding** — a route guard checks the viewer's membership/visibility before rendering. Unauthorized → a "no access" / 404 page that **does not leak existence** for private boards.
-4. **Backfill links** — Home "recent" and History rows link to `/meetings/:id/report`; the ID-less routes either redirect to the resolved current meeting or are retired.
+4. **Backfill links** — Home "recent" and History rows link to `/events/:id/report`; the ID-less routes either redirect to the resolved current meeting or are retired.
 
 ## B. Data model — meetings become shareable documents
 

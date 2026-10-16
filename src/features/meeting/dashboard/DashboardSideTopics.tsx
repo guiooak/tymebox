@@ -63,7 +63,7 @@ export function DashboardSideTopics({
           art="parking"
           compact
           title="Nothing parked yet"
-          description="Tangents go here, so the meeting can keep moving."
+          description="Tangents go here, so the event can keep moving."
         />
       ) : (
         <div className={styles.notes}>

@@ -1,6 +1,13 @@
 import { useEffect, type ReactNode } from 'react';
 import { Loader } from '../common/components';
-import { Navigate, Route, RouteGuard, Routes, paths } from '../common/services/router';
+import {
+  Navigate,
+  Route,
+  RouteGuard,
+  Routes,
+  legacyRedirects,
+  paths,
+} from '../common/services/router';
 import { Login, useAuthStore } from '../features/auth';
 import { useMeetingStore } from '../features/meeting/store';
 import { Home } from '../features/meeting/home/Home';
@@ -54,6 +61,9 @@ export function AppShell() {
             <Route path={paths.liveMeeting} element={protect(<MeetingDashboard />)} />
             <Route path={paths.report} element={protect(<MeetingReport />)} />
             <Route path={paths.meetings} element={protect(<MeetingsHistory />)} />
+            {legacyRedirects.map(([from, to]) => (
+              <Route key={from} path={from} element={<Navigate to={to} replace />} />
+            ))}
             <Route path="*" element={<Navigate to={paths.home} replace />} />
           </Routes>
         </main>
