@@ -6,7 +6,9 @@ export function Logo() {
       <span className={styles.icon} aria-hidden="true">
         ⏳
       </span>
-      Timebox <strong>Works</strong>
+      <span>
+        Tyme<strong>box</strong>
+      </span>
     </span>
   );
 }
