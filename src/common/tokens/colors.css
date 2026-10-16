@@ -59,7 +59,6 @@
 
   /* Status hues, only at the steps the manual uses. */
   --tw-emerald-400: #34d399;
-  --tw-emerald-600: #059669;
   --tw-emerald-700: #047857;
   --tw-red-400: #f87171;
   --tw-red-600: #dc2626;
@@ -73,7 +72,8 @@
   --tw-primary: var(--tw-blue-600);
   --tw-primary-strong: var(--tw-blue-700);
   --tw-secondary: var(--tw-slate-500);
-  --tw-success: var(--tw-emerald-600);
+  /* emerald-700, not 600: white on #059669 is only 3.8:1. */
+  --tw-success: var(--tw-emerald-700);
   --tw-info: var(--tw-blue-700);
   --tw-warning: var(--tw-amber-500);
   --tw-danger: var(--tw-red-600);
@@ -127,9 +127,10 @@
 
   /* Chart series. Kept here rather than inline in BurndownChart so the chart
    * follows the palette and the dark variant like everything else. */
-  --tw-chart-tendency: var(--tw-slate-400);
+  --tw-chart-tendency: var(--tw-slate-500);
   --tw-chart-progress: var(--tw-primary-text);
-  --tw-chart-projection: var(--tw-accent);
+  /* amber-600: amber-500 is only 2.1:1 on white, too faint for a line. */
+  --tw-chart-projection: var(--tw-amber-600);
   --tw-chart-grid: color-mix(in srgb, var(--tw-text) 10%, transparent);
   --tw-chart-axis: var(--tw-text-muted);
   --tw-chart-bg: var(--tw-surface);

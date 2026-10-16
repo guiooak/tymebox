@@ -34,11 +34,12 @@
   --primary:var(--blue-600); --primary-hover:var(--blue-700); --on-primary:#FFFFFF; --link:var(--blue-600);
   --accent:var(--amber-500); --on-accent:var(--slate-900);
   --logo:var(--blue-600); --sand:var(--amber-500);
-  --success:#047857; --success-bg:#ECFDF5; --success-solid:#059669;
+  --success:#047857; --success-bg:#ECFDF5; --success-solid:#047857;
   --warning:var(--amber-700); --warning-bg:var(--amber-50); --warning-solid:var(--amber-500);
   --danger:#DC2626; --danger-bg:#FEF2F2; --danger-solid:#DC2626;
   --info:var(--blue-700); --info-bg:var(--blue-50);
   --focus:var(--blue-500);
+  --chart-tendency:var(--slate-500); --chart-projection:var(--amber-600);
   --shadow-sm:0 1px 2px rgba(15,23,42,.06);
   --shadow-md:0 4px 12px rgba(15,23,42,.08);
   --shadow-lg:0 16px 32px rgba(15,23,42,.14);
@@ -52,11 +53,12 @@
     --primary:var(--blue-600); --primary-hover:var(--blue-500); --on-primary:#FFFFFF; --link:var(--blue-400);
     --accent:var(--amber-400); --on-accent:var(--slate-900);
     --logo:var(--blue-500); --sand:var(--amber-400);
-    --success:#34D399; --success-bg:rgba(52,211,153,.12); --success-solid:#059669;
+    --success:#34D399; --success-bg:rgba(52,211,153,.12); --success-solid:#047857;
     --warning:var(--amber-400); --warning-bg:rgba(251,191,36,.12); --warning-solid:var(--amber-400);
     --danger:#F87171; --danger-bg:rgba(248,113,113,.12); --danger-solid:#DC2626;
     --info:var(--blue-400); --info-bg:rgba(96,165,250,.12);
     --focus:var(--blue-400);
+    --chart-tendency:var(--slate-400); --chart-projection:var(--amber-400);
     --shadow-sm:0 1px 2px rgba(0,0,0,.3);
     --shadow-md:0 4px 12px rgba(0,0,0,.35);
     --shadow-lg:0 16px 32px rgba(0,0,0,.45);
@@ -69,11 +71,12 @@
   --primary:var(--blue-600); --primary-hover:var(--blue-500); --on-primary:#FFFFFF; --link:var(--blue-400);
   --accent:var(--amber-400); --on-accent:var(--slate-900);
   --logo:var(--blue-500); --sand:var(--amber-400);
-  --success:#34D399; --success-bg:rgba(52,211,153,.12); --success-solid:#059669;
+  --success:#34D399; --success-bg:rgba(52,211,153,.12); --success-solid:#047857;
   --warning:var(--amber-400); --warning-bg:rgba(251,191,36,.12); --warning-solid:var(--amber-400);
   --danger:#F87171; --danger-bg:rgba(248,113,113,.12); --danger-solid:#DC2626;
   --info:var(--blue-400); --info-bg:rgba(96,165,250,.12);
   --focus:var(--blue-400);
+  --chart-tendency:var(--slate-400); --chart-projection:var(--amber-400);
   --shadow-sm:0 1px 2px rgba(0,0,0,.3);
   --shadow-md:0 4px 12px rgba(0,0,0,.35);
   --shadow-lg:0 16px 32px rgba(0,0,0,.45);
@@ -538,7 +541,7 @@ footer.site { padding:40px 0 56px; font-size:13px; color:var(--text-muted); }
         <div class="card chart-card">
           <h4>Burndown</h4>
           <svg id="burndown" viewBox="0 0 340 200" role="img" aria-label="Gráfico de burndown de exemplo"></svg>
-          <div class="legend"><span><i style="border-color:var(--text-subtle); border-top-style:dashed"></i>Tendency</span><span><i style="border-color:var(--primary)"></i>Your progress</span><span><i style="border-color:var(--accent); border-top-style:dashed"></i>Projection</span></div>
+          <div class="legend"><span><i style="border-color:var(--chart-tendency); border-top-style:dashed"></i>Tendency</span><span><i style="border-color:var(--primary)"></i>Your progress</span><span><i style="border-color:var(--chart-projection); border-top-style:dashed"></i>Projection</span></div>
         </div>
       </div>
 
@@ -789,7 +792,10 @@ footer.site { padding:40px 0 56px; font-size:13px; color:var(--text-muted); }
     ['--link','Links e texto de destaque', 'blue.600', 'blue.400'],
     ['--logo','Traço do símbolo', 'blue.600', 'blue.500'],
     ['--accent / --sand','Areia, tempo, foco (texto Slate 900)', 'amber.500', 'amber.400'],
-    ['--success','Ao vivo, concluído, adiantado', '#047857', '#34D399'],
+    ['--success','Ao vivo, concluído, adiantado (texto)', '#047857', '#34D399'],
+    ['--success-solid','Botões Start/Finish (texto branco)', '#047857', '#047857'],
+    ['--chart-tendency','Linha de tendência do burndown', 'slate.500', 'slate.400'],
+    ['--chart-projection','Linha de projeção do burndown', 'amber.600', 'amber.400'],
     ['--warning','Ritmo atrasado, atenção', 'amber.700', 'amber.400'],
     ['--danger','Estouro de tempo, ações destrutivas', '#DC2626', '#F87171'],
     ['--info','Status neutro, “Now”, finalizado', 'blue.700', 'blue.400'],
@@ -809,6 +815,9 @@ footer.site { padding:40px 0 56px; font-size:13px; color:var(--text-muted); }
     ['Âmbar 700 (warning) sobre branco', HEX.amber[700], '#FFFFFF'],
     ['Verde #047857 sobre branco', '#047857', '#FFFFFF'],
     ['Vermelho #DC2626 sobre branco', '#DC2626', '#FFFFFF'],
+    ['Branco sobre verde #047857 (botão)', '#FFFFFF', '#047857'],
+    ['Branco sobre verde #059669 (não usar)', '#FFFFFF', '#059669'],
+    ['Âmbar 600 sobre branco (linha de projeção)', HEX.amber[600], '#FFFFFF'],
     ['Slate 50 sobre Slate 900', HEX.slate[50], HEX.slate[900]],
     ['Slate 400 (muted) sobre Slate 900', HEX.slate[400], HEX.slate[900]],
     ['Azul 400 sobre Slate 900', HEX.blue[400], HEX.slate[900]],
@@ -851,10 +860,10 @@ footer.site { padding:40px 0 56px; font-size:13px; color:var(--text-muted); }
     let g = '';
     for (let v = 0; v <= 7; v++) g += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--border);stroke-width:1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" style="font:11px var(--font-mono);fill:var(--text-muted)">${v}</text>`;
     ['17:30', '17:45', '18:00', '18:15', '18:30'].forEach((t, i) => { g += `<text x="${x(i * 15)}" y="${H - 8}" text-anchor="middle" style="font:11px var(--font-mono);fill:var(--text-muted)">${t}</text>`; });
-    g += `<line x1="${x(0)}" y1="${y(7)}" x2="${x(60)}" y2="${y(0)}" style="stroke:var(--text-subtle);stroke-width:1.5;stroke-dasharray:5 4"/>`;
+    g += `<line x1="${x(0)}" y1="${y(7)}" x2="${x(60)}" y2="${y(0)}" style="stroke:var(--chart-tendency);stroke-width:1.5;stroke-dasharray:5 4"/>`;
     const pts = [[0, 7], [6, 7], [6, 6], [24, 6], [24, 3]];
     g += `<polyline points="${pts.map(([m, v]) => x(m) + ',' + y(v)).join(' ')}" style="fill:none;stroke:var(--primary);stroke-width:2.5;stroke-linejoin:round"/>`;
-    g += `<line x1="${x(24)}" y1="${y(3)}" x2="${x(38)}" y2="${y(1)}" style="stroke:var(--accent);stroke-width:2;stroke-dasharray:4 4"/>`;
+    g += `<line x1="${x(24)}" y1="${y(3)}" x2="${x(38)}" y2="${y(1)}" style="stroke:var(--chart-projection);stroke-width:2;stroke-dasharray:4 4"/>`;
     [[6, 6], [24, 3]].forEach(([m, v]) => { g += `<circle cx="${x(m)}" cy="${y(v)}" r="4" style="fill:var(--surface);stroke:var(--primary);stroke-width:2"/>`; });
     $('#burndown').innerHTML = g;
   }

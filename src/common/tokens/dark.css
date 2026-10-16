@@ -17,7 +17,7 @@
 
     /* Fills keep their light-theme hue so white text stays readable on them
      * (white on blue-600 is 5.2:1); only the neutral and amber fills move. */
-    --tw-primary-strong: var(--tw-blue-500);
+    --tw-primary-strong: var(--tw-blue-700);
     --tw-secondary: var(--tw-slate-600);
     --tw-warning: var(--tw-amber-400);
     --tw-light: var(--tw-slate-800);
@@ -53,7 +53,8 @@
     --tw-tint-base: var(--tw-slate-800);
     --tw-overlay: rgba(2, 6, 23, 0.62);
 
-    --tw-chart-tendency: var(--tw-slate-500);
+    --tw-chart-tendency: var(--tw-slate-400);
+    --tw-chart-projection: var(--tw-amber-400);
 
     /* Shadows can't darken a dark ground — deepen them and let borders carry
      * most of the separation instead. */
