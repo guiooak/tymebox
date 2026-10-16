@@ -76,12 +76,13 @@ Yarn release is pinned in‑repo (`yarnPath`).
 
 ## CI / Deploy
 
-- **`.github/workflows/ci.yml`** — lint, typecheck, test (+ coverage to Codecov),
-  format check, and build, on every push/PR to `main`.
-- **`.github/workflows/deploy.yml`** — builds and deploys to **Firebase Hosting**
-  (live channel on `main`, preview channel on PRs). Requires repo secrets:
-  `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*`
-  build vars.
+**`.github/workflows/ci.yml`** runs on Node 24 for every push/PR to `main`:
+
+- lint, typecheck, test (+ coverage to Codecov), format check, and build;
+- then, only if all of those pass, **deploy** to **Firebase Hosting** (live
+  channel on `main`, preview channel on PRs from this repo; fork PRs are
+  skipped). Requires repo secrets: `FIREBASE_SERVICE_ACCOUNT`,
+  `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*` build vars.
 
 ## Not included yet
 
