@@ -5,6 +5,13 @@
   justify-content: center;
   padding: var(--tw-space-5);
   color: var(--tw-text-muted);
+  /* Fast loads finish before the spinner appears, so it never just blinks. */
+  animation: appear 200ms ease-out 150ms both;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
 }
 .spinner {
   width: 20px;

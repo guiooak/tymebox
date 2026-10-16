@@ -131,3 +131,8 @@
   gap: var(--tw-space-2);
   flex-wrap: wrap;
 }
+
+/* Holds the space the content will take while the first snapshot loads. */
+.loading {
+  min-height: 240px;
+}

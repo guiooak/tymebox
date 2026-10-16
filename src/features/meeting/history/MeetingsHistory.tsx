@@ -6,6 +6,7 @@ import {
   Button,
   Container,
   Heading,
+  Loader,
   Page,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
@@ -45,6 +46,7 @@ function whenLabel(meeting: Meeting): string {
 export function MeetingsHistory() {
   const navigation = useNavigation();
   const meetings = useMeetingStore((state) => state.meetings);
+  const loading = useMeetingStore((state) => state.loading);
   const reopen = useMeetingStore((state) => state.reopen);
   const reopenInDashboard = useMeetingStore((state) => state.reopenInDashboard);
   const clone = useMeetingStore((state) => state.clone);
@@ -113,110 +115,124 @@ export function MeetingsHistory() {
           <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
         </header>
 
-        <div className={styles.toolbar}>
-          <div className={styles.filters} role="tablist" aria-label="Filter by status">
-            {FILTERS.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                role="tab"
-                aria-selected={filter === item.key}
-                className={filter === item.key ? styles.filterActive : styles.filter}
-                onClick={() => setFilter(item.key)}
-              >
-                {item.label}
-                <span className={styles.count}>{counts[item.key] ?? 0}</span>
-              </button>
-            ))}
-          </div>
-          <div className={styles.controls}>
-            <input
-              className={styles.search}
-              type="search"
-              value={query}
-              placeholder="Search events…"
-              aria-label="Search events"
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <select
-              className={styles.sort}
-              value={sort}
-              aria-label="Sort events"
-              onChange={(event) => setSort(event.target.value as SortKey)}
-            >
-              {SORTS.map((item) => (
-                <option key={item.key} value={item.key}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {visible.length === 0 ? (
-          <BlankSlate
-            art={meetings.length === 0 ? 'events' : 'search'}
-            title={
-              meetings.length === 0 ? 'No events yet' : 'Nothing matches those filters'
-            }
-            description={
-              meetings.length === 0
-                ? 'Create one and it will show up here.'
-                : 'Try a different status, or clear the search.'
-            }
-          />
+        {loading ? (
+          <Loader className={styles.loading} label="Loading your events…" />
         ) : (
-          <div className={styles.list}>
-            {visible.map((meeting) => {
-              const summary = summarizeMeeting(meeting);
-              return (
-                <Box key={meeting.id} className={styles.item}>
-                  <div className={styles.info}>
-                    <div className={styles.titleRow}>
-                      <strong>{meeting.name || 'Untitled event'}</strong>
-                      <Badge theme={summary.status.theme}>{summary.status.label}</Badge>
-                      {summary.outcome && (
-                        <Badge theme={summary.outcome.theme}>
-                          {summary.outcome.label}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className={styles.meta}>
-                      {whenLabel(meeting)} · {meeting.goals.length} milestones
-                      {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
-                    </div>
-                  </div>
-                  <div className={styles.actions}>
-                    <Button
-                      theme="secondary"
-                      outline
-                      size="sm"
-                      onClick={() => void onOpenDashboard(meeting.id)}
-                    >
-                      Open dashboard
-                    </Button>
-                    <Button
-                      theme="secondary"
-                      outline
-                      size="sm"
-                      disabled={!meeting.realEndTime}
-                      title={
-                        meeting.realEndTime
-                          ? undefined
-                          : 'Only finished events have a report'
-                      }
-                      onClick={() => void onOpenReport(meeting.id)}
-                    >
-                      View report
-                    </Button>
-                    <Button size="sm" onClick={() => void onClone(meeting.id)}>
-                      Clone
-                    </Button>
-                  </div>
-                </Box>
-              );
-            })}
-          </div>
+          <>
+            <div className={styles.toolbar}>
+              <div
+                className={styles.filters}
+                role="tablist"
+                aria-label="Filter by status"
+              >
+                {FILTERS.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={filter === item.key}
+                    className={filter === item.key ? styles.filterActive : styles.filter}
+                    onClick={() => setFilter(item.key)}
+                  >
+                    {item.label}
+                    <span className={styles.count}>{counts[item.key] ?? 0}</span>
+                  </button>
+                ))}
+              </div>
+              <div className={styles.controls}>
+                <input
+                  className={styles.search}
+                  type="search"
+                  value={query}
+                  placeholder="Search events…"
+                  aria-label="Search events"
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+                <select
+                  className={styles.sort}
+                  value={sort}
+                  aria-label="Sort events"
+                  onChange={(event) => setSort(event.target.value as SortKey)}
+                >
+                  {SORTS.map((item) => (
+                    <option key={item.key} value={item.key}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {visible.length === 0 ? (
+              <BlankSlate
+                art={meetings.length === 0 ? 'events' : 'search'}
+                title={
+                  meetings.length === 0
+                    ? 'No events yet'
+                    : 'Nothing matches those filters'
+                }
+                description={
+                  meetings.length === 0
+                    ? 'Create one and it will show up here.'
+                    : 'Try a different status, or clear the search.'
+                }
+              />
+            ) : (
+              <div className={styles.list}>
+                {visible.map((meeting) => {
+                  const summary = summarizeMeeting(meeting);
+                  return (
+                    <Box key={meeting.id} className={styles.item}>
+                      <div className={styles.info}>
+                        <div className={styles.titleRow}>
+                          <strong>{meeting.name || 'Untitled event'}</strong>
+                          <Badge theme={summary.status.theme}>
+                            {summary.status.label}
+                          </Badge>
+                          {summary.outcome && (
+                            <Badge theme={summary.outcome.theme}>
+                              {summary.outcome.label}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className={styles.meta}>
+                          {whenLabel(meeting)} · {meeting.goals.length} milestones
+                          {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
+                        </div>
+                      </div>
+                      <div className={styles.actions}>
+                        <Button
+                          theme="secondary"
+                          outline
+                          size="sm"
+                          onClick={() => void onOpenDashboard(meeting.id)}
+                        >
+                          Open dashboard
+                        </Button>
+                        <Button
+                          theme="secondary"
+                          outline
+                          size="sm"
+                          disabled={!meeting.realEndTime}
+                          title={
+                            meeting.realEndTime
+                              ? undefined
+                              : 'Only finished events have a report'
+                          }
+                          onClick={() => void onOpenReport(meeting.id)}
+                        >
+                          View report
+                        </Button>
+                        <Button size="sm" onClick={() => void onClone(meeting.id)}>
+                          Clone
+                        </Button>
+                      </div>
+                    </Box>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </Page>
     </Container>
