@@ -78,8 +78,19 @@ typography, spacing/radius/elevation tokens and the app's components. Open it in
 a browser (it switches between light and dark) to export the SVG/PNG logos,
 favicon, app icon and design tokens.
 
-The app doesn't use these tokens yet: `src/common/tokens/` still holds the
-Bootstrap-based palette and Inter.
+The app follows the manual:
+
+- `src/common/tokens/` holds its palette, type, radius and elevation.
+- `src/features/brand/` draws the symbol and lockup.
+- `public/` ships the favicon and app icons.
+- Plus Jakarta Sans and JetBrains Mono are self-hosted through
+  `@fontsource-variable`.
+- `src/common/tokens/contrast.test.ts` checks the WCAG ratios of the key
+  token pairs in both themes.
+
+The manual's token export uses a `--tb-` prefix; the app keeps `--tw-`, and the
+names after the prefix match. Change a colour in the manual first, then in
+`tokens/`.
 
 ## Supply‑chain hardening
 

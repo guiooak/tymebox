@@ -253,3 +253,37 @@ PR #3 with a comment listing the commits on `main`.
 - **Manual follow-up:** if implementation forces a token change (e.g. the
   dark `surface-sunken` value), update `docs/brand/tymebox-brand-manual.html`
   in the same commit so the manual stays the source of truth.
+
+---
+
+## Outcome (2026-10-16)
+
+Shipped on `main` as planned, with the recommended options: self-hosted fonts,
+navigation icons included, and the yellow PostIt dropped.
+
+Deviations and findings:
+
+- **Lint fix in PR #3.** The cherry-picked `useCssVars` failed the upgraded
+  `eslint-plugin-react-hooks` (non-trivial dependency expression). It was
+  fixed in its own commit.
+- **The contrast test caught four palette failures.** They were fixed in both
+  `tokens/` and the manual:
+  - success fills move to emerald-700 (white on emerald-600 is 3.8:1);
+  - the light-mode projection line uses amber-600 (amber-500 is 2.1:1 on
+    white);
+  - the light-mode tendency line uses slate-500 (slate-400 is 2.6:1);
+  - the dark hover fill darkens to blue-700 (blue-500 is 3.7:1 with white
+    text).
+- **Brand components live in `src/features/brand/`**, not `src/app/brand/`.
+  Login is a feature and must not import from `src/app`.
+- **Dial geometry.** It uses real dash lengths
+  (`4.398 10.263`, offset `2.199`) instead of `pathLength="120"`. librsvg
+  ignores `pathLength`, so the exported PNG icons came out with uneven marks.
+  The manual keeps `pathLength`; both render the same 12 marks in browsers.
+- **Print.** The dark tokens sit under `@media screen`, so printing always
+  uses the light theme.
+- **Not done.**
+  - A lint rule against literal colours. A few intentional literals remain:
+    chart fallbacks and the countdown's highlight gradient.
+  - Verification ran against the local fake-Firebase harness, not a signed-in
+    deploy. Print and the chart download weren't exercised.
