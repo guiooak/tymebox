@@ -53,7 +53,7 @@ export function TimeCardsGrid({
 
   return (
     <section>
-      <Heading size="sm" level={2}>
+      <Heading size="sm" level={2} className={styles.sectionTitle}>
         Timing
       </Heading>
       <div className={styles.timeGrid}>
