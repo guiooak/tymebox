@@ -13,6 +13,7 @@ import {
   Paragraph,
 } from '../../../common/components';
 import { paths, useNavigation } from '../../../common/services/router';
+import { FIELD_LIMITS } from '../domain/types';
 import { useMeetingStore } from '../store';
 import styles from './MeetingForm.module.css';
 
@@ -85,6 +86,7 @@ export function MeetingForm() {
               value={name}
               onChange={setName}
               placeholder="Weekly planning"
+              maxLength={FIELD_LIMITS.meetingName}
             />
             {nameError && <span className={styles.error}>{nameError}</span>}
           </FormField>
@@ -95,6 +97,7 @@ export function MeetingForm() {
               value={description}
               onChange={setDescription}
               placeholder="Optional context for this event"
+              maxLength={FIELD_LIMITS.meetingDescription}
             />
           </FormField>
 

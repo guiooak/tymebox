@@ -6,6 +6,7 @@ import {
   createGoal,
   duplicateGoal as cloneGoal,
   moveItem,
+  resetGoalsProgress,
   type Goal,
   type Meeting,
   type SideTopic,
@@ -178,7 +179,10 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       if (!current) {
         return;
       }
-      await repo.patchMeeting(uid, current.id, { realStartTime: '', status: 'draft' });
+      // A cancelled event stays in history as it was left; "Open dashboard"
+      // turns it back into a fresh draft (see `reopenInDashboard`).
+      await repo.patchMeeting(uid, current.id, { realEndTime: '', status: 'cancelled' });
+      await repo.setCurrentMeetingId(uid, null);
     },
 
     finishMeeting: async () => {
@@ -273,7 +277,16 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
     reopenInDashboard: async (id) => {
       const uid = requireUid();
       const source = get().meetings.find((meeting) => meeting.id === id);
-      if (source?.realEndTime) {
+      if (source?.status === 'cancelled') {
+        // Run it again from scratch: the aborted run's completions would
+        // otherwise show up on the new burndown and report.
+        await repo.patchMeeting(uid, id, {
+          realStartTime: '',
+          realEndTime: '',
+          status: 'draft',
+          goals: resetGoalsProgress(source.goals),
+        });
+      } else if (source?.realEndTime) {
         await repo.patchMeeting(uid, id, { realEndTime: '', status: 'active' });
       }
       await repo.setCurrentMeetingId(uid, id);

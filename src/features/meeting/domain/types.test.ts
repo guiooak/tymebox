@@ -5,6 +5,7 @@ import {
   duplicateGoal,
   hasSchedule,
   moveItem,
+  resetGoalsProgress,
 } from './types';
 
 describe('hasSchedule', () => {
@@ -47,5 +48,16 @@ describe('createSideTopic', () => {
   it('records the milestone it was parked during', () => {
     expect(createSideTopic('Discovery').goalName).toBe('Discovery');
     expect(createSideTopic().goalName).toBe('');
+  });
+});
+
+describe('resetGoalsProgress', () => {
+  it('clears completions but keeps names, weights and notes', () => {
+    const goal = {
+      ...createGoal('Plan', 2),
+      finishedAt: '2026-01-01T10:00:00Z',
+      decisions: 'ok',
+    };
+    expect(resetGoalsProgress([goal])).toEqual([{ ...goal, finishedAt: '' }]);
   });
 });

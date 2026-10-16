@@ -11,7 +11,7 @@ import {
   Switch,
 } from '../../../common/components';
 import { formatTime, nowISO } from '../../../common/services/datetime';
-import type { Goal } from '../domain/types';
+import { FIELD_LIMITS, type Goal } from '../domain/types';
 import { GoalEditModal } from './GoalEditModal';
 import styles from './GoalsDecisionCollector.module.css';
 
@@ -213,6 +213,7 @@ export function GoalsDecisionCollector({
                     value={goal.name}
                     label="milestone name"
                     placeholder="Name this milestone"
+                    maxLength={FIELD_LIMITS.goalName}
                     readOnly={!canEdit}
                     onChange={(name) => name && onChangeGoal(goal.id, { name })}
                   />
@@ -250,6 +251,7 @@ export function GoalsDecisionCollector({
                   onChange={(value) => onChangeGoal(goal.id, { decisions: value })}
                   readOnly={disabled && !canEdit}
                   minHeight={70}
+                  maxLength={FIELD_LIMITS.goalDecisions}
                 />
               </FormField>
             </Collapse>
@@ -265,6 +267,7 @@ export function GoalsDecisionCollector({
               className={styles.addInput}
               value={draftName}
               placeholder="Milestone name"
+              maxLength={FIELD_LIMITS.goalName}
               aria-label="New milestone name"
               onChange={(event) => setDraftName(event.target.value)}
               onKeyDown={onAddKeyDown}

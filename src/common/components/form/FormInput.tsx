@@ -35,6 +35,7 @@ export function FormInput({
         type={type}
         className={cx(styles.control, error && styles.invalid, className)}
         placeholder={placeholder}
+        maxLength={fieldOptions.maxLength}
         value={value}
         onChange={(event) => setValue(event.target.value)}
         onBlur={onBlur}

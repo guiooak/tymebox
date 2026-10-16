@@ -11,6 +11,7 @@ export type FormTextareaProps = {
   required?: boolean;
   minHeight?: number;
   readOnly?: boolean;
+  maxLength?: number;
   validate?: FieldValidator;
   id?: string;
 };
@@ -33,6 +34,7 @@ export function FormTextarea({
         onBlur={onBlur}
         placeholder={placeholder}
         readOnly={readOnly}
+        maxLength={fieldOptions.maxLength}
         minHeight={minHeight}
         invalid={!!error}
       />

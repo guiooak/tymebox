@@ -1,5 +1,5 @@
 import { Badge, Box, Button, PostIt, useDialog } from '../../../common/components';
-import { createSideTopic, type SideTopic } from '../domain/types';
+import { createSideTopic, FIELD_LIMITS, type SideTopic } from '../domain/types';
 import styles from './MeetingDashboard.module.css';
 
 export type DashboardSideTopicsProps = {
@@ -60,6 +60,7 @@ export function DashboardSideTopics({
               <PostIt
                 prefix={`${index + 1}.`}
                 value={item.value}
+                maxLength={FIELD_LIMITS.sideTopic}
                 onChange={(value) => update(item.id, value)}
                 onBlur={() => onBlur(item)}
                 onDelete={() => void onDelete(item)}

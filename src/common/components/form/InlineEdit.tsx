@@ -13,6 +13,7 @@ export type InlineEditProps = {
   readOnly?: boolean;
   /** Visual weight of the read-only text: matches the surrounding typography. */
   size?: 'sm' | 'md' | 'lg';
+  maxLength?: number;
   className?: string;
 };
 
@@ -29,6 +30,7 @@ export function InlineEdit({
   multiline,
   readOnly,
   size = 'md',
+  maxLength,
   className,
 }: InlineEditProps) {
   const [editing, setEditing] = useState(false);
@@ -37,13 +39,6 @@ export function InlineEdit({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useAutoGrowTextarea(textareaRef, editing ? draft : '');
-
-  // A live edit shouldn't be stomped by an incoming store update.
-  useEffect(() => {
-    if (!editing) {
-      setDraft(value);
-    }
-  }, [value, editing]);
 
   useEffect(() => {
     if (!editing) {
@@ -63,8 +58,13 @@ export function InlineEdit({
   };
 
   const cancel = () => {
-    setDraft(value);
     setEditing(false);
+  };
+
+  // Seeded once per edit, so an incoming store update can't stomp a live edit.
+  const startEditing = () => {
+    setDraft(value);
+    setEditing(true);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -97,7 +97,7 @@ export function InlineEdit({
           !value && styles.empty,
           className,
         )}
-        onClick={() => setEditing(true)}
+        onClick={startEditing}
       >
         {value || placeholder}
       </button>
@@ -111,6 +111,7 @@ export function InlineEdit({
       className={cx(styles.field, styles[size], className)}
       value={draft}
       placeholder={placeholder}
+      maxLength={maxLength}
       rows={1}
       onChange={(event) => setDraft(event.target.value)}
       onBlur={commit}
@@ -123,6 +124,7 @@ export function InlineEdit({
       className={cx(styles.field, styles[size], className)}
       value={draft}
       placeholder={placeholder}
+      maxLength={maxLength}
       onChange={(event) => setDraft(event.target.value)}
       onBlur={commit}
       onKeyDown={onKeyDown}

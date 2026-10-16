@@ -12,6 +12,7 @@ export type TextAreaProps = {
   readOnly?: boolean;
   minHeight?: number;
   invalid?: boolean;
+  maxLength?: number;
   onBlur?: () => void;
 };
 
@@ -26,6 +27,7 @@ export function TextArea({
   readOnly,
   minHeight = 80,
   invalid,
+  maxLength,
   onBlur,
 }: TextAreaProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -40,6 +42,7 @@ export function TextArea({
       style={{ minHeight }}
       placeholder={placeholder}
       readOnly={readOnly}
+      maxLength={maxLength}
       value={value}
       rows={1}
       onChange={(event) => onChange(event.target.value)}

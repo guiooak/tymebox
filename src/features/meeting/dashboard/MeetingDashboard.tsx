@@ -18,7 +18,7 @@ import { nowISO, toTimestamp } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
 import { tendencyCrossoverTs } from '../domain/burndown';
-import { createSideTopic, hasSchedule, type Goal } from '../domain/types';
+import { createSideTopic, FIELD_LIMITS, hasSchedule, type Goal } from '../domain/types';
 import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
 import { DashboardShortcuts } from './DashboardShortcuts';
@@ -126,13 +126,14 @@ export function MeetingDashboard() {
 
   const onCancel = async () => {
     const confirmed = await dialog.confirm({
-      text: 'Are you sure you want to cancel it?',
+      text: 'Are you sure you want to cancel it? It stays in your history as cancelled, and you can run it again from there.',
       confirmButtonTheme: 'danger',
       confirmButtonText: 'Yes, do it',
       cancelButtonText: 'Not anymore',
     });
     if (confirmed) {
       await cancelMeeting();
+      navigation.replace(paths.home);
     }
   };
 
@@ -210,6 +211,7 @@ export function MeetingDashboard() {
             value={meeting.name}
             label="event name"
             placeholder="Name this event"
+            maxLength={FIELD_LIMITS.meetingName}
             size="lg"
             onChange={(name) => name && void updateMeeting({ name })}
           />
@@ -221,6 +223,7 @@ export function MeetingDashboard() {
           value={meeting.description}
           label="event description"
           placeholder="Add a description"
+          maxLength={FIELD_LIMITS.meetingDescription}
           size="sm"
           multiline
           className={styles.description}

@@ -9,9 +9,17 @@ export type PostItProps = {
   onChange: (value: string) => void;
   onBlur?: () => void;
   onDelete?: () => void;
+  maxLength?: number;
 };
 
-export function PostIt({ value, prefix, onChange, onBlur, onDelete }: PostItProps) {
+export function PostIt({
+  value,
+  prefix,
+  onChange,
+  onBlur,
+  onDelete,
+  maxLength,
+}: PostItProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useAutoGrowTextarea(ref, value);
 
@@ -24,6 +32,7 @@ export function PostIt({ value, prefix, onChange, onBlur, onDelete }: PostItProp
           ref={ref}
           className={styles.textarea}
           value={value}
+          maxLength={maxLength}
           onChange={(event) => onChange(event.target.value)}
           onBlur={onBlur}
           rows={1}

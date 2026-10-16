@@ -33,6 +33,21 @@ export type Meeting = {
   updatedAt: string;
 };
 
+/** Text length caps. They mirror `database.rules.json`: a longer value is
+ * rejected by the database, so the inputs stop it first. */
+export const FIELD_LIMITS = {
+  meetingName: 200,
+  meetingDescription: 5000,
+  goalName: 500,
+  goalDecisions: 5000,
+  sideTopic: 2000,
+} as const;
+
+/** Clear every completion, keeping names, weights and notes. */
+export function resetGoalsProgress(goals: Goal[]): Goal[] {
+  return goals.map((goal) => ({ ...goal, finishedAt: '' }));
+}
+
 export function createGoal(name: string, weight = 1): Goal {
   return { id: uid(), name, weight, finishedAt: '', decisions: '' };
 }
