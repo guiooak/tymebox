@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   diffMs,
   formatDuration,
+  formatDurationMinutes,
   formatLong,
   formatTime,
   isSameDay,
@@ -23,6 +24,8 @@ export type TimeCountdownProps = {
   unscheduledHint?: string;
   /** Hero treatment — used by the dashboard, where time left is the point. */
   prominent?: boolean;
+  /** Show the ticking seconds under an hour; off shows whole minutes only. */
+  showSeconds?: boolean;
 };
 
 export function TimeCountdown({
@@ -33,6 +36,7 @@ export function TimeCountdown({
   warnAfter,
   unscheduledHint = 'not scheduled yet',
   prominent,
+  showSeconds = true,
 }: TimeCountdownProps) {
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [pulseKey, setPulseKey] = useState(0);
@@ -98,7 +102,13 @@ export function TimeCountdown({
       pulseKey={pulseKey}
     >
       <TimeFormat
-        value={disabled ? '--:--' : formatDuration(Math.abs(remaining))}
+        value={
+          disabled
+            ? '--:--'
+            : showSeconds
+              ? formatDuration(Math.abs(remaining))
+              : formatDurationMinutes(remaining, isNegative ? 'down' : 'up')
+        }
         size={size}
       />
     </TimeDisplay>

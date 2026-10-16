@@ -87,3 +87,18 @@ export function formatDuration(ms: number): string {
   }
   return `${pad(minutes)}m ${pad(seconds)}s`;
 }
+
+/**
+ * Format a duration without seconds, as "1h 05m" or "19m". The minutes are
+ * rounded in the given direction: up for time still left (so it never reads
+ * "00m" before the end), down for time already spent.
+ */
+export function formatDurationMinutes(ms: number, rounding: 'up' | 'down'): string {
+  const totalSeconds = Math.abs(ms) / 1000;
+  const totalMinutes =
+    rounding === 'up' ? Math.ceil(totalSeconds / 60) : Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const pad = (value: number) => String(value).padStart(2, '0');
+  return hours > 0 ? `${hours}h ${pad(minutes)}m` : `${pad(minutes)}m`;
+}

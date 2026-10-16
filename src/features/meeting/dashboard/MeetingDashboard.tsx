@@ -24,6 +24,7 @@ import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
 import { DashboardShortcuts } from './DashboardShortcuts';
 import { DashboardSideTopics } from './DashboardSideTopics';
+import { useCountdownSeconds } from './useCountdownSeconds';
 import { useThresholdAlerts } from './useThresholdAlerts';
 import styles from './MeetingDashboard.module.css';
 
@@ -66,12 +67,28 @@ export function MeetingDashboard() {
       )
     : null;
 
+  const [showSeconds, setShowSeconds] = useCountdownSeconds();
+
   const alerts = useThresholdAlerts({
     active,
     eventName: meeting?.name ?? '',
     warnAfterTs: warnAfter,
     endTs: scheduled ? toTimestamp(meeting.expectedEndTime) : null,
   });
+
+  // Short labels keep both countdown toggles on one row; the tooltip explains.
+  const alertsLabel =
+    alerts.permission === 'unsupported'
+      ? 'Alerts unavailable'
+      : alerts.permission === 'denied'
+        ? 'Alerts blocked'
+        : 'Time alerts';
+  const alertsHint =
+    alerts.permission === 'unsupported'
+      ? 'Notifications are not available in this browser'
+      : alerts.permission === 'denied'
+        ? 'Notifications are blocked: allow them in your browser settings'
+        : 'Notify me when the event trends late and when time runs out';
 
   useEffect(() => {
     if (loading || guarded.current) {
@@ -247,20 +264,25 @@ export function MeetingDashboard() {
               warnAfter={warnAfter}
               unscheduledHint="set an end time to start the clock"
               prominent
+              showSeconds={showSeconds}
             />
-            <div className={styles.alertsRow}>
-              <Switch
-                checked={alerts.enabled}
-                onChange={() => void alerts.toggle()}
-                label="Notify me when time runs out"
-              />
-              <span className={styles.alertsLabel}>
-                {alerts.permission === 'unsupported'
-                  ? 'Notifications unavailable in this browser'
-                  : alerts.permission === 'denied'
-                    ? 'Notifications blocked — enable them in your browser'
-                    : 'Notify me on threshold crossings'}
-              </span>
+            <div className={styles.toggles}>
+              <div className={styles.toggle} title={alertsHint}>
+                <Switch
+                  checked={alerts.enabled}
+                  onChange={() => void alerts.toggle()}
+                  label="Notify me when time runs out"
+                />
+                <span className={styles.alertsLabel}>{alertsLabel}</span>
+              </div>
+              <div className={styles.toggle}>
+                <Switch
+                  checked={showSeconds}
+                  onChange={setShowSeconds}
+                  label="Show seconds in the countdown"
+                />
+                <span className={styles.alertsLabel}>Show seconds</span>
+              </div>
             </div>
           </div>
           <Box className={styles.block}>
