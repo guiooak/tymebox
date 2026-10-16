@@ -67,6 +67,19 @@ yarn dev
 | `yarn test` / `yarn test:coverage` | Vitest |
 | `yarn format` / `yarn format:check` | Prettier |
 
+## Brand
+
+The logo manual and style guide (v3.0) live in
+[`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html):
+symbol versions and construction, lockups, clear space and minimum sizes, logo
+colour per background, misuse examples, colour scales with WCAG contrast,
+typography, spacing/radius/elevation tokens and the app's components. Open it in
+a browser (it switches between light and dark) to export the SVG/PNG logos,
+favicon, app icon and design tokens.
+
+The app doesn't use these tokens yet: `src/common/tokens/` still holds the
+Bootstrap-based palette and Inter.
+
 ## Supply‑chain hardening
 
 `.yarnrc.yml` keeps install scripts disabled by default (`enableScripts: false`)
