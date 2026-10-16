@@ -13,11 +13,20 @@
 .headTop {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--tw-space-3);
 }
 .headTop > :first-child {
-  flex: 1;
+  flex: 1 1 240px;
   min-width: 0;
+}
+/* Status and the event's main action, kept together at the right edge so
+ * Start/Finish is always in view (it used to sit below the fold). */
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+  margin-left: auto;
 }
 .description {
   margin-top: var(--tw-space-1);

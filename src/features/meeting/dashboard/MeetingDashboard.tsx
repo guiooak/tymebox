@@ -216,9 +216,20 @@ export function MeetingDashboard() {
             size="lg"
             onChange={(name) => name && void updateMeeting({ name })}
           />
-          <Badge theme={active ? 'success' : 'secondary'}>
-            {active ? 'Live' : 'Setting up'}
-          </Badge>
+          <div className={styles.headActions}>
+            <Badge theme={active ? 'success' : 'secondary'}>
+              {active ? 'Live' : 'Setting up'}
+            </Badge>
+            {active ? (
+              <Button theme="success" onClick={() => void onFinish()}>
+                Finish event
+              </Button>
+            ) : (
+              <Button theme="success" onClick={() => void onStart()}>
+                Start event
+              </Button>
+            )}
+          </div>
         </div>
         <InlineEdit
           value={meeting.description}
@@ -316,7 +327,7 @@ export function MeetingDashboard() {
         <DashboardShortcuts shortcuts={shortcuts} />
       </div>
 
-      <Footer justifyContent="space-between">
+      <Footer justifyContent="flex-start">
         {active ? (
           <Button theme="danger" outline onClick={() => void onCancel()}>
             Cancel event
@@ -324,15 +335,6 @@ export function MeetingDashboard() {
         ) : (
           <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
             Go back
-          </Button>
-        )}
-        {active ? (
-          <Button theme="success" onClick={() => void onFinish()}>
-            Finish event
-          </Button>
-        ) : (
-          <Button theme="success" onClick={() => void onStart()}>
-            Start event
           </Button>
         )}
       </Footer>
