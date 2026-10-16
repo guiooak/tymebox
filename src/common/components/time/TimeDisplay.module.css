@@ -58,23 +58,38 @@
   color: var(--tw-text);
   border-color: transparent;
 }
-.display.primary {
-  background: color-mix(in srgb, var(--tw-primary) 18%, var(--tw-tint-base));
-}
+.display.primary,
 .display.secondary {
-  background: color-mix(in srgb, var(--tw-secondary) 20%, var(--tw-tint-base));
+  /* On track (and not started) stays neutral: colour is saved for the states
+   * that need attention (manual §08). */
+  background: var(--tw-surface-sunken);
 }
 .display.success {
-  background: color-mix(in srgb, var(--tw-success) 20%, var(--tw-tint-base));
+  background: color-mix(in srgb, var(--tw-success) 14%, var(--tw-tint-base));
 }
 .display.info {
-  background: color-mix(in srgb, var(--tw-info) 22%, var(--tw-tint-base));
+  background: color-mix(in srgb, var(--tw-info) 12%, var(--tw-tint-base));
 }
 .display.warning {
-  background: color-mix(in srgb, var(--tw-warning) 38%, var(--tw-tint-base));
+  background: color-mix(in srgb, var(--tw-warning) 16%, var(--tw-tint-base));
 }
 .display.danger {
-  background: color-mix(in srgb, var(--tw-danger) 30%, var(--tw-tint-base));
+  background: color-mix(in srgb, var(--tw-danger) 12%, var(--tw-tint-base));
+}
+
+/* On the hero countdown the state also shows in the digits and the edge, so
+ * it reads from across the room. */
+.prominent.warning {
+  border: 1px solid color-mix(in srgb, var(--tw-warning) 50%, transparent);
+}
+.prominent.danger {
+  border: 1px solid color-mix(in srgb, var(--tw-danger) 45%, transparent);
+}
+.prominent.warning .value {
+  color: var(--tw-warning-text);
+}
+.prominent.danger .value {
+  color: var(--tw-danger-text);
 }
 .header {
   text-transform: uppercase;

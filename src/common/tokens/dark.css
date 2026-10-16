@@ -7,55 +7,59 @@
  * There is exactly one dark block because "system" is resolved in JS: the
  * theme store always stamps a concrete data-theme onto <html>, so the CSS
  * never has to repeat itself for prefers-color-scheme.
+ *
+ * Screen only: a report printed from dark mode still comes out dark-on-white.
  */
 
-:root[data-theme='dark'] {
-  color-scheme: dark;
+@media screen {
+  :root[data-theme='dark'] {
+    color-scheme: dark;
 
-  /* Fills keep their light-theme hue so white text stays readable on them
-   * (white on blue-600 is 5.2:1); only the neutral and amber fills move. */
-  --tw-primary-strong: var(--tw-blue-500);
-  --tw-secondary: var(--tw-slate-600);
-  --tw-warning: var(--tw-amber-400);
-  --tw-light: var(--tw-slate-800);
-  --tw-dark: var(--tw-slate-950);
-  --tw-accent: var(--tw-amber-400);
+    /* Fills keep their light-theme hue so white text stays readable on them
+     * (white on blue-600 is 5.2:1); only the neutral and amber fills move. */
+    --tw-primary-strong: var(--tw-blue-500);
+    --tw-secondary: var(--tw-slate-600);
+    --tw-warning: var(--tw-amber-400);
+    --tw-light: var(--tw-slate-800);
+    --tw-dark: var(--tw-slate-950);
+    --tw-accent: var(--tw-amber-400);
 
-  --tw-on-light: var(--tw-slate-50);
-  --tw-on-dark: var(--tw-slate-50);
+    --tw-on-light: var(--tw-slate-50);
+    --tw-on-dark: var(--tw-slate-50);
 
-  /* Text and strokes take the light end of each hue: the 600s fall below 3:1
-   * on a slate-800 surface. */
-  --tw-primary-text: var(--tw-blue-400);
-  --tw-secondary-text: var(--tw-slate-400);
-  --tw-success-text: var(--tw-emerald-400);
-  --tw-info-text: var(--tw-blue-400);
-  --tw-warning-text: var(--tw-amber-400);
-  --tw-danger-text: var(--tw-red-400);
+    /* Text and strokes take the light end of each hue: the 600s fall below 3:1
+     * on a slate-800 surface. */
+    --tw-primary-text: var(--tw-blue-400);
+    --tw-secondary-text: var(--tw-slate-400);
+    --tw-success-text: var(--tw-emerald-400);
+    --tw-info-text: var(--tw-blue-400);
+    --tw-warning-text: var(--tw-amber-400);
+    --tw-danger-text: var(--tw-red-400);
 
-  --tw-logo: var(--tw-blue-500);
-  --tw-sand: var(--tw-amber-400);
+    --tw-logo: var(--tw-blue-500);
+    --tw-sand: var(--tw-amber-400);
 
-  --tw-text: var(--tw-slate-50);
-  --tw-text-muted: var(--tw-slate-400);
-  --tw-text-subtle: var(--tw-slate-500);
-  --tw-bg: var(--tw-slate-900);
-  --tw-surface: var(--tw-slate-800);
-  --tw-surface-raised: var(--tw-slate-800);
-  --tw-surface-sunken: var(--tw-slate-850);
-  --tw-border-color: var(--tw-slate-700);
-  --tw-border-strong: var(--tw-slate-600);
+    --tw-text: var(--tw-slate-50);
+    --tw-text-muted: var(--tw-slate-400);
+    --tw-text-subtle: var(--tw-slate-500);
+    --tw-bg: var(--tw-slate-900);
+    --tw-surface: var(--tw-slate-800);
+    --tw-surface-raised: var(--tw-slate-800);
+    --tw-surface-sunken: var(--tw-slate-850);
+    --tw-border-color: var(--tw-slate-700);
+    --tw-border-strong: var(--tw-slate-600);
 
-  /* The single token that turns every pastel in the app into a dark tint. */
-  --tw-tint-base: var(--tw-slate-800);
-  --tw-overlay: rgba(2, 6, 23, 0.62);
+    /* The single token that turns every pastel in the app into a dark tint. */
+    --tw-tint-base: var(--tw-slate-800);
+    --tw-overlay: rgba(2, 6, 23, 0.62);
 
-  --tw-chart-tendency: var(--tw-slate-500);
+    --tw-chart-tendency: var(--tw-slate-500);
 
-  /* Shadows can't darken a dark ground — deepen them and let borders carry
-   * most of the separation instead. */
-  --tw-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --tw-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --tw-shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.45);
-  --tw-hairline: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    /* Shadows can't darken a dark ground — deepen them and let borders carry
+     * most of the separation instead. */
+    --tw-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --tw-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --tw-shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.45);
+    --tw-hairline: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
 }

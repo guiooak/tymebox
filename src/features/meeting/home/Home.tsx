@@ -145,9 +145,7 @@ export function Home() {
               <strong>{current?.name || 'Untitled event'}</strong>
               <div className={styles.meta}>{resume.hint}</div>
             </div>
-            <Button theme="success" onClick={() => navigation.go(resume.to)}>
-              {resume.label}
-            </Button>
+            <Button onClick={() => navigation.go(resume.to)}>{resume.label}</Button>
           </Box>
         )}
 

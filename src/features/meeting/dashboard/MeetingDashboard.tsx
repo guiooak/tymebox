@@ -318,7 +318,7 @@ export function MeetingDashboard() {
 
       <Footer justifyContent="space-between">
         {active ? (
-          <Button theme="secondary" outline onClick={() => void onCancel()}>
+          <Button theme="danger" outline onClick={() => void onCancel()}>
             Cancel event
           </Button>
         ) : (
