@@ -64,6 +64,10 @@
 .chip:disabled {
   cursor: default;
 }
+.chipIcon {
+  color: var(--tw-text-muted);
+  flex-shrink: 0;
+}
 .chipLabel {
   color: var(--tw-text-muted);
 }

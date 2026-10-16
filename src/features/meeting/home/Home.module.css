@@ -68,7 +68,7 @@
   gap: var(--tw-space-1);
 }
 .stepIcon {
-  font-size: var(--tw-font-size-lg);
+  color: var(--tw-primary-text);
 }
 
 .templatesSection,

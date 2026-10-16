@@ -1,27 +1,27 @@
 import { useState } from 'react';
-import { Box, Button, Heading } from '../../../common/components';
+import { Box, Button, Heading, Icon, type IconName } from '../../../common/components';
 import styles from './Home.module.css';
 
 const STORAGE_KEY = 'tw-onboarding-dismissed';
 
-const STEPS = [
+const STEPS: Array<{ icon: IconName; title: string; body: string }> = [
   {
-    icon: '📝',
+    icon: 'pencil',
     title: 'Name it',
     body: 'An event starts with a title. Nothing else is required up front.',
   },
   {
-    icon: '🧩',
+    icon: 'board',
     title: 'Fill the board',
     body: 'Add milestones, set a start and end time, edit anything at any moment.',
   },
   {
-    icon: '⏱',
+    icon: 'play',
     title: 'Run it',
     body: 'Hit Start. The countdown and burndown chart track how you are doing.',
   },
   {
-    icon: '📊',
+    icon: 'chart',
     title: 'Read the report',
     body: 'Finishing produces a report you can print, export or copy.',
   },
@@ -60,9 +60,7 @@ export function OnboardingCard({ onTrySample }: OnboardingCardProps) {
       <ol className={styles.steps}>
         {STEPS.map((step) => (
           <li key={step.title} className={styles.step}>
-            <span className={styles.stepIcon} aria-hidden="true">
-              {step.icon}
-            </span>
+            <Icon name={step.icon} size={22} className={styles.stepIcon} />
             <strong>{step.title}</strong>
             <span className={styles.meta}>{step.body}</span>
           </li>

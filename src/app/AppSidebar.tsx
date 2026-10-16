@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Icon } from '../common/components';
 import { NavLink, paths } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
 import { useMeetingStore } from '../features/meeting/store';
@@ -36,28 +37,20 @@ export function AppSidebar() {
 
       <nav className={styles.nav}>
         <NavLink to={paths.home} end className={linkClass} title="Home">
-          <span className={styles.icon} aria-hidden="true">
-            ⌂
-          </span>
+          <Icon name="home" className={styles.icon} />
           <span className={styles.label}>Home</span>
         </NavLink>
         <NavLink to={paths.newMeeting} className={linkClass} title="New event">
-          <span className={styles.icon} aria-hidden="true">
-            ＋
-          </span>
+          <Icon name="plus" className={styles.icon} />
           <span className={styles.label}>New event</span>
         </NavLink>
         <NavLink to={paths.meetings} end className={linkClass} title="History">
-          <span className={styles.icon} aria-hidden="true">
-            🗂
-          </span>
+          <Icon name="history" className={styles.icon} />
           <span className={styles.label}>History</span>
         </NavLink>
         {live && (
           <NavLink to={paths.liveMeeting} className={linkClass} title="Live event">
-            <span className={styles.icon} aria-hidden="true">
-              ⏱
-            </span>
+            <Icon name="timer" className={styles.icon} />
             <span className={styles.label}>Live event</span>
           </NavLink>
         )}
@@ -77,9 +70,7 @@ export function AppSidebar() {
           title="Sign out"
           aria-label="Sign out"
         >
-          <span className={styles.icon} aria-hidden="true">
-            ⎋
-          </span>
+          <Icon name="signOut" className={styles.icon} />
           <span className={styles.label}>Sign out</span>
         </button>
       </div>

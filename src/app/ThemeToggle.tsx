@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
+import { Icon, type IconName } from '../common/components';
 import { useThemeStore, type ThemeMode } from '../common/services/theme';
 
 const ORDER: ThemeMode[] = ['system', 'light', 'dark'];
 
-const LABEL: Record<ThemeMode, { icon: string; text: string }> = {
-  system: { icon: '◐', text: 'System theme' },
-  light: { icon: '☀', text: 'Light theme' },
-  dark: { icon: '☾', text: 'Dark theme' },
+const LABEL: Record<ThemeMode, { icon: IconName; text: string }> = {
+  system: { icon: 'system', text: 'System theme' },
+  light: { icon: 'sun', text: 'Light theme' },
+  dark: { icon: 'moon', text: 'Dark theme' },
 };
 
 export type ThemeToggleProps = {
@@ -37,9 +38,7 @@ export function ThemeToggle({
       title={`${current.text} — switch to ${LABEL[next].text.toLowerCase()}`}
       aria-label={`${current.text}. Switch to ${LABEL[next].text.toLowerCase()}`}
     >
-      <span className={iconClassName} aria-hidden="true">
-        {current.icon}
-      </span>
+      <Icon name={current.icon} className={iconClassName} />
       <span className={labelClassName}>{current.text}</span>
     </button>
   );

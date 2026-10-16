@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, DatePicker } from '../../../common/components';
+import { Button, DatePicker, Icon, type IconName } from '../../../common/components';
 import {
   diffMs,
   formatDuration,
@@ -17,7 +17,7 @@ export type DashboardScheduleProps = {
 };
 
 type ChipProps = {
-  icon: string;
+  icon: IconName;
   label: string;
   value: string;
   onChange: (iso: string) => void;
@@ -54,7 +54,7 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
       aria-label={`Edit ${label.toLowerCase()}`}
       onClick={() => setEditing(true)}
     >
-      <span aria-hidden="true">{icon}</span>
+      <Icon name={icon} size={16} className={styles.chipIcon} />
       <span className={styles.chipLabel}>{label}</span>
       <strong className={value ? undefined : styles.chipEmpty}>{display}</strong>
     </button>
@@ -79,14 +79,14 @@ export function DashboardSchedule({
   return (
     <div className={styles.schedule}>
       <ScheduleChip
-        icon="🕘"
+        icon="clock"
         label="Starts"
         value={expectedStartTime}
         onChange={(iso) => onChange({ expectedStartTime: iso })}
         readOnly={readOnly}
       />
       <ScheduleChip
-        icon="🏁"
+        icon="flag"
         label="Ends"
         value={expectedEndTime}
         onChange={(iso) => onChange({ expectedEndTime: iso })}

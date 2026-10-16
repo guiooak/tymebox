@@ -134,16 +134,16 @@ export function MeetingReport() {
           <Heading size="lg" level={1} title={meeting.name} />
           {sameDay ? (
             <Heading size="xxs" level={2}>
-              ⏱ Happened on {formatLong(meeting.realStartTime)} until{' '}
+              Happened on {formatLong(meeting.realStartTime)} until{' '}
               {formatTime(meeting.realEndTime)}
             </Heading>
           ) : (
             <>
               <Heading size="xxs" level={2}>
-                ⏱ Started {formatLong(meeting.realStartTime)}
+                Started {formatLong(meeting.realStartTime)}
               </Heading>
               <Heading size="xxs" level={2}>
-                ⏱ Finished {formatLong(meeting.realEndTime)}
+                Finished {formatLong(meeting.realEndTime)}
               </Heading>
             </>
           )}
