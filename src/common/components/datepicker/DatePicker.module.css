@@ -13,11 +13,11 @@
   color: var(--tw-text);
 }
 .trigger:focus {
-  outline: 2px solid var(--tw-primary);
+  outline: 2px solid var(--tw-primary-text);
   outline-offset: 1px;
 }
 .invalid {
-  border-color: var(--tw-danger);
+  border-color: var(--tw-danger-text);
 }
 .popover {
   position: absolute;

@@ -4,7 +4,7 @@
   border-radius: var(--tw-radius-pill);
   border: 1px solid var(--tw-border-color);
   background: var(--tw-surface);
-  color: var(--tw-primary);
+  color: var(--tw-primary-text);
   cursor: pointer;
   font-style: italic;
   font-weight: var(--tw-font-weight-bold);

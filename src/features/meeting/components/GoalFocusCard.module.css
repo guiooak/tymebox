@@ -1,5 +1,5 @@
 .focus {
-  border-left: 3px solid var(--tw-primary);
+  border-left: 3px solid var(--tw-primary-text);
   margin-bottom: var(--tw-gutter);
 }
 .head {

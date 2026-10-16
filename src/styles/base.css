@@ -33,7 +33,7 @@ p {
 }
 
 a {
-  color: var(--tw-primary);
+  color: var(--tw-primary-text);
   text-decoration: none;
 }
 

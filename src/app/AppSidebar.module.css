@@ -74,7 +74,7 @@
   transition: var(--tw-transition);
 }
 .signOut {
-  color: var(--tw-primary);
+  color: var(--tw-primary-text);
 }
 .themeToggle {
   composes: signOut;

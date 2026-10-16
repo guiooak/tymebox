@@ -18,7 +18,7 @@ export function BlankSlateArt({ name }: { name: BlankSlateArtName }) {
     focusable: false,
   };
   const line = 'var(--tw-text-subtle)';
-  const accent = 'var(--tw-primary)';
+  const accent = 'var(--tw-primary-text)';
 
   switch (name) {
     case 'events':

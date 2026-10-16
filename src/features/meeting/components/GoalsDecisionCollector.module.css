@@ -50,7 +50,7 @@
   cursor: grabbing;
 }
 .dropTarget {
-  outline: 2px dashed var(--tw-primary);
+  outline: 2px dashed var(--tw-primary-text);
   outline-offset: 2px;
   border-radius: var(--tw-radius);
 }
@@ -72,7 +72,7 @@
 .addTrigger:hover {
   background: var(--tw-surface-sunken);
   color: var(--tw-text);
-  border-color: var(--tw-primary);
+  border-color: var(--tw-primary-text);
 }
 .addRow {
   display: flex;
@@ -84,7 +84,7 @@
   flex: 1;
   min-width: 0;
   padding: 8px 12px;
-  border: 1px solid var(--tw-primary);
+  border: 1px solid var(--tw-primary-text);
   border-radius: var(--tw-radius-sm);
   font-size: var(--tw-font-size-md);
   font-family: inherit;
@@ -115,7 +115,7 @@
   background: var(--tw-surface);
 }
 .error {
-  color: var(--tw-danger);
+  color: var(--tw-danger-text);
   font-size: var(--tw-font-size-xs);
 }
 

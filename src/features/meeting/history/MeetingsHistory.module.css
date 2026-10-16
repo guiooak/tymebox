@@ -39,7 +39,7 @@
   transition: all var(--tw-transition);
 }
 .filter:hover {
-  border-color: var(--tw-primary);
+  border-color: var(--tw-primary-text);
   color: var(--tw-text);
 }
 .filterActive {

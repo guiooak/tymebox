@@ -58,7 +58,7 @@
   transition: all var(--tw-transition);
 }
 .chip:hover:not(:disabled) {
-  border-color: var(--tw-primary);
+  border-color: var(--tw-primary-text);
   background: var(--tw-surface-sunken);
 }
 .chip:disabled {
@@ -88,7 +88,7 @@
   min-width: 0;
 }
 .scheduleError {
-  color: var(--tw-danger);
+  color: var(--tw-danger-text);
   font-size: var(--tw-font-size-xs);
 }
 

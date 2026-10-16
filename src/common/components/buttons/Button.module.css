@@ -73,19 +73,19 @@
   color: var(--tw-primary-text);
 }
 .outline.secondary {
-  color: var(--tw-secondary);
+  color: var(--tw-secondary-text);
 }
 .outline.success {
-  color: var(--tw-success);
+  color: var(--tw-success-text);
 }
 .outline.info {
-  color: var(--tw-info);
+  color: var(--tw-info-text);
 }
 .outline.warning {
   color: var(--tw-warning-text);
 }
 .outline.danger {
-  color: var(--tw-danger);
+  color: var(--tw-danger-text);
 }
 .outline.dark {
   color: var(--tw-dark);
