@@ -24,14 +24,23 @@ export type DatePickerProps = {
   onBlur?: () => void;
   invalid?: boolean;
   id?: string;
+  /** Start with the calendar open, e.g. when the picker replaces a chip on click. */
+  defaultOpen?: boolean;
 };
 
 function pad(value: number): string {
   return String(value).padStart(2, '0');
 }
 
-export function DatePicker({ value, onChange, onBlur, invalid, id }: DatePickerProps) {
-  const [open, setOpen] = useState(false);
+export function DatePicker({
+  value,
+  onChange,
+  onBlur,
+  invalid,
+  id,
+  defaultOpen = false,
+}: DatePickerProps) {
+  const [open, setOpen] = useState(defaultOpen);
   const [view, setView] = useState(() => (value ? toDate(value) : new Date()));
   const containerRef = useRef<HTMLDivElement>(null);
 

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Button, DatePicker, Icon, type IconName } from '../../../common/components';
+import { useEffect, useRef, useState } from 'react';
+import { DatePicker, Icon, type IconName } from '../../../common/components';
 import {
   diffMs,
   formatDuration,
@@ -26,6 +26,8 @@ type ChipProps = {
 
 function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
   const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(value);
+  const editorRef = useRef<HTMLSpanElement>(null);
 
   const display = value
     ? isSameDay(value, new Date())
@@ -33,15 +35,62 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
       : formatLong(value)
     : 'not set';
 
-  // Stays open across picks: the day grid and the time input are separate
-  // changes, so closing on the first one would mean reopening for the second.
+  const open = () => {
+    setDraft(value);
+    setEditing(true);
+  };
+
+  // Leaving the editor saves: the day grid and the time input are separate
+  // picks, so the change is kept as a draft until focus moves elsewhere.
+  // Escape throws the draft away.
+  useEffect(() => {
+    if (!editing) {
+      return;
+    }
+    const finish = (save: boolean) => {
+      setEditing(false);
+      if (save && draft && draft !== value) {
+        onChange(draft);
+      }
+    };
+    const editor = editorRef.current;
+    const onPointerDown = (event: MouseEvent) => {
+      if (editor && !editor.contains(event.target as Node)) {
+        finish(true);
+      }
+    };
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget as Node | null;
+      if (editor && next && !editor.contains(next)) {
+        finish(true);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        finish(false);
+      } else if (
+        event.key === 'Enter' &&
+        (event.target as HTMLElement).tagName === 'INPUT'
+      ) {
+        event.preventDefault();
+        finish(true);
+      }
+    };
+    document.addEventListener('mousedown', onPointerDown);
+    editor?.addEventListener('focusout', onFocusOut);
+    editor?.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown);
+      editor?.removeEventListener('focusout', onFocusOut);
+      editor?.removeEventListener('keydown', onKeyDown);
+    };
+  }, [editing, draft, value, onChange]);
+
   if (editing) {
     return (
-      <span className={styles.chipEditor}>
-        <DatePicker value={value} onChange={onChange} />
-        <Button size="sm" onClick={() => setEditing(false)}>
-          Done
-        </Button>
+      <span className={styles.chipEditor} ref={editorRef}>
+        <DatePicker value={draft} onChange={setDraft} defaultOpen />
       </span>
     );
   }
@@ -52,7 +101,7 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
       className={styles.chip}
       disabled={readOnly}
       aria-label={`Edit ${label.toLowerCase()}`}
-      onClick={() => setEditing(true)}
+      onClick={open}
     >
       <Icon name={icon} size={16} className={styles.chipIcon} />
       <span className={styles.chipLabel}>{label}</span>
