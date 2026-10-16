@@ -62,13 +62,27 @@ export function Modal({
         aria-modal="true"
         onClick={(event) => event.stopPropagation()}
       >
-        {(title || !disableCloseButton) && (
-          <div className={styles.header}>
+        {!disableCloseButton && (
+          // Same height as the first line below it (the title, or the text of
+          // an untitled dialog), so the X centres on that line.
+          <span className={cx(styles.closeSlot, title ? styles.onTitle : styles.onText)}>
+            <CloseButton onClick={onClose} />
+          </span>
+        )}
+        {title && (
+          <div className={cx(styles.header, !disableCloseButton && styles.clearClose)}>
             <h3 className={styles.title}>{title}</h3>
-            {!disableCloseButton && <CloseButton onClick={onClose} />}
           </div>
         )}
-        <div className={styles.body}>{children}</div>
+        <div
+          className={cx(
+            styles.body,
+            title ? styles.belowTitle : styles.untitled,
+            !title && !disableCloseButton && styles.clearClose,
+          )}
+        >
+          {children}
+        </div>
         {footer && <div className={cx(styles.footer)}>{footer}</div>}
       </div>
     </div>,

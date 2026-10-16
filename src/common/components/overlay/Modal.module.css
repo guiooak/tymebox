@@ -10,6 +10,7 @@
   backdrop-filter: blur(2px);
 }
 .dialog {
+  position: relative;
   width: 100%;
   background: var(--tw-surface);
   border-radius: var(--tw-radius-lg);
@@ -18,23 +19,49 @@
   flex-direction: column;
   max-height: 90vh;
 }
-.header {
+
+/* The X sits in a slot as tall as the first line beside it — the title row,
+ * or the first line of text in an untitled confirm — so both share a centre. */
+.closeSlot {
+  position: absolute;
+  top: var(--tw-space-5);
+  right: var(--tw-space-4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: var(--tw-space-4) var(--tw-space-4) 0;
+}
+.onTitle {
+  height: 1.75rem; /* title: 1.25rem × 1.4 */
+}
+.onText {
+  height: 1.5rem; /* body text: 1rem × 1.5 */
+}
+
+.header {
+  padding: var(--tw-space-5) var(--tw-space-5) 0;
 }
 .title {
   margin: 0;
   font-size: var(--tw-font-size-lg);
+  line-height: 1.4;
 }
 .body {
-  padding: var(--tw-space-4);
+  padding: var(--tw-space-4) var(--tw-space-5) var(--tw-space-5);
   overflow-y: auto;
+  line-height: 1.5;
+}
+.untitled {
+  padding-top: var(--tw-space-5);
 }
 .footer {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--tw-space-2);
   justify-content: flex-end;
-  padding: 0 var(--tw-space-4) var(--tw-space-4);
+  padding: 0 var(--tw-space-5) var(--tw-space-5);
+}
+
+/* Keeps text clear of the X; last so it wins over the paddings above. */
+.header.clearClose,
+.body.clearClose {
+  padding-right: calc(var(--tw-space-5) + 2rem);
 }
