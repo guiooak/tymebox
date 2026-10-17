@@ -1,5 +1,8 @@
 # Timebox Works — Collaborative Sharing & Deep Links (Plan 3)
 
+> **Superseded** by `2026-10-17-01-event-sharing-and-access-requests.md`, which
+> keys access by email in the security rules instead of using Cloud Functions.
+
 ## Context
 
 Follow-up to the UX pass (Home/Overview landing page, left sidebar nav, noun/lifecycle routes `/events/new|live|report`, renamed from `/meetings/*` on 2026-10-16) and builds on the hardened RTDB rules in `database.rules.json`. It introduces **deep-linkable meeting routes** and turns meetings from per-user-private documents into **shareable, optionally collaborative boards** with three visibility modes and per-guest edit/view permissions.

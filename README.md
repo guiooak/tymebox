@@ -53,8 +53,47 @@ yarn dev
 1. Create a Firebase project; enable **Google** as an Authentication provider and
    create a **Realtime Database**.
 2. Put the web app config into `.env.local` (`VITE_FIREBASE_*`).
-3. Deploy the database rules from `database.rules.json` (restrict each user to
-   `users/$uid`): `firebase deploy --only database`.
+3. Deploy the database rules from `database.rules.json`:
+   `firebase deploy --only database`. CI deploys them on every push to `main`,
+   before hosting.
+
+### Local development without a Firebase project
+
+The Firebase emulators run Auth and the Realtime Database locally with the real
+security rules. They need Java 11 or newer.
+
+```bash
+yarn dev:emulators   # terminal 1: Auth + Database emulators (UI on :4000)
+yarn dev:local       # terminal 2: the app against them (.env.emulators)
+```
+
+The Login page then also offers **Emulator: sign in as**, which takes any
+made-up email. To try sharing, open the app on two origins with separate
+sessions, for example `localhost:5173` for one person and
+`bruno.localhost:5173` for the other.
+
+## Sharing
+
+- **The link:** every event lives at `/events/:id` (its report at
+  `/events/:id/report`), and that URL is the link people share.
+- **Private by default:** the owner adds people by email as **Viewer** or
+  **Contributor**, or makes it **public** to anyone signed in who has the link,
+  with a role for them.
+- **Roles:** contributors run the event (start, finish, schedule, milestones,
+  notes, parking lot). Only the owner shares or deletes. Viewers follow along
+  read-only.
+- **Asking for access:** someone who opens a link without access can request
+  it. The owner sees a badge on **Share** and a notice on Home, then approves
+  (choosing the role) or denies. The requester's page opens the event as soon
+  as they're approved.
+- **Shared with me:** a section on Home lists events shared with your email,
+  plus public events you've opened.
+
+Access is keyed by email and enforced by `database.rules.json`
+(`auth.token.email`), with no server code. The rules are tested against the
+emulator in `src/test/rules/`, run with `yarn test:rules`. Events created before
+sharing (under `users/$uid/meetings`) move to `meetings/$id` the next time
+their owner signs in.
 
 ## Scripts
 
@@ -66,6 +105,8 @@ yarn dev
 | `yarn lint` | ESLint (incl. the import‑boundary rules) |
 | `yarn typecheck` | `tsc -b` only |
 | `yarn test` / `yarn test:coverage` | Vitest |
+| `yarn test:rules` | Security-rules tests against the Database emulator (Java 11+) |
+| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them |
 | `yarn format` / `yarn format:check` | Prettier |
 
 ## Brand
