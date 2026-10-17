@@ -6,7 +6,7 @@
         "owner"
       ],
       "$id": {
-        ".read": "auth != null && (data.child('owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',')).exists() || root.child('meetingAccess/' + $id + '/visibility').val() === 'public')",
+        ".read": "auth != null && (data.child('owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',')).exists()) || root.child('meetingAccess/' + $id + '/visibility').val() === 'public')",
         ".write": "auth != null && ((!data.exists() && newData.child('owner').val() === auth.uid) || (data.child('owner').val() === auth.uid && !newData.exists()))",
         ".validate": "newData.hasChildren(['owner'])",
         "owner": {
@@ -20,42 +20,42 @@
           ".validate": "newData.val() === $id"
         },
         "name": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 200"
         },
         "description": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 5000"
         },
         "expectedStartTime": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "expectedEndTime": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "realStartTime": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "realEndTime": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "status": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.val() === 'draft' || newData.val() === 'active' || newData.val() === 'cancelled' || newData.val() === 'finished'"
         },
         "createdAt": {
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "updatedAt": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           ".validate": "newData.isString() && newData.val().length <= 64"
         },
         "goals": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           "$goalId": {
             ".validate": "newData.hasChildren(['id', 'name'])",
             "id": {
@@ -82,7 +82,7 @@
           }
         },
         "sideTopics": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || (auth.token.email_verified === true && root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor') || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
           "$topicKey": {
             "id": {
               ".validate": "newData.isString() && newData.val().length <= 128"
@@ -124,7 +124,7 @@
           ".read": "auth != null && root.child('meetings/' + $id + '/owner').val() === auth.uid",
           ".write": "auth != null && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid",
           "$key": {
-            ".read": "auth != null && $key === auth.token.email.toLowerCase().replace('.', ',')",
+            ".read": "auth != null && (auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ','))",
             ".validate": "newData.hasChildren(['email', 'role', 'addedAt'])",
             "email": {
               ".validate": "newData.isString() && newData.val().length <= 254"
@@ -147,9 +147,9 @@
     },
     "sharedWith": {
       "$emailKey": {
-        ".read": "auth != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',')",
+        ".read": "auth != null && (auth.token.email_verified === true && $emailKey === auth.token.email.toLowerCase().replace('.', ','))",
         "$id": {
-          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid || ($emailKey === auth.token.email.toLowerCase().replace('.', ',') && !newData.exists()))",
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid || ((auth.token.email_verified === true && $emailKey === auth.token.email.toLowerCase().replace('.', ',')) && !newData.exists()))",
           ".validate": "newData.hasChildren(['addedAt', 'role'])",
           "addedAt": {
             ".validate": "newData.isNumber()"
@@ -167,8 +167,8 @@
       "$id": {
         ".read": "auth != null && root.child('meetings/' + $id + '/owner').val() === auth.uid",
         "$key": {
-          ".read": "auth != null && $key === auth.token.email.toLowerCase().replace('.', ',')",
-          ".write": "auth != null && ((root.child('meetings/' + $id + '/owner').val() === auth.uid && !newData.exists()) || ($key === auth.token.email.toLowerCase().replace('.', ',') && !newData.exists()) || ($key === auth.token.email.toLowerCase().replace('.', ',') && root.child('meetings/' + $id).exists() && root.child('meetings/' + $id + '/owner').val() !== auth.uid && !root.child('meetingAccess/' + $id + '/members/' + $key).exists()))",
+          ".read": "auth != null && (auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ','))",
+          ".write": "auth != null && ((root.child('meetings/' + $id + '/owner').val() === auth.uid && !newData.exists()) || ((auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',')) && !newData.exists()) || ((auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',')) && root.child('meetings/' + $id).exists() && root.child('meetings/' + $id + '/owner').val() !== auth.uid && !root.child('meetingAccess/' + $id + '/members/' + $key).exists()))",
           ".validate": "newData.hasChildren(['email', 'requestedAt'])",
           "email": {
             ".validate": "newData.val() === auth.token.email"
@@ -177,7 +177,7 @@
             ".validate": "newData.isString() && newData.val().length <= 200"
           },
           "photoURL": {
-            ".validate": "newData.isString() && newData.val().length <= 2000"
+            ".validate": "newData.isString() && newData.val().length <= 2000 && (newData.val() === '' || newData.val().beginsWith('https://lh3.googleusercontent.com/'))"
           },
           "message": {
             ".validate": "newData.isString() && newData.val().length <= 280"
@@ -196,7 +196,7 @@
         ".read": "auth != null && auth.uid === $ownerUid",
         "$id": {
           "$key": {
-            ".write": "auth != null && (auth.uid === $ownerUid || ($key === auth.token.email.toLowerCase().replace('.', ',') && root.child('meetings/' + $id + '/owner').val() === $ownerUid))",
+            ".write": "auth != null && (auth.uid === $ownerUid || ((auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',')) && root.child('meetings/' + $id + '/owner').val() === $ownerUid))",
             ".validate": "newData.val() === true"
           }
         }

@@ -1,4 +1,11 @@
-import { can, emailKey, isValidShareEmail, roleFor, type AccessSettings } from './access';
+import {
+  can,
+  emailKey,
+  isValidShareEmail,
+  requestPhoto,
+  roleFor,
+  type AccessSettings,
+} from './access';
 
 const access = (over: Partial<AccessSettings> = {}): AccessSettings => ({
   owner: 'owner-uid',
@@ -75,5 +82,16 @@ describe('can', () => {
     expect(can('viewer', 'edit')).toBe(false);
     expect(can('viewer', 'view')).toBe(true);
     expect(can(null, 'view')).toBe(false);
+  });
+});
+
+describe('requestPhoto', () => {
+  it('keeps Google profile pictures and drops anything else', () => {
+    expect(requestPhoto('https://lh3.googleusercontent.com/a/abc=s96-c')).toBe(
+      'https://lh3.googleusercontent.com/a/abc=s96-c',
+    );
+    expect(requestPhoto('https://tracker.example/pixel.gif')).toBe('');
+    expect(requestPhoto('https://lh3.googleusercontent.com.evil.example/a')).toBe('');
+    expect(requestPhoto('')).toBe('');
   });
 });

@@ -354,3 +354,91 @@ describe('legacy per-user events', () => {
     await assertFails(db(STRANGER).ref(`users/${OWNER.uid}/meetings`).once('value'));
   });
 });
+
+describe('unverified email addresses', () => {
+  // The same people, but with an address the sign-in provider didn't verify:
+  // what's tied to an email must not open for them.
+  const unverified = (user: { uid: string; email: string }) =>
+    env
+      .authenticatedContext(user.uid, { email: user.email, email_verified: false })
+      .database();
+
+  it('get none of the access shared with that email', async () => {
+    await seed();
+    await assertFails(unverified(VIEWER).ref(`meetings/${ID}`).once('value'));
+    await assertFails(unverified(CONTRIB).ref(`meetings/${ID}/name`).set('Hijacked'));
+    await assertFails(
+      unverified(VIEWER)
+        .ref(`meetingAccess/${ID}/members/${key(VIEWER.email)}`)
+        .once('value'),
+    );
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx
+        .database()
+        .ref(`sharedWith/${key(VIEWER.email)}/${ID}`)
+        .set({ addedAt: 1, role: 'viewer' });
+    });
+    await assertFails(
+      unverified(VIEWER)
+        .ref(`sharedWith/${key(VIEWER.email)}`)
+        .once('value'),
+    );
+    await assertFails(
+      unverified(VIEWER)
+        .ref(`sharedWith/${key(VIEWER.email)}/${ID}`)
+        .remove(),
+    );
+  });
+
+  it('can’t ask for access in that email’s name', async () => {
+    await seed();
+    await assertFails(
+      unverified(STRANGER)
+        .ref(`accessRequests/${ID}/${key(STRANGER.email)}`)
+        .set({ email: STRANGER.email, name: 'S', photoURL: '', requestedAt: 1 }),
+    );
+    await assertFails(
+      unverified(STRANGER)
+        .ref(`requestsByOwner/${OWNER.uid}/${ID}/${key(STRANGER.email)}`)
+        .set(true),
+    );
+  });
+
+  it('still see public events and their own events', async () => {
+    await seed('public');
+    await assertSucceeds(unverified(STRANGER).ref(`meetings/${ID}`).once('value'));
+    await assertSucceeds(unverified(OWNER).ref(`meetings/${ID}/name`).set('Mine'));
+  });
+});
+
+describe('access request pictures', () => {
+  it('accept only Google profile pictures, or none', async () => {
+    await seed();
+    const mine = db(STRANGER).ref(`accessRequests/${ID}/${key(STRANGER.email)}`);
+    const base = { email: STRANGER.email, name: 'S', requestedAt: 1 };
+    await assertFails(
+      mine.set({ ...base, photoURL: 'https://tracker.example/pixel.gif' }),
+    );
+    await assertFails(
+      mine.set({ ...base, photoURL: 'https://lh3.googleusercontent.com.evil.example/a' }),
+    );
+    await assertSucceeds(
+      mine.set({ ...base, photoURL: 'https://lh3.googleusercontent.com/a/abc=s96-c' }),
+    );
+    await assertSucceeds(mine.set({ ...base, photoURL: '' }));
+  });
+});
+
+describe('your own user node', () => {
+  it('holds only known fields, and only you can touch it', async () => {
+    const me = db(OWNER).ref(`users/${OWNER.uid}`);
+    await assertSucceeds(me.child('currentMeetingId').set(ID));
+    await assertSucceeds(me.child('settings/decisionsAutomaticBehavior').set(false));
+    await assertSucceeds(me.child('visited/abc').set(123));
+    await assertFails(me.child('anything').set('x'.repeat(100)));
+    await assertFails(me.child('settings/other').set(true));
+    await assertFails(me.child('visited/abc').set('soon'));
+    await assertFails(me.child('currentMeetingId').set('x'.repeat(200)));
+    await assertFails(db(STRANGER).ref(`users/${OWNER.uid}/currentMeetingId`).set(ID));
+  });
+});

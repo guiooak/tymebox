@@ -9,6 +9,7 @@ import {
 import { nowISO } from '../../../common/services/datetime';
 import {
   emailKey,
+  requestPhoto,
   type AccessRequest,
   type AccessSettings,
   type GrantedRole,
@@ -461,7 +462,7 @@ export async function requestAccess(
     [`accessRequests/${id}/${key}`]: {
       email: requester.email,
       name: requester.name,
-      photoURL: requester.photoURL,
+      photoURL: requestPhoto(requester.photoURL),
       message: message.trim(),
       requestedAt: Date.now(),
     },
