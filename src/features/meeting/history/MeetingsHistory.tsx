@@ -10,6 +10,9 @@ import {
   Page,
   Select,
   type SelectOption,
+  ItemLink,
+  itemLinkAbove,
+  itemLinkContainer,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import {
@@ -105,6 +108,15 @@ export function MeetingsHistory() {
     navigation.go(eventPath(id));
   };
 
+  // A click on the item: finished events open their report, the rest their
+  // board, without reopening anything.
+  const onOpen = async (meeting: Meeting) => {
+    await reopen(meeting.id);
+    navigation.go(
+      meeting.realEndTime ? eventReportPath(meeting.id) : eventPath(meeting.id),
+    );
+  };
+
   const onClone = async (id: string) => {
     const newId = await clone(id);
     if (newId) {
@@ -183,10 +195,15 @@ export function MeetingsHistory() {
                 {visible.map((meeting) => {
                   const summary = summarizeMeeting(meeting);
                   return (
-                    <Box key={meeting.id} className={styles.item}>
+                    <Box
+                      key={meeting.id}
+                      className={`${styles.item} ${itemLinkContainer}`}
+                    >
                       <div className={styles.info}>
                         <div className={styles.titleRow}>
-                          <strong>{meeting.name || 'Untitled event'}</strong>
+                          <ItemLink onClick={() => void onOpen(meeting)}>
+                            <strong>{meeting.name || 'Untitled event'}</strong>
+                          </ItemLink>
                           <Badge theme={summary.status.theme}>
                             {summary.status.label}
                           </Badge>
@@ -201,7 +218,7 @@ export function MeetingsHistory() {
                           {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
                         </div>
                       </div>
-                      <div className={styles.actions}>
+                      <div className={`${styles.actions} ${itemLinkAbove}`}>
                         <Button
                           theme="secondary"
                           outline

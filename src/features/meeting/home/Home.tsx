@@ -6,6 +6,9 @@ import {
   Container,
   Heading,
   Loader,
+  ItemLink,
+  itemLinkAbove,
+  itemLinkContainer,
   Menu,
   Page,
 } from '../../../common/components';
@@ -66,6 +69,11 @@ export function Home() {
   const onReopen = async (id: string) => {
     await reopen(id);
     navigation.go(eventReportPath(id));
+  };
+
+  const onOpenBoard = async (id: string) => {
+    await reopen(id);
+    navigation.go(eventPath(id));
   };
 
   const onClone = async (id: string) => {
@@ -202,24 +210,26 @@ export function Home() {
                 </Heading>
                 <div className={styles.list}>
                   {metrics.upcoming.map((meeting) => (
-                    <Box key={meeting.id} className={styles.item}>
+                    <Box
+                      key={meeting.id}
+                      className={`${styles.item} ${itemLinkContainer}`}
+                    >
                       <div>
-                        <strong>{meeting.name}</strong>
+                        <ItemLink onClick={() => void onOpenBoard(meeting.id)}>
+                          <strong>{meeting.name}</strong>
+                        </ItemLink>
                         <div className={styles.meta}>
                           {formatLong(meeting.expectedStartTime)}
                         </div>
                       </div>
-                      <div className={styles.actions}>
+                      <div className={`${styles.actions} ${itemLinkAbove}`}>
                         <Badge theme="info">Scheduled</Badge>
                         <Menu
                           label={`Actions for ${meeting.name}`}
                           items={[
                             {
                               label: 'Open board',
-                              onSelect: () =>
-                                void reopen(meeting.id).then(() =>
-                                  navigation.go(eventPath(meeting.id)),
-                                ),
+                              onSelect: () => void onOpenBoard(meeting.id),
                             },
                           ]}
                         />
@@ -305,15 +315,20 @@ export function Home() {
                   ) : (
                     <div className={styles.list}>
                       {metrics.recent.map((meeting) => (
-                        <Box key={meeting.id} className={styles.item}>
+                        <Box
+                          key={meeting.id}
+                          className={`${styles.item} ${itemLinkContainer}`}
+                        >
                           <div>
-                            <strong>{meeting.name}</strong>
+                            <ItemLink onClick={() => void onReopen(meeting.id)}>
+                              <strong>{meeting.name}</strong>
+                            </ItemLink>
                             <div className={styles.meta}>
                               {formatLong(meeting.realEndTime)} · {meeting.goals.length}{' '}
                               goals
                             </div>
                           </div>
-                          <div className={styles.actions}>
+                          <div className={`${styles.actions} ${itemLinkAbove}`}>
                             <Menu
                               label={`Actions for ${meeting.name}`}
                               items={[

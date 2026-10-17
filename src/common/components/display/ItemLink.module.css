@@ -1,0 +1,43 @@
+.container {
+  position: relative;
+  transition:
+    border-color var(--tw-transition),
+    box-shadow var(--tw-transition);
+}
+.container:hover {
+  border-color: var(--tw-border-strong);
+  box-shadow: var(--tw-shadow);
+}
+
+.link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+/* The hit area: covers the whole item it sits in. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.container .link::after {
+  border-radius: var(--tw-radius);
+}
+.link:focus-visible {
+  outline: none;
+}
+.link:focus-visible::after {
+  outline: 2px solid var(--tw-primary-text);
+  outline-offset: 1px;
+}
+
+/* Menus and buttons inside the item keep their own clicks. */
+.above {
+  position: relative;
+  z-index: 1;
+}

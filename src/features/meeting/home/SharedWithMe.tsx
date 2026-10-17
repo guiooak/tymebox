@@ -1,4 +1,13 @@
-import { Badge, BlankSlate, Box, Heading, Menu } from '../../../common/components';
+import {
+  Badge,
+  BlankSlate,
+  Box,
+  Heading,
+  ItemLink,
+  itemLinkAbove,
+  itemLinkContainer,
+  Menu,
+} from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import {
   eventPath,
@@ -51,10 +60,14 @@ export function SharedWithMe() {
           {events.map((event) => {
             const status = STATUS[event.status];
             const finished = event.status === 'finished';
+            const open = () =>
+              navigation.go(finished ? eventReportPath(event.id) : eventPath(event.id));
             return (
-              <Box key={event.id} className={styles.item}>
+              <Box key={event.id} className={`${styles.item} ${itemLinkContainer}`}>
                 <div>
-                  <strong>{event.name || 'Untitled event'}</strong>
+                  <ItemLink onClick={open}>
+                    <strong>{event.name || 'Untitled event'}</strong>
+                  </ItemLink>
                   <div className={styles.meta}>
                     by {event.ownerName || 'someone'}
                     {finished && event.realEndTime
@@ -62,7 +75,7 @@ export function SharedWithMe() {
                       : ''}
                   </div>
                 </div>
-                <div className={styles.actions}>
+                <div className={`${styles.actions} ${itemLinkAbove}`}>
                   <Badge theme={status.theme}>{status.label}</Badge>
                   <Badge>
                     {event.via === 'public' ? 'Public link' : ROLE_LABELS[event.via]}
@@ -72,10 +85,7 @@ export function SharedWithMe() {
                     items={[
                       {
                         label: finished ? 'View report' : 'Open board',
-                        onSelect: () =>
-                          navigation.go(
-                            finished ? eventReportPath(event.id) : eventPath(event.id),
-                          ),
+                        onSelect: open,
                       },
                     ]}
                   />
