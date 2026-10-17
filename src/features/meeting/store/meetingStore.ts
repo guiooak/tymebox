@@ -489,7 +489,7 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
     },
 
     // "Open dashboard" from history: a finished event goes back to running so it
-    // can be picked up again, mirroring the report's "Back to dashboard".
+    // can be picked up again, mirroring the report's "Reopen event".
     reopenInDashboard: async (id) => {
       const user = requireUser();
       const source = get().meetings.find((meeting) => meeting.id === id);

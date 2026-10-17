@@ -221,7 +221,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
         <Footer justifyContent="space-between">
           {can(role, 'run') ? (
             <Button theme="tertiary" onClick={() => void onBackToDashboard()}>
-              Back to dashboard
+              Reopen event
             </Button>
           ) : (
             <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
