@@ -33,6 +33,10 @@ describe('Landing', () => {
       'Every event, inside its box.',
     );
     expect(screen.getByRole('heading', { name: 'Three steps, one box.' })).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Tymebox home' })).toHaveAttribute(
+      'href',
+      '/',
+    );
 
     const buttons = screen.getAllByRole('button', { name: /Continue with Google/ });
     expect(buttons).toHaveLength(2);

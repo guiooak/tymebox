@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Badge, Icon, TimeDisplay, type IconName } from '../../common/components';
 import { useT } from '../../common/services/i18n';
-import { useReturnPath } from '../../common/services/router';
+import { Link, paths, useReturnPath } from '../../common/services/router';
 import { LanguageSelect } from '../../app/LanguageSelect';
 import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
@@ -127,13 +127,16 @@ function ReportCards() {
 export function Landing() {
   const returnPath = useReturnPath('');
   const fromEvent = returnPath.startsWith('/events/');
-  const t = useT().landing;
+  const tt = useT();
+  const t = tt.landing;
 
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>
-          <Logo size={30} />
+          <Link to={paths.home} className={styles.brand} aria-label={tt.shell.homeAria}>
+            <Logo size={30} />
+          </Link>
           <div className={styles.topBarControls}>
             <LanguageSelect />
             <ThemeToggle
