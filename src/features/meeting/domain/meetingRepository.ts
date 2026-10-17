@@ -1,5 +1,6 @@
 import {
   newKey,
+  read,
   subscribe,
   subscribeWhere,
   updateAt,
@@ -191,8 +192,8 @@ export async function createMeeting(meeting: Meeting): Promise<void> {
 /** Delete an event with its access settings, shares and pending requests. */
 export async function deleteMeeting(
   meeting: Meeting,
-  members: Member[],
-  requests: AccessRequest[],
+  members: Pick<Member, 'key'>[],
+  requests: Pick<AccessRequest, 'key'>[],
 ): Promise<void> {
   const changes: Record<string, unknown> = {
     [eventPath(meeting.id)]: null,
@@ -206,6 +207,20 @@ export async function deleteMeeting(
     changes[`requestsByOwner/${meeting.owner}/${meeting.id}/${request.key}`] = null;
   }
   await writeMany(changes);
+}
+
+/**
+ * Owner only: delete an event that isn't open, looking up who it's shared with
+ * and who asked for access first, so nobody keeps a dangling entry.
+ */
+export async function deleteMeetingEverywhere(meeting: Meeting): Promise<void> {
+  const [members, requests] = await Promise.all([
+    read<Record<string, unknown>>(`${accessPath(meeting.id)}/members`),
+    read<Record<string, unknown>>(`accessRequests/${meeting.id}`),
+  ]);
+  const keys = (value: Record<string, unknown> | null) =>
+    Object.keys(value ?? {}).map((key) => ({ key }));
+  await deleteMeeting(meeting, keys(members), keys(requests));
 }
 
 export type EventFields = Partial<

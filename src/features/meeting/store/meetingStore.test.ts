@@ -12,6 +12,7 @@ vi.mock('../domain/meetingRepository', () => ({
   putSideTopic: vi.fn(async () => {}),
   shareWith: vi.fn(async () => {}),
   approveRequest: vi.fn(async () => {}),
+  deleteMeetingEverywhere: vi.fn(async () => {}),
 }));
 
 const repo = await import('../domain/meetingRepository');
@@ -137,5 +138,16 @@ describe('sharing', () => {
     useMeetingStore.setState({ role: 'contributor' });
     await useMeetingStore.getState().shareWith('c@x.com', 'viewer');
     expect(repo.shareWith).not.toHaveBeenCalled();
+  });
+
+  it('deletes only your own events, letting go of the current one', async () => {
+    await useMeetingStore.getState().deleteEvent('m1');
+    expect(repo.setCurrentMeetingId).toHaveBeenCalledWith('u1', null);
+    expect(repo.deleteMeetingEverywhere).toHaveBeenCalledWith(meeting);
+
+    vi.clearAllMocks();
+    useMeetingStore.setState({ meetings: [{ ...meeting, owner: 'someone-else' }] });
+    await useMeetingStore.getState().deleteEvent('m1');
+    expect(repo.deleteMeetingEverywhere).not.toHaveBeenCalled();
   });
 });

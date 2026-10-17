@@ -10,6 +10,7 @@ import {
   itemLinkAbove,
   itemLinkContainer,
   Menu,
+  useDialog,
   Page,
 } from '../../../common/components';
 import {
@@ -25,6 +26,7 @@ import {
   eventReportPath,
 } from '../../../common/services/router';
 import { useAuthStore } from '../../auth';
+import type { Meeting } from '../domain/types';
 import { useMeetingStore } from '../store';
 import { OnboardingCard } from './OnboardingCard';
 import { meetingTemplates } from './templates';
@@ -62,6 +64,8 @@ export function Home() {
   const reopen = useMeetingStore((state) => state.reopen);
   const clone = useMeetingStore((state) => state.clone);
   const createFromTemplate = useMeetingStore((state) => state.createFromTemplate);
+  const deleteEvent = useMeetingStore((state) => state.deleteEvent);
+  const dialog = useDialog();
   const metrics = useMeetingMetrics();
 
   const firstName = user?.displayName?.split(' ')[0];
@@ -69,6 +73,19 @@ export function Home() {
   const onReopen = async (id: string) => {
     await reopen(id);
     navigation.go(eventReportPath(id));
+  };
+
+  const onDelete = async (meeting: Meeting) => {
+    const confirmed = await dialog.confirm({
+      title: 'Delete this event?',
+      text: `“${meeting.name || 'Untitled event'}” and its report will be deleted, also for everyone it’s shared with. This can’t be undone.`,
+      confirmButtonText: 'Delete event',
+      confirmButtonTheme: 'danger',
+      cancelButtonText: 'Keep it',
+    });
+    if (confirmed) {
+      await deleteEvent(meeting.id);
+    }
   };
 
   const onOpenBoard = async (id: string) => {
@@ -231,6 +248,11 @@ export function Home() {
                               label: 'Open board',
                               onSelect: () => void onOpenBoard(meeting.id),
                             },
+                            {
+                              label: 'Delete event',
+                              danger: true,
+                              onSelect: () => void onDelete(meeting),
+                            },
                           ]}
                         />
                       </div>
@@ -339,6 +361,11 @@ export function Home() {
                                 {
                                   label: 'Clone',
                                   onSelect: () => void onClone(meeting.id),
+                                },
+                                {
+                                  label: 'Delete event',
+                                  danger: true,
+                                  onSelect: () => void onDelete(meeting),
                                 },
                               ]}
                             />

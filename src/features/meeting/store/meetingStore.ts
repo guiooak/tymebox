@@ -94,6 +94,8 @@ export type MeetingState = {
 
   saveDraft: (input: MeetingDraftInput) => Promise<string | null>;
   discardCurrent: () => Promise<void>;
+  /** Owner only: delete one of your events for good, with its shares. */
+  deleteEvent: (id: string) => Promise<void>;
   reopen: (id: string) => Promise<void>;
   reopenInDashboard: (id: string) => Promise<void>;
   clone: (id: string) => Promise<string | null>;
@@ -465,6 +467,18 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       await repo.createMeeting(meeting);
       await repo.setCurrentMeetingId(user.uid, meeting.id);
       return meeting.id;
+    },
+
+    deleteEvent: async (id) => {
+      const user = requireUser();
+      const meeting = get().meetings.find((item) => item.id === id);
+      if (!meeting || meeting.owner !== user.uid) {
+        return;
+      }
+      if (get().currentMeetingId === id) {
+        await repo.setCurrentMeetingId(user.uid, null);
+      }
+      await repo.deleteMeetingEverywhere(meeting);
     },
 
     discardCurrent: async () => {
