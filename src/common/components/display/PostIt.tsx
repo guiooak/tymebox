@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useT } from '../../services/i18n';
 import { CloseButton } from '../buttons';
 import { useAutoGrowTextarea } from '../useAutoGrowTextarea';
 import styles from './PostIt.module.css';
@@ -26,13 +27,18 @@ export function PostIt({
   autoFocus,
   readOnly,
 }: PostItProps) {
+  const t = useT();
   const ref = useRef<HTMLTextAreaElement>(null);
   useAutoGrowTextarea(ref, value);
 
   return (
     <div className={styles.postIt}>
       {!readOnly && (
-        <CloseButton className={styles.close} onClick={onDelete} label="Delete topic" />
+        <CloseButton
+          className={styles.close}
+          onClick={onDelete}
+          label={t.board.deleteTopic}
+        />
       )}
       <div className={styles.row}>
         {prefix && <span className={styles.prefix}>{prefix}</span>}

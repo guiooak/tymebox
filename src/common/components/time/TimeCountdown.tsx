@@ -8,6 +8,7 @@ import {
   isSameDay,
   type DateInput,
 } from '../../services/datetime';
+import { useT } from '../../services/i18n';
 import type { Theme } from '../layout';
 import { TimeDisplay } from './TimeDisplay';
 import { TimeFormat, type TimeFormatSize } from './TimeFormat';
@@ -34,10 +35,11 @@ export function TimeCountdown({
   disabled,
   size = 'xl',
   warnAfter,
-  unscheduledHint = 'not scheduled yet',
+  unscheduledHint,
   prominent,
   showSeconds = true,
 }: TimeCountdownProps) {
+  const t = useT().board;
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [pulseKey, setPulseKey] = useState(0);
   const previousTheme = useRef<Theme | null>(null);
@@ -79,8 +81,8 @@ export function TimeCountdown({
     return (
       <TimeDisplay
         theme="secondary"
-        header="time left"
-        footer={<small>{unscheduledHint}</small>}
+        header={t.timeLeft}
+        footer={<small>{unscheduledHint ?? t.notScheduled}</small>}
         prominent={prominent}
       >
         <TimeFormat value="--:--" size={size} />
@@ -96,7 +98,7 @@ export function TimeCountdown({
   return (
     <TimeDisplay
       theme={theme}
-      header={isNegative ? 'overdue time' : 'time left'}
+      header={isNegative ? t.overdueTime : t.timeLeft}
       footer={<small>should be finished at {endLabel}</small>}
       prominent={prominent}
       pulseKey={pulseKey}

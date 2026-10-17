@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useKeyboardShortcuts, type Shortcut } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import { ShortcutsHelpModal } from './ShortcutsHelpModal';
 import styles from './MeetingDashboard.module.css';
 
@@ -13,11 +14,12 @@ export type DashboardShortcutsProps = {
  * branches.
  */
 export function DashboardShortcuts({ shortcuts }: DashboardShortcutsProps) {
+  const t = useT().board;
   const [helpOpen, setHelpOpen] = useState(false);
 
   const all: Shortcut[] = [
     ...shortcuts,
-    { key: '?', description: 'Show this help', onTrigger: () => setHelpOpen(true) },
+    { key: '?', description: t.showHelp, onTrigger: () => setHelpOpen(true) },
   ];
 
   useKeyboardShortcuts(all, !helpOpen);
@@ -29,7 +31,7 @@ export function DashboardShortcuts({ shortcuts }: DashboardShortcutsProps) {
         className={styles.shortcutsHint}
         onClick={() => setHelpOpen(true)}
       >
-        Keyboard shortcuts (?)
+        {t.shortcutsButton}
       </button>
       <ShortcutsHelpModal
         open={helpOpen}

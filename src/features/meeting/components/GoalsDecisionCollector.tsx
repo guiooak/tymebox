@@ -11,6 +11,7 @@ import {
   Menu,
   Switch,
 } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import { cx } from '../../../common/components/cx';
 import { formatTime, nowISO } from '../../../common/services/datetime';
 import { FIELD_LIMITS, type Goal } from '../domain/types';
@@ -49,6 +50,8 @@ export function GoalsDecisionCollector({
   onReorderGoals,
   onConfirmRemove,
 }: GoalsDecisionCollectorProps) {
+  const tt = useT();
+  const t = tt.milestones;
   const [openId, setOpenId] = useState<string | null>(
     () => goals.find((g) => !g.finishedAt)?.id ?? null,
   );
@@ -128,19 +131,19 @@ export function GoalsDecisionCollector({
   };
 
   const menuItems = (goal: Goal, index: number) => [
-    { label: 'Edit', onSelect: () => setEditingGoal(goal) },
-    { label: 'Duplicate', onSelect: () => onDuplicateGoal?.(goal.id) },
+    { label: t.edit, onSelect: () => setEditingGoal(goal) },
+    { label: t.duplicate, onSelect: () => onDuplicateGoal?.(goal.id) },
     {
-      label: 'Move up',
+      label: t.moveUp,
       disabled: index === 0,
       onSelect: () => onReorderGoals?.(index, index - 1),
     },
     {
-      label: 'Move down',
+      label: t.moveDown,
       disabled: index === goals.length - 1,
       onSelect: () => onReorderGoals?.(index, index + 1),
     },
-    { label: 'Delete', danger: true, onSelect: () => void onDelete(goal) },
+    { label: t.delete, danger: true, onSelect: () => void onDelete(goal) },
   ];
 
   const onDrop = (index: number) => {
@@ -159,9 +162,9 @@ export function GoalsDecisionCollector({
           <Switch
             checked={automatic}
             onChange={onToggleAutomatic}
-            label="Automatic mode"
+            label={t.automaticMode}
           />
-          <Label text="Automatic" />
+          <Label text={t.automatic} />
         </div>
         <Button
           size="sm"
@@ -169,17 +172,12 @@ export function GoalsDecisionCollector({
           outline
           onClick={() => setAllOpen((value) => !value)}
         >
-          {allOpen ? 'Close all' : 'Open all'}
+          {allOpen ? t.closeAll : t.openAll}
         </Button>
       </div>
 
       {goals.length === 0 && (
-        <BlankSlate
-          art="milestones"
-          compact
-          title="No milestones yet"
-          description="Add the first thing this event needs to land."
-        />
+        <BlankSlate art="milestones" compact title={t.none} description={t.noneText} />
       )}
 
       <div className={styles.list}>
@@ -218,7 +216,7 @@ export function GoalsDecisionCollector({
                   <span
                     className={styles.dragHandle}
                     aria-hidden="true"
-                    title="Drag to reorder"
+                    title={t.dragToReorder}
                     onMouseDown={() => setHandleArmed(goal.id)}
                     onMouseUp={() => setHandleArmed(null)}
                   >
@@ -230,8 +228,8 @@ export function GoalsDecisionCollector({
                 <div className={styles.titleRow}>
                   <InlineEdit
                     value={goal.name}
-                    label="milestone name"
-                    placeholder="Name this milestone"
+                    label={t.nameLabel}
+                    placeholder={t.namePlaceholder}
                     maxLength={FIELD_LIMITS.goalName}
                     readOnly={!canEdit}
                     onChange={(name) => name && onChangeGoal(goal.id, { name })}
@@ -239,7 +237,7 @@ export function GoalsDecisionCollector({
                   <span className={styles.badges}>
                     {goal.finishedAt && (
                       <small className={styles.doneAt}>
-                        done at {formatTime(goal.finishedAt)}
+                        {t.doneAt(formatTime(goal.finishedAt))}
                       </small>
                     )}
                     {goal.weight !== 1 && (
@@ -251,19 +249,19 @@ export function GoalsDecisionCollector({
               actions={
                 canEdit ? (
                   <Menu
-                    label={`Actions for ${goal.name}`}
+                    label={tt.common.actionsFor(goal.name)}
                     items={menuItems(goal, index)}
                   />
                 ) : undefined
               }
               checkbox={{
-                label: 'Done',
+                label: t.done,
                 checked: !!goal.finishedAt,
                 disabled,
                 onChange: (checked) => onCheck(goal, checked),
               }}
             >
-              <FormField label="Notes">
+              <FormField label={t.notes}>
                 <FormTextarea
                   name={`decisions-${goal.id}`}
                   value={goal.decisions}
@@ -285,14 +283,14 @@ export function GoalsDecisionCollector({
               ref={addRef}
               className={styles.addInput}
               value={draftName}
-              placeholder="Milestone name"
+              placeholder={t.newName}
               maxLength={FIELD_LIMITS.goalName}
-              aria-label="New milestone name"
+              aria-label={t.newNameAria}
               onChange={(event) => setDraftName(event.target.value)}
               onKeyDown={onAddKeyDown}
             />
             <Button size="sm" onClick={submitNewGoal}>
-              Add
+              {t.add}
             </Button>
             <Button
               size="sm"
@@ -303,7 +301,7 @@ export function GoalsDecisionCollector({
                 setAdding(false);
               }}
             >
-              Cancel
+              {tt.common.cancel}
             </Button>
           </div>
         ) : (
@@ -312,7 +310,7 @@ export function GoalsDecisionCollector({
             className={styles.addTrigger}
             onClick={() => setAdding(true)}
           >
-            + Add milestone
+            {t.addMilestone}
           </button>
         ))}
 

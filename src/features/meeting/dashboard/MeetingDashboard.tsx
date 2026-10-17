@@ -15,6 +15,7 @@ import {
   type Shortcut,
 } from '../../../common/components';
 import { nowISO } from '../../../common/services/datetime';
+import { useT } from '../../../common/services/i18n';
 import {
   eventReportPath,
   Navigate,
@@ -46,6 +47,8 @@ export function MeetingDashboard() {
 function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
   const navigation = useNavigation();
   const dialog = useDialog();
+  const tt = useT();
+  const t = tt.board;
   // Owners and contributors run the event; viewers follow along read-only.
   const canRun = can(role, 'run');
   const automatic = useMeetingStore((state) => state.decisionsAutomaticBehavior);
@@ -82,16 +85,16 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
   // Short labels keep both countdown toggles on one row; the tooltip explains.
   const alertsLabel =
     alerts.permission === 'unsupported'
-      ? 'Alerts unavailable'
+      ? t.alertsUnavailable
       : alerts.permission === 'denied'
-        ? 'Alerts blocked'
-        : 'Time alerts';
+        ? t.alertsBlocked
+        : t.timeAlerts;
   const alertsHint =
     alerts.permission === 'unsupported'
-      ? 'Notifications are not available in this browser'
+      ? t.alertsUnavailableHint
       : alerts.permission === 'denied'
-        ? 'Notifications are blocked: allow them in your browser settings'
-        : 'Notify me when the event trends late and when time runs out';
+        ? t.alertsBlockedHint
+        : t.alertsHint;
 
   // A finished event lives on its report.
   if (meeting.realEndTime) {
@@ -105,21 +108,19 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
   const onStart = async () => {
     if (goals.length === 0) {
       const anyway = await dialog.confirm({
-        text: 'This event has no milestones yet. Start it anyway?',
-        confirmButtonText: 'Start anyway',
-        cancelButtonText: 'Let me add some',
+        text: t.noMilestones,
+        confirmButtonText: t.startAnyway,
+        cancelButtonText: t.letMeAdd,
       });
       if (!anyway) {
         return;
       }
     }
     const ready = await dialog.confirm({
-      text: scheduled
-        ? 'Are you ready to start?'
-        : 'No schedule yet — we’ll box this to one hour starting now. You can change the end time from the board at any moment.',
+      text: scheduled ? t.ready : t.noSchedule,
       confirmButtonTheme: 'success',
-      confirmButtonText: "Yes, let's go!",
-      cancelButtonText: 'Not yet',
+      confirmButtonText: t.letsGo,
+      cancelButtonText: t.notYet,
     });
     if (ready) {
       await startMeeting();
@@ -128,10 +129,10 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
 
   const onCancel = async () => {
     const confirmed = await dialog.confirm({
-      text: 'Are you sure you want to cancel it? It stays in your history as cancelled, and you can run it again from there.',
+      text: t.cancelConfirm,
       confirmButtonTheme: 'danger',
-      confirmButtonText: 'Yes, do it',
-      cancelButtonText: 'Not anymore',
+      confirmButtonText: tt.common.yesDoIt,
+      cancelButtonText: tt.common.notAnymore,
     });
     if (confirmed) {
       await cancelMeeting();
@@ -146,10 +147,10 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
 
   const onAllCompleted = async () => {
     const confirmed = await dialog.confirm({
-      text: 'All done! ✅ Do you want to finish this event?',
+      text: t.allDone,
       confirmButtonTheme: 'success',
-      confirmButtonText: 'Yes, finish it!',
-      cancelButtonText: 'Not yet',
+      confirmButtonText: t.finishIt,
+      cancelButtonText: t.notYet,
       closeOnOverlayClick: true,
     });
     if (confirmed) {
@@ -159,10 +160,10 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
 
   const onConfirmRemoveGoal = (goal: Goal) =>
     dialog.confirm({
-      text: `Remove “${goal.name}” and its notes?`,
+      text: t.removeGoal(goal.name),
       confirmButtonTheme: 'danger',
-      confirmButtonText: 'Yes, do it',
-      cancelButtonText: 'Not anymore',
+      confirmButtonText: tt.common.yesDoIt,
+      cancelButtonText: tt.common.notAnymore,
     });
 
   const completeCurrentGoal = () => {
@@ -187,25 +188,25 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
   const shortcuts: Shortcut[] = [
     {
       key: 'd',
-      description: 'Mark the current milestone as done',
+      description: t.shortcuts.done,
       disabled: !canRun || !active || !currentGoal,
       onTrigger: completeCurrentGoal,
     },
     {
       key: 'p',
-      description: 'Park a side topic',
+      description: t.shortcuts.park,
       disabled: !canRun,
       onTrigger: parkTopic,
     },
     {
       key: 's',
-      description: 'Start the event',
+      description: t.shortcuts.start,
       disabled: !canRun || active,
       onTrigger: () => void onStart(),
     },
     {
       key: 'f',
-      description: 'Finish the event',
+      description: t.shortcuts.finish,
       disabled: !canRun || !active,
       onTrigger: () => void onFinish(),
     },
@@ -217,23 +218,23 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
         <div className={styles.headTop}>
           <InlineEdit
             value={meeting.name}
-            label="event name"
-            placeholder="Name this event"
+            label={t.eventName}
+            placeholder={t.namePlaceholder}
             maxLength={FIELD_LIMITS.meetingName}
             size="lg"
             readOnly={!canRun}
             onChange={(name) => name && void updateMeeting({ name })}
           />
           <Badge theme={active ? 'success' : 'secondary'}>
-            {active ? 'Live' : 'Setting up'}
+            {active ? tt.status.active : tt.status.draft}
           </Badge>
-          {!canRun && <Badge>View only</Badge>}
+          {!canRun && <Badge>{t.viewOnly}</Badge>}
           <ShareButton />
         </div>
         <InlineEdit
           value={meeting.description}
-          label="event description"
-          placeholder="Add a description"
+          label={t.eventDescription}
+          placeholder={t.descriptionPlaceholder}
           maxLength={FIELD_LIMITS.meetingDescription}
           size="sm"
           multiline
@@ -257,7 +258,7 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
               timeTarget={meeting.expectedEndTime || null}
               disabled={!active}
               warnAfter={warnAfter}
-              unscheduledHint="set an end time to start the clock"
+              unscheduledHint={t.unscheduled}
               prominent
               showSeconds={showSeconds}
             />
@@ -266,7 +267,7 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
                 <Switch
                   checked={alertsOn}
                   onChange={() => void alerts.toggle()}
-                  label="Notify me when time runs out"
+                  label={t.alertsSwitch}
                 />
                 <span className={styles.alertsLabel}>{alertsLabel}</span>
               </div>
@@ -274,9 +275,9 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
                 <Switch
                   checked={showSeconds}
                   onChange={setShowSeconds}
-                  label="Show seconds in the countdown"
+                  label={t.showSecondsSwitch}
                 />
-                <span className={styles.alertsLabel}>Show seconds</span>
+                <span className={styles.alertsLabel}>{t.showSeconds}</span>
               </div>
             </div>
           </div>
@@ -292,8 +293,8 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
               <BlankSlate
                 art="chart"
                 compact
-                title="No burndown yet"
-                description="Set a start and end time and the chart starts tracking."
+                title={t.noBurndown}
+                description={t.noBurndownText}
               />
             )}
           </Box>
@@ -340,21 +341,21 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
       <Footer justifyContent="space-between">
         {active && canRun ? (
           <Button theme="danger" outline onClick={() => void onCancel()}>
-            Cancel event
+            {t.cancelEvent}
           </Button>
         ) : (
           <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
-            Go back
+            {t.goBack}
           </Button>
         )}
         {canRun &&
           (active ? (
             <Button theme="success" onClick={() => void onFinish()}>
-              Finish event
+              {t.finishEvent}
             </Button>
           ) : (
             <Button theme="success" onClick={() => void onStart()}>
-              Start event
+              {t.startEvent}
             </Button>
           ))}
       </Footer>

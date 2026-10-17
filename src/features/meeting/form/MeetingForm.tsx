@@ -12,12 +12,14 @@ import {
   Page,
   Paragraph,
 } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import { eventPath, useNavigation } from '../../../common/services/router';
 import { FIELD_LIMITS } from '../domain/types';
 import { useMeetingStore } from '../store';
 import styles from './MeetingForm.module.css';
 
 export function MeetingForm() {
+  const t = useT().form;
   const navigation = useNavigation();
   const currentMeeting = useMeetingStore((state) => state.currentMeeting);
   const saveDraft = useMeetingStore((state) => state.saveDraft);
@@ -50,7 +52,7 @@ export function MeetingForm() {
     setDescription(currentMeeting.description);
   }, [currentMeeting]);
 
-  const nameError = submitted && !name.trim() ? 'Event name is required' : null;
+  const nameError = submitted && !name.trim() ? t.nameRequired : null;
 
   const onSubmit = async () => {
     setSubmitted(true);
@@ -75,38 +77,35 @@ export function MeetingForm() {
       <Page>
         <Form onSubmit={() => void onSubmit()} onReset={() => void onReset()}>
           <Heading size="md" level={1}>
-            New event
+            {t.title}
           </Heading>
-          <Paragraph className={styles.lede}>
-            Name it and go — milestones, timings and everything else are added on the
-            board.
-          </Paragraph>
+          <Paragraph className={styles.lede}>{t.lede}</Paragraph>
 
-          <FormField label="Event name">
+          <FormField label={t.name}>
             <FormInput
               name="name"
               value={name}
               onChange={setName}
-              placeholder="Weekly planning"
+              placeholder={t.namePlaceholder}
               maxLength={FIELD_LIMITS.meetingName}
             />
             {nameError && <span className={styles.error}>{nameError}</span>}
           </FormField>
 
-          <FormField label="Description">
+          <FormField label={t.description}>
             <FormTextarea
               name="description"
               value={description}
               onChange={setDescription}
-              placeholder="Optional context for this event"
+              placeholder={t.descriptionPlaceholder}
               maxLength={FIELD_LIMITS.meetingDescription}
             />
           </FormField>
 
           <Footer justifyContent="flex-end">
             <div className={styles.actions}>
-              <FormResetButton>Clean form</FormResetButton>
-              <FormSubmitButton>Create event</FormSubmitButton>
+              <FormResetButton>{t.clean}</FormResetButton>
+              <FormSubmitButton>{t.create}</FormSubmitButton>
             </div>
           </Footer>
         </Form>

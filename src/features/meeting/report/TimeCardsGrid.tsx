@@ -1,5 +1,6 @@
 import { Heading, TimeDisplay } from '../../../common/components';
 import { diffMs, formatDuration, formatTime } from '../../../common/services/datetime';
+import { useT } from '../../../common/services/i18n';
 import { getTimeDisplayFeedbackByDiff } from '../domain/timeDisplayFeedbackRules';
 import styles from './MeetingReport.module.css';
 
@@ -13,6 +14,7 @@ type MetricCardProps = {
 };
 
 function MetricCard({ label, planned, actual, diff, kind }: MetricCardProps) {
+  const t = useT().report;
   const feedback = getTimeDisplayFeedbackByDiff(diff);
   const message = kind === 'duration' ? feedback.durationMessage : feedback.momentMessage;
   return (
@@ -21,7 +23,7 @@ function MetricCard({ label, planned, actual, diff, kind }: MetricCardProps) {
       header={label}
       footer={
         <span className={styles.timeCardFooter}>
-          <span className={styles.planned}>planned {planned}</span>
+          <span className={styles.planned}>{t.planned(planned)}</span>
           {message && (
             <span>
               {message} {formatDuration(Math.abs(diff))}
@@ -48,31 +50,32 @@ export function TimeCardsGrid({
   realStartTime,
   realEndTime,
 }: TimeCardsGridProps) {
+  const t = useT().report;
   const expectedDuration = diffMs(expectedEndTime, expectedStartTime);
   const realDuration = diffMs(realEndTime, realStartTime);
 
   return (
     <section>
       <Heading size="sm" level={2} className={styles.sectionTitle}>
-        Timing
+        {t.timing}
       </Heading>
       <div className={styles.timeGrid}>
         <MetricCard
-          label="Start"
+          label={t.start}
           planned={formatTime(expectedStartTime)}
           actual={formatTime(realStartTime)}
           diff={diffMs(expectedStartTime, realStartTime)}
           kind="moment"
         />
         <MetricCard
-          label="End"
+          label={t.end}
           planned={formatTime(expectedEndTime)}
           actual={formatTime(realEndTime)}
           diff={diffMs(expectedEndTime, realEndTime)}
           kind="moment"
         />
         <MetricCard
-          label="Total duration"
+          label={t.totalDuration}
           planned={formatDuration(Math.abs(expectedDuration))}
           actual={formatDuration(Math.abs(realDuration))}
           diff={expectedDuration - realDuration}

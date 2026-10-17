@@ -1,4 +1,5 @@
 import { Button, Modal, type Shortcut } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import styles from './MeetingDashboard.module.css';
 
 export type ShortcutsHelpModalProps = {
@@ -12,13 +13,14 @@ export function ShortcutsHelpModal({
   onClose,
   shortcuts,
 }: ShortcutsHelpModalProps) {
+  const t = useT().board;
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title="Keyboard shortcuts"
+      title={t.shortcutsTitle}
       closeOnOverlayClick
-      footer={<Button onClick={onClose}>Got it</Button>}
+      footer={<Button onClick={onClose}>{t.gotIt}</Button>}
     >
       <dl className={styles.shortcuts}>
         {shortcuts.map((shortcut) => (

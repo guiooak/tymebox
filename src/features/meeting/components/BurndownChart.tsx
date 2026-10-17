@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { Chart, InfoButton, type ChartSeries } from '../../../common/components';
 import { useDialog } from '../../../common/components';
 import { formatTime, toTimestamp } from '../../../common/services/datetime';
+import { useT } from '../../../common/services/i18n';
 import { usePrefersReducedMotion } from '../../../common/services/motion';
 import { useCssVars } from '../../../common/services/theme';
 import {
@@ -24,6 +25,7 @@ export type BurndownChartProps = {
 export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
   function BurndownChart({ startTime, endTime, items, showProjection, height }, ref) {
     const dialog = useDialog();
+    const t = useT().burndown;
     // Recharts animates in JS, so the global prefers-reduced-motion rule in
     // base.css can't reach it — the preference has to be read here.
     const reduceMotion = usePrefersReducedMotion();
@@ -55,7 +57,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
       const result: ChartSeries[] = [
         {
           id: 'tendency',
-          name: 'Tendency',
+          name: t.tendency,
           color: palette.tendency,
           data: buildTendency(startTs, endTs, total),
           strokeWidth: 1,
@@ -63,7 +65,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         },
         {
           id: 'progress',
-          name: 'Your progress',
+          name: t.progress,
           color: palette.progress,
           data: progress,
           strokeWidth: 2,
@@ -75,7 +77,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         if (projection) {
           result.push({
             id: 'projection',
-            name: 'Projection',
+            name: t.projection,
             color: palette.projection,
             data: projection,
             strokeWidth: 2,
@@ -84,7 +86,7 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
         }
       }
       return result;
-    }, [startTime, endTime, items, showProjection, now, palette]);
+    }, [startTime, endTime, items, showProjection, now, palette, t]);
 
     const xDomain = useMemo<[number, number]>(
       () => [toTimestamp(startTime), toTimestamp(endTime)],
@@ -93,9 +95,9 @@ export const BurndownChart = forwardRef<HTMLDivElement, BurndownChartProps>(
 
     const onInfo = () =>
       dialog.alert({
-        title: 'This is your Burndown Chart 📉',
-        text: 'The grey line is the ideal tendency from total work down to zero across the event. The blue line steps down as you complete goals. The green projection estimates your next completion. When your progress sits above the tendency line, the event is trending late — so speed up or trim scope.',
-        buttonText: 'Got it',
+        title: t.infoTitle,
+        text: t.infoText,
+        buttonText: t.gotIt,
         closeOnOverlayClick: true,
       });
 

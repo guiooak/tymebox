@@ -6,6 +6,7 @@ import {
   PostIt,
   useDialog,
 } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import { FIELD_LIMITS, type SideTopic } from '../domain/types';
 import styles from './MeetingDashboard.module.css';
 
@@ -29,6 +30,7 @@ export function DashboardSideTopics({
   focusKey,
   readOnly,
 }: DashboardSideTopicsProps) {
+  const t = useT();
   const dialog = useDialog();
 
   // A topic left empty is dropped when the field loses focus. Judge emptiness
@@ -48,10 +50,10 @@ export function DashboardSideTopics({
       return;
     }
     const confirmed = await dialog.confirm({
-      text: 'Are you sure you want to remove it?',
+      text: t.board.removeTopic,
       confirmButtonTheme: 'danger',
-      confirmButtonText: 'Yes, do it',
-      cancelButtonText: 'Not anymore',
+      confirmButtonText: t.common.yesDoIt,
+      cancelButtonText: t.common.notAnymore,
     });
     if (confirmed) {
       onRemove(item.key);
@@ -61,10 +63,10 @@ export function DashboardSideTopics({
   return (
     <Box className={styles.parkingLot}>
       <div className={styles.parkingHead}>
-        <strong>Parking lot</strong>
+        <strong>{t.board.parkingLot}</strong>
         {!readOnly && (
           <Button size="sm" onClick={onAdd}>
-            + Add side topic
+            {t.board.addSideTopic}
           </Button>
         )}
       </div>
@@ -72,8 +74,8 @@ export function DashboardSideTopics({
         <BlankSlate
           art="parking"
           compact
-          title="Nothing parked yet"
-          description="Tangents go here, so the event can keep moving."
+          title={t.board.nothingParked}
+          description={t.board.nothingParkedText}
         />
       ) : (
         <div className={styles.notes}>
@@ -90,7 +92,7 @@ export function DashboardSideTopics({
                 readOnly={readOnly}
               />
               {item.goalName && (
-                <Badge className={styles.noteTag}>during “{item.goalName}”</Badge>
+                <Badge className={styles.noteTag}>{t.board.during(item.goalName)}</Badge>
               )}
             </div>
           ))}

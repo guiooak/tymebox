@@ -20,6 +20,7 @@ import {
   paths,
   useNavigation,
 } from '../../../common/services/router';
+import { useT } from '../../../common/services/i18n';
 import { BurndownChart } from '../components';
 import { can, type Role } from '../domain/access';
 import type { Meeting } from '../domain/types';
@@ -30,15 +31,6 @@ import { TemplatePreviewModal } from './TemplatePreviewModal';
 import { TimeCardsGrid } from './TimeCardsGrid';
 import styles from './MeetingReport.module.css';
 
-/** "3rd event in a row under budget" — ordinal for a small, human-sized count. */
-function ordinal(value: number): string {
-  const suffix =
-    value % 100 >= 11 && value % 100 <= 13
-      ? 'th'
-      : (['th', 'st', 'nd', 'rd'][value % 10] ?? 'th');
-  return `${value}${suffix}`;
-}
-
 /** The report of the finished event in the URL, for anyone allowed to open it. */
 export function MeetingReport() {
   return <EventGate>{(event, role) => <Report meeting={event} role={role} />}</EventGate>;
@@ -47,6 +39,8 @@ export function MeetingReport() {
 function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const navigation = useNavigation();
   const dialog = useDialog();
+  const tt = useT();
+  const t = tt.report;
   const backToDashboard = useMeetingStore((state) => state.backToDashboard);
 
   const chartRef = useRef<HTMLDivElement>(null);
@@ -96,10 +90,10 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const onDownloadChart = async () => {
     const dataUrl = await renderChartImage();
     if (!dataUrl) {
-      await dialog.alert('The chart is not ready to export yet.');
+      await dialog.alert(t.chartNotReady);
       return;
     }
-    downloadUrl(dataUrl, `${toFileStem(meeting.name)}-burndown.png`);
+    downloadUrl(dataUrl, t.chartFile(toFileStem(meeting.name)));
   };
 
   const onBackToDashboard = async () => {
@@ -109,9 +103,9 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
 
   const onStartNew = async () => {
     const confirmed = await dialog.confirm({
-      text: 'This will close this report. Start a new event?',
-      confirmButtonText: 'Yes, do it',
-      cancelButtonText: 'Not anymore',
+      text: t.closeReport,
+      confirmButtonText: tt.common.yesDoIt,
+      cancelButtonText: tt.common.notAnymore,
     });
     if (confirmed) {
       // The new-event form lets go of a finished current event by itself.
@@ -129,16 +123,18 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
           </div>
           {sameDay ? (
             <Heading size="xxs" level={2}>
-              Happened on {formatLong(meeting.realStartTime)} until{' '}
-              {formatTime(meeting.realEndTime)}
+              {t.happenedOn(
+                formatLong(meeting.realStartTime),
+                formatTime(meeting.realEndTime),
+              )}
             </Heading>
           ) : (
             <>
               <Heading size="xxs" level={2}>
-                Started {formatLong(meeting.realStartTime)}
+                {t.started(formatLong(meeting.realStartTime))}
               </Heading>
               <Heading size="xxs" level={2}>
-                Finished {formatLong(meeting.realEndTime)}
+                {t.finished(formatLong(meeting.realEndTime))}
               </Heading>
             </>
           )}
@@ -147,16 +143,14 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
           )}
           {trend >= 2 && (
             <div className={styles.trend}>
-              <Badge theme="success">
-                🔥 {ordinal(trend)} event in a row finishing on budget
-              </Badge>
+              <Badge theme="success">{t.streak(trend)}</Badge>
             </div>
           )}
         </header>
 
         <section className={styles.section}>
           <Heading size="sm" level={2} className={styles.sectionTitle}>
-            Goals
+            {t.goals}
           </Heading>
           <div className={styles.goals}>
             {meeting.goals.map((goal) => (
@@ -164,10 +158,8 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
                 <div className={styles.goalHead}>
                   <strong>{goal.name}</strong>
                   <span className={styles.goalMeta}>
-                    {goal.finishedAt
-                      ? `done at ${formatTime(goal.finishedAt)}h`
-                      : 'not done'}{' '}
-                    · weight {goal.weight}
+                    {goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone}{' '}
+                    · {t.weight(goal.weight)}
                   </span>
                 </div>
                 {goal.decisions && <p className={styles.decisions}>{goal.decisions}</p>}
@@ -179,7 +171,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
         {sideTopics.length > 0 && (
           <section className={styles.section}>
             <Heading size="sm" level={2} className={styles.sectionTitle}>
-              Side topics
+              {t.sideTopics}
             </Heading>
             <ul className={styles.topics}>
               {sideTopics.map((topic) => (
@@ -188,7 +180,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
                   {topic.goalName && (
                     <span className={styles.sideTopicTag}>
                       {' '}
-                      — during “{topic.goalName}”
+                      {t.during(topic.goalName)}
                     </span>
                   )}
                 </li>
@@ -199,7 +191,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
 
         <section className={styles.section}>
           <Heading size="sm" level={2} className={styles.sectionTitle}>
-            Performance
+            {t.performance}
           </Heading>
           <BurndownChart
             ref={chartRef}
@@ -221,24 +213,24 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
         <Footer justifyContent="space-between">
           {can(role, 'run') ? (
             <Button theme="tertiary" onClick={() => void onBackToDashboard()}>
-              Reopen event
+              {t.reopen}
             </Button>
           ) : (
             <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
-              Go to Home
+              {t.goHome}
             </Button>
           )}
           <div className={styles.actions}>
             <Button theme="info" outline onClick={() => void onDownloadChart()}>
-              Download chart
+              {t.downloadChart}
             </Button>
             <Button theme="info" outline onClick={printPage}>
-              Print / PDF
+              {t.print}
             </Button>
             <Button theme="info" outline onClick={() => void onCopyReport()}>
-              Copy report
+              {t.copyReport}
             </Button>
-            <Button onClick={() => void onStartNew()}>Start new event</Button>
+            <Button onClick={() => void onStartNew()}>{t.startNew}</Button>
           </div>
         </Footer>
       </Page>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { DatePicker, Icon, type IconName } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import {
   diffMs,
   formatDuration,
@@ -25,6 +26,7 @@ type ChipProps = {
 };
 
 function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
+  const t = useT().board;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const editorRef = useRef<HTMLSpanElement>(null);
@@ -33,7 +35,7 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
     ? isSameDay(value, new Date())
       ? formatTime(value)
       : formatLong(value)
-    : 'not set';
+    : t.notSet;
 
   const open = () => {
     setDraft(value);
@@ -100,7 +102,7 @@ function ScheduleChip({ icon, label, value, onChange, readOnly }: ChipProps) {
       type="button"
       className={styles.chip}
       disabled={readOnly}
-      aria-label={`Edit ${label.toLowerCase()}`}
+      aria-label={t.editNamed(label)}
       onClick={open}
     >
       <Icon name={icon} size={16} className={styles.chipIcon} />
@@ -121,6 +123,7 @@ export function DashboardSchedule({
   onChange,
   readOnly,
 }: DashboardScheduleProps) {
+  const t = useT().board;
   const duration =
     expectedStartTime && expectedEndTime ? diffMs(expectedEndTime, expectedStartTime) : 0;
   const invalid = !!expectedStartTime && !!expectedEndTime && duration <= 0;
@@ -129,24 +132,22 @@ export function DashboardSchedule({
     <div className={styles.schedule}>
       <ScheduleChip
         icon="clock"
-        label="Starts"
+        label={t.starts}
         value={expectedStartTime}
         onChange={(iso) => onChange({ expectedStartTime: iso })}
         readOnly={readOnly}
       />
       <ScheduleChip
         icon="flag"
-        label="Ends"
+        label={t.ends}
         value={expectedEndTime}
         onChange={(iso) => onChange({ expectedEndTime: iso })}
         readOnly={readOnly}
       />
       {duration > 0 && (
-        <span className={styles.chipStatic}>{formatDuration(duration)} box</span>
+        <span className={styles.chipStatic}>{t.box(formatDuration(duration))}</span>
       )}
-      {invalid && (
-        <span className={styles.scheduleError}>End time should be after start time</span>
-      )}
+      {invalid && <span className={styles.scheduleError}>{t.endBeforeStart}</span>}
     </div>
   );
 }

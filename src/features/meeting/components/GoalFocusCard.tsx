@@ -1,4 +1,5 @@
 import { Badge, Box, Button } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import type { Goal } from '../domain/types';
 import styles from './GoalFocusCard.module.css';
 
@@ -22,13 +23,14 @@ export function GoalFocusCard({
   disabled,
   onComplete,
 }: GoalFocusCardProps) {
+  const t = useT().milestones;
   if (!goal) {
     return (
       <Box className={styles.focus}>
         <div className={styles.head}>
-          <Badge theme="success">All done</Badge>
+          <Badge theme="success">{t.allDone}</Badge>
         </div>
-        <p className={styles.title}>Every milestone is closed. 🎉</p>
+        <p className={styles.title}>{t.allClosed}</p>
       </Box>
     );
   }
@@ -36,10 +38,8 @@ export function GoalFocusCard({
   return (
     <Box className={styles.focus}>
       <div className={styles.head}>
-        <Badge theme="primary">Now</Badge>
-        <span className={styles.progress}>
-          {position} of {total}
-        </span>
+        <Badge theme="primary">{t.now}</Badge>
+        <span className={styles.progress}>{t.position(position, total)}</span>
       </div>
       <p className={styles.title}>{goal.name}</p>
       {goal.decisions.trim() && <p className={styles.notes}>{goal.decisions}</p>}
@@ -50,7 +50,7 @@ export function GoalFocusCard({
         onClick={onComplete}
         className={styles.action}
       >
-        Mark as done
+        {t.markDone}
       </Button>
     </Box>
   );

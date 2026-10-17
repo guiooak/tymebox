@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, FormDatetimePicker, FormField, Modal } from '../../../common/components';
+import { useT } from '../../../common/services/i18n';
 import type { Goal } from '../domain/types';
 import styles from './GoalsDecisionCollector.module.css';
 
@@ -14,6 +15,8 @@ export type GoalEditModalProps = {
  * milestone was actually completed, and how much it weighs in the burndown.
  */
 export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
+  const tt = useT();
+  const t = tt.milestones;
   const [finishedAt, setFinishedAt] = useState(goal?.finishedAt ?? '');
   const [weight, setWeight] = useState(String(goal?.weight ?? 1));
 
@@ -31,7 +34,7 @@ export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
   const parsedWeight = Number(weight);
   const weightError =
     !weight.trim() || Number.isNaN(parsedWeight) || parsedWeight <= 0
-      ? 'Weight must be a positive number'
+      ? t.weightError
       : null;
 
   const onConfirm = () => {
@@ -46,26 +49,22 @@ export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
     <Modal
       open={!!goal}
       onClose={onClose}
-      title={goal ? `Edit “${goal.name}”` : 'Edit milestone'}
+      title={goal ? t.editTitle(goal.name) : t.editMilestone}
       closeOnOverlayClick
       footer={
         <>
           <Button theme="secondary" outline onClick={onClose}>
-            Cancel
+            {tt.common.cancel}
           </Button>
           <Button onClick={onConfirm} disabled={!!weightError}>
-            Save
+            {t.save}
           </Button>
         </>
       }
     >
-      <FormField label="Completed at">
+      <FormField label={t.completedAt}>
         <FormDatetimePicker value={finishedAt} onChange={setFinishedAt} />
-        <small className={styles.hint}>
-          {finishedAt
-            ? 'Correcting this moves the point on the burndown chart.'
-            : 'Empty means this milestone is still open.'}
-        </small>
+        <small className={styles.hint}>{finishedAt ? t.completedHint : t.openHint}</small>
         {finishedAt && (
           <Button
             size="sm"
@@ -74,24 +73,22 @@ export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
             className={styles.clearTime}
             onClick={() => setFinishedAt('')}
           >
-            Mark as not done
+            {t.markNotDone}
           </Button>
         )}
       </FormField>
 
-      <FormField label="Weight">
+      <FormField label={t.weight}>
         <input
           className={styles.weightInput}
           type="number"
           min={1}
           step={1}
           value={weight}
-          aria-label="Weight"
+          aria-label={t.weight}
           onChange={(event) => setWeight(event.target.value)}
         />
-        <small className={styles.hint}>
-          Heavier milestones take a bigger step down on the burndown chart.
-        </small>
+        <small className={styles.hint}>{t.weightHint}</small>
         {weightError && <span className={styles.error}>{weightError}</span>}
       </FormField>
     </Modal>
