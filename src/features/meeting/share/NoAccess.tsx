@@ -8,6 +8,7 @@ import {
   TextArea,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
+import { useT } from '../../../common/services/i18n';
 import { paths, useNavigation } from '../../../common/services/router';
 import { ACCESS_LIMITS } from '../domain/access';
 import { useMeetingStore } from '../store';
@@ -20,6 +21,7 @@ import styles from './share.module.css';
  */
 export function NoAccess() {
   const navigation = useNavigation();
+  const t = useT().share;
   const access = useMeetingStore((state) => state.access);
   const myRequest = useMeetingStore((state) => state.myRequest);
   const user = useMeetingStore((state) => state.user);
@@ -51,7 +53,7 @@ export function NoAccess() {
       await requestAccess(message);
       setMessage('');
     } catch {
-      setError('Couldn’t send the request. Check the link and try again.');
+      setError(t.requestSendFailed);
     } finally {
       setBusy(false);
     }
@@ -71,7 +73,7 @@ export function NoAccess() {
 
   const goHome = (
     <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
-      Go to Home
+      {t.goHome}
     </Button>
   );
 
@@ -82,11 +84,10 @@ export function NoAccess() {
           {myRequest ? (
             <>
               <Heading size="md" level={1}>
-                Request sent
+                {t.requestSent}
               </Heading>
               <Paragraph className={styles.muted}>
-                You asked for access on {formatLong(new Date(myRequest.requestedAt))}.
-                This page opens the event as soon as the owner approves.
+                {t.requestSentText(formatLong(new Date(myRequest.requestedAt)))}
               </Paragraph>
               <div className={styles.row}>
                 {goHome}
@@ -96,35 +97,29 @@ export function NoAccess() {
                   disabled={busy}
                   onClick={() => void cancel()}
                 >
-                  Cancel request
+                  {t.cancelRequest}
                 </Button>
               </div>
             </>
           ) : (
             <>
               <Heading size="md" level={1}>
-                {declined
-                  ? 'The owner didn’t approve your request'
-                  : 'You don’t have access to this event'}
+                {declined ? t.declined : t.noAccess}
               </Heading>
               <Paragraph className={styles.muted}>
-                {access
-                  ? `Ask the owner for access. They'll see your request${
-                      user?.email ? ` from ${user.email}` : ''
-                    } and can let you in as a viewer or a contributor.`
-                  : 'This event doesn’t exist, or it hasn’t been shared with you.'}
+                {access ? t.askOwner(user?.email ?? '') : t.missing}
               </Paragraph>
               {access && (
                 <>
                   <label className={styles.label} htmlFor="request-message">
-                    Message to the owner (optional)
+                    {t.messageLabel}
                   </label>
                   <TextArea
                     id="request-message"
                     value={message}
                     maxLength={ACCESS_LIMITS.requestMessage}
                     onChange={setMessage}
-                    placeholder="I’m on the team running this meeting…"
+                    placeholder={t.messagePlaceholder}
                   />
                   {error && <p className={styles.error}>{error}</p>}
                 </>
@@ -133,7 +128,7 @@ export function NoAccess() {
                 {goHome}
                 {access && (
                   <Button disabled={busy} onClick={() => void send()}>
-                    {declined ? 'Ask again' : 'Request access'}
+                    {declined ? t.askAgain : t.requestAccess}
                   </Button>
                 )}
               </div>

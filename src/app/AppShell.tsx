@@ -38,6 +38,12 @@ export function AppShell() {
   const email = user?.email ?? '';
   const name = user?.displayName ?? user?.email ?? '';
   const photoURL = user?.photoURL ?? '';
+  // The tab title follows the interface language (index.html keeps the
+  // English one for link previews, which don't run the app).
+  useEffect(() => {
+    document.title = t.shell.documentTitle;
+  }, [t]);
+
   useEffect(() => {
     if (!uid) {
       return;

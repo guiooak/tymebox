@@ -439,6 +439,9 @@ describe('your own user node', () => {
     await assertFails(me.child('settings/other').set(true));
     await assertFails(me.child('visited/abc').set('soon'));
     await assertFails(me.child('currentMeetingId').set('x'.repeat(200)));
+    await assertSucceeds(me.child('settings/locale').set('pt-BR'));
+    await assertSucceeds(me.child('settings/locale').set('en-US'));
+    await assertFails(me.child('settings/locale').set('fr-FR'));
     await assertFails(db(STRANGER).ref(`users/${OWNER.uid}/currentMeetingId`).set(ID));
   });
 });

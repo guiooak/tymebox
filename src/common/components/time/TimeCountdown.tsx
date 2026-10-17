@@ -99,7 +99,7 @@ export function TimeCountdown({
     <TimeDisplay
       theme={theme}
       header={isNegative ? t.overdueTime : t.timeLeft}
-      footer={<small>should be finished at {endLabel}</small>}
+      footer={<small>{t.shouldFinishAt(endLabel)}</small>}
       prominent={prominent}
       pulseKey={pulseKey}
     >

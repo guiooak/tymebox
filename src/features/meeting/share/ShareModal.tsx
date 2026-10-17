@@ -1,10 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { Button, Modal, Select, type SelectOption } from '../../../common/components';
+import { useT, type Messages } from '../../../common/services/i18n';
 import { eventPath } from '../../../common/services/router';
 import {
   emailKey,
   isValidShareEmail,
-  ROLE_LABELS,
   type AccessRequest,
   type GrantedRole,
   type Member,
@@ -23,27 +23,23 @@ export function eventLink(id: string): string {
   return `${window.location.origin}${eventPath(id)}`;
 }
 
-const ROLE_OPTIONS: ReadonlyArray<SelectOption<GrantedRole>> = [
-  { value: 'viewer', label: ROLE_LABELS.viewer, description: 'Follows along, read-only' },
-  {
-    value: 'contributor',
-    label: ROLE_LABELS.contributor,
-    description: 'Runs the event and edits it',
-  },
-];
+function roleOptions(t: Messages): SelectOption<GrantedRole>[] {
+  return [
+    { value: 'viewer', label: t.roles.viewer, description: t.share.viewerHint },
+    {
+      value: 'contributor',
+      label: t.roles.contributor,
+      description: t.share.contributorHint,
+    },
+  ];
+}
 
-const VISIBILITY_OPTIONS: ReadonlyArray<SelectOption<Visibility>> = [
-  {
-    value: 'private',
-    label: 'Private: only people added',
-    description: 'Others with the link can ask for access',
-  },
-  {
-    value: 'public',
-    label: 'Anyone with the link',
-    description: 'Anyone signed in who has the link can open it',
-  },
-];
+function visibilityOptions(t: Messages): SelectOption<Visibility>[] {
+  return [
+    { value: 'private', label: t.share.privateLabel, description: t.share.privateHint },
+    { value: 'public', label: t.share.publicLabel, description: t.share.publicHint },
+  ];
+}
 
 function RoleSelect({
   value,
@@ -57,10 +53,11 @@ function RoleSelect({
   /** Small next to the small buttons of a person's row. */
   size?: 'sm' | 'md';
 }) {
+  const t = useT();
   return (
     <Select<GrantedRole>
       value={value}
-      options={ROLE_OPTIONS}
+      options={roleOptions(t)}
       onChange={onChange}
       label={label}
       size={size}
@@ -78,21 +75,22 @@ function Initial({ name, photoURL }: { name: string; photoURL?: string }) {
   );
 }
 
-function timeAgo(ms: number): string {
+function timeAgo(ms: number, t: Messages['share']): string {
   const minutes = Math.max(0, Math.round((Date.now() - ms) / 60000));
   if (minutes < 1) {
-    return 'just now';
+    return t.justNow;
   }
   if (minutes < 60) {
-    return `${minutes} min ago`;
+    return t.minutesAgo(minutes);
   }
   const hours = Math.round(minutes / 60);
-  return hours < 24 ? `${hours} h ago` : `${Math.round(hours / 24)} d ago`;
+  return hours < 24 ? t.hoursAgo(hours) : t.daysAgo(Math.round(hours / 24));
 }
 
 function RequestRow({ request }: { request: AccessRequest }) {
   const approveRequest = useMeetingStore((state) => state.approveRequest);
   const denyRequest = useMeetingStore((state) => state.denyRequest);
+  const t = useT().share;
   const [role, setRole] = useState<GrantedRole>('viewer');
   const [busy, setBusy] = useState(false);
 
@@ -112,7 +110,7 @@ function RequestRow({ request }: { request: AccessRequest }) {
         <strong>{request.name || request.email}</strong>
         <span className={styles.muted}>
           {request.name ? `${request.email} · ` : ''}
-          {timeAgo(request.requestedAt)}
+          {timeAgo(request.requestedAt, t)}
         </span>
         {request.message && <q className={styles.message}>{request.message}</q>}
       </div>
@@ -121,14 +119,14 @@ function RequestRow({ request }: { request: AccessRequest }) {
           size="sm"
           value={role}
           onChange={setRole}
-          label={`Role for ${request.email}`}
+          label={t.roleFor(request.email)}
         />
         <Button
           size="sm"
           disabled={busy}
           onClick={() => void act(() => approveRequest(request, role))}
         >
-          Approve
+          {t.approve}
         </Button>
         <Button
           size="sm"
@@ -137,7 +135,7 @@ function RequestRow({ request }: { request: AccessRequest }) {
           disabled={busy}
           onClick={() => void act(() => denyRequest(request))}
         >
-          Deny
+          {t.deny}
         </Button>
       </div>
     </li>
@@ -145,6 +143,7 @@ function RequestRow({ request }: { request: AccessRequest }) {
 }
 
 function MemberRow({ member }: { member: Member }) {
+  const t = useT().share;
   const setMemberRole = useMeetingStore((state) => state.setMemberRole);
   const unshare = useMeetingStore((state) => state.unshare);
   return (
@@ -158,16 +157,16 @@ function MemberRow({ member }: { member: Member }) {
           size="sm"
           value={member.role}
           onChange={(role) => void setMemberRole(member, role)}
-          label={`Role for ${member.email}`}
+          label={t.roleFor(member.email)}
         />
         <Button
           size="sm"
           theme="secondary"
           outline
-          aria-label={`Remove ${member.email}`}
+          aria-label={t.removeNamed(member.email)}
           onClick={() => void unshare(member)}
         >
-          Remove
+          {t.remove}
         </Button>
       </div>
     </li>
@@ -180,6 +179,8 @@ function MemberRow({ member }: { member: Member }) {
  * change saves at once; the database rules check it.
  */
 export function ShareModal({ open, onClose }: ShareModalProps) {
+  const tt = useT();
+  const t = tt.share;
   const event = useMeetingStore((state) => state.event);
   const access = useMeetingStore((state) => state.access);
   const members = useMeetingStore((state) => state.members);
@@ -212,15 +213,15 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
     submit.preventDefault();
     const value = email.trim();
     if (!isValidShareEmail(value)) {
-      setError('Enter a valid email address.');
+      setError(t.invalidEmail);
       return;
     }
     if (user?.email && emailKey(value) === emailKey(user.email)) {
-      setError('That’s you — you already own this event.');
+      setError(t.itsYou);
       return;
     }
     if (members.some((member) => member.key === emailKey(value))) {
-      setError('This person already has access. Change their role below.');
+      setError(t.alreadyMember);
       return;
     }
     setError(null);
@@ -235,16 +236,16 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
     <Modal
       open={open}
       onClose={onClose}
-      title={`Share “${event.name}”`}
+      title={t.title(event.name)}
       width={600}
       closeOnOverlayClick
-      footer={<Button onClick={onClose}>Done</Button>}
+      footer={<Button onClick={onClose}>{t.done}</Button>}
     >
       <div className={styles.modalBody}>
         {requests.length > 0 && (
           <section className={styles.section} aria-labelledby="share-requests">
             <h4 id="share-requests" className={styles.sectionTitle}>
-              Requests <span className={styles.count}>{requests.length}</span>
+              {t.requests} <span className={styles.count}>{requests.length}</span>
             </h4>
             <ul className={styles.people}>
               {requests.map((request) => (
@@ -255,68 +256,63 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
         )}
 
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle}>Link</h4>
+          <h4 className={styles.sectionTitle}>{t.link}</h4>
           <div className={styles.linkRow}>
             <input
               className={styles.input}
               value={link}
               readOnly
-              aria-label="Event link"
+              aria-label={t.eventLink}
             />
             <Button theme="secondary" outline onClick={() => void copy()}>
-              {copied ? 'Copied!' : 'Copy link'}
+              {copied ? t.copied : t.copyLink}
             </Button>
           </div>
         </section>
 
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle}>General access</h4>
+          <h4 className={styles.sectionTitle}>{t.generalAccess}</h4>
           <div className={styles.linkRow}>
             <Select<Visibility>
               value={access.visibility}
-              options={VISIBILITY_OPTIONS}
+              options={visibilityOptions(tt)}
               onChange={onVisibility}
-              label="General access"
+              label={t.generalAccess}
             />
             {access.visibility === 'public' && (
               <RoleSelect
                 value={access.publicRole}
                 onChange={(publicRole) => void setVisibility('public', publicRole)}
-                label="Role for anyone with the link"
+                label={t.publicRoleLabel}
               />
             )}
           </div>
           <p className={styles.hint}>
             {access.visibility === 'public'
-              ? 'Anyone signed in who has the link can open it as a ' +
-                ROLE_LABELS[access.publicRole].toLowerCase() +
-                '. Public events they open appear under their Shared with me.'
-              : 'Only you and the people below can open it. Others with the link can ask for access.'}
+              ? t.publicNote(tt.roles[access.publicRole])
+              : t.privateNote}
           </p>
         </section>
 
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle}>People</h4>
+          <h4 className={styles.sectionTitle}>{t.people}</h4>
           <form className={styles.addRow} onSubmit={(submit) => void add(submit)}>
             <input
               className={styles.input}
               type="email"
               value={email}
-              placeholder="name@company.com"
-              aria-label="Email to share with"
+              placeholder={t.emailPlaceholder}
+              aria-label={t.emailAria}
               onChange={(change) => {
                 setEmail(change.target.value);
                 setError(null);
               }}
             />
-            <RoleSelect value={role} onChange={setRole} label="Role for the new person" />
-            <Button type="submit">Add</Button>
+            <RoleSelect value={role} onChange={setRole} label={t.newPersonRole} />
+            <Button type="submit">{t.add}</Button>
           </form>
           {error && <p className={styles.error}>{error}</p>}
-          <p className={styles.hint}>
-            They’ll find it under Shared with me after signing in with this email. Send
-            them the link so they know.
-          </p>
+          <p className={styles.hint}>{t.addedHint}</p>
           <ul className={styles.people}>
             <li className={styles.person}>
               <Initial name={user?.name || event.ownerName} photoURL={user?.photoURL} />
@@ -324,7 +320,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
                 <strong>{event.ownerName || user?.name}</strong>
                 <span className={styles.muted}>{user?.email}</span>
               </div>
-              <span className={styles.ownerTag}>Owner</span>
+              <span className={styles.ownerTag}>{t.owner}</span>
             </li>
             {members.map((member) => (
               <MemberRow key={member.key} member={member} />

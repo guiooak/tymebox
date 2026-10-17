@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { getT } from '../../../common/services/i18n';
 import { notify } from '../../../common/services/notifications';
 import {
   alertCrossings,
@@ -55,13 +56,13 @@ export function ThresholdAlertsWatcher() {
       previous.current = { id: meeting.id, state };
       for (const crossing of alertCrossings(last, state)) {
         if (crossing === 'late') {
-          notify('Trending late', {
-            body: `“${meeting.name}” is behind: the current milestone has run over its share of the time.`,
+          notify(getT().alerts.lateTitle, {
+            body: getT().alerts.lateBody(meeting.name),
             tag: `tw-late-${meeting.id}`,
           });
         } else {
-          notify('Time is up', {
-            body: `“${meeting.name}” has reached its planned end time.`,
+          notify(getT().alerts.upTitle, {
+            body: getT().alerts.upBody(meeting.name),
             tag: `tw-overdue-${meeting.id}`,
           });
         }

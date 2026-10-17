@@ -103,11 +103,6 @@ export function can(role: Role | null, action: Action): boolean {
   return !!role && ALLOWED[role].includes(action);
 }
 
-export const ROLE_LABELS: Record<GrantedRole, string> = {
-  viewer: 'Viewer',
-  contributor: 'Contributor',
-};
-
 const GOOGLE_PHOTOS = 'https://lh3.googleusercontent.com/';
 
 /** The rules accept only Google profile pictures on an access request; anything else goes as none. */

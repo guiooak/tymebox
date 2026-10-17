@@ -1,4 +1,5 @@
 import { toTimestamp } from '../../../common/services/datetime';
+import { getT } from '../../../common/services/i18n';
 import type { ChartPoint } from '../../../common/services/chart';
 
 export type BurndownItem = {
@@ -19,8 +20,8 @@ export function buildTendency(
   total: number,
 ): ChartPoint[] {
   return [
-    { x: startTs, y: total, label: 'Start' },
-    { x: endTs, y: 0, label: 'Deadline' },
+    { x: startTs, y: total, label: getT().burndown.start },
+    { x: endTs, y: 0, label: getT().burndown.deadline },
   ];
 }
 
@@ -65,7 +66,9 @@ export function buildProgress(
       (a, b) => toTimestamp(a.finishedAt as string) - toTimestamp(b.finishedAt as string),
     );
 
-  const points: ChartPoint[] = [{ x: startTs, y: total, label: 'No task done yet' }];
+  const points: ChartPoint[] = [
+    { x: startTs, y: total, label: getT().burndown.noneDone },
+  ];
   let remaining = total;
   for (const item of finished) {
     remaining -= Number(item.weight) || 1;
@@ -96,7 +99,7 @@ export function buildProjection(
   const avg =
     remainingWeights.reduce((acc, weight) => acc + weight, 0) / remainingWeights.length;
   return [
-    { x: lastProgress.x, y: lastProgress.y, label: 'Last done' },
-    { x: nowTs, y: Math.max(0, lastProgress.y - avg), label: 'Next target' },
+    { x: lastProgress.x, y: lastProgress.y, label: getT().burndown.lastDone },
+    { x: nowTs, y: Math.max(0, lastProgress.y - avg), label: getT().burndown.nextTarget },
   ];
 }

@@ -1,5 +1,5 @@
 import { addHours, diffMs, nowISO, toISO } from '../../../common/services/datetime';
-import { useI18nStore, type Locale } from '../../../common/services/i18n';
+import { getT, useI18nStore, type Locale } from '../../../common/services/i18n';
 import { createStore } from '../../../common/services/state';
 import { uid as makeId } from '../../../common/services/uid';
 import {
@@ -552,7 +552,7 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
         durationMs > 0 ? new Date(start.getTime() + durationMs) : addHours(start, 1);
 
       const meeting = newMeeting({
-        name: `${source.name} (copy)`,
+        name: getT().events.copyName(source.name),
         description: source.description,
         expectedStartTime: toISO(start),
         expectedEndTime: toISO(end),

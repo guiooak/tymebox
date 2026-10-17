@@ -62,4 +62,21 @@ describe('Landing', () => {
       window.matchMedia = matchMedia;
     }
   });
+
+  it('speaks Portuguese when that is the chosen language', async () => {
+    const { useI18nStore } = await import('../../common/services/i18n');
+    useI18nStore.getState().setLocale('pt-BR');
+    try {
+      renderAt('/');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+        'Cada evento, na sua caixa.',
+      );
+      expect(
+        screen.getAllByRole('button', { name: /Continuar com o Google/ }),
+      ).toHaveLength(2);
+      expect(screen.getByRole('combobox', { name: 'Idioma' })).toHaveTextContent('PT');
+    } finally {
+      useI18nStore.getState().setLocale('en-US');
+    }
+  });
 });

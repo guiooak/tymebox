@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../../common/components';
-import { ROLE_LABELS } from '../domain/access';
+import { useT } from '../../../common/services/i18n';
 import { useMeetingStore } from '../store';
 import { eventLink, ShareModal } from './ShareModal';
 import styles from './share.module.css';
@@ -14,6 +14,8 @@ export function ShareButton() {
   const event = useMeetingStore((state) => state.event);
   const role = useMeetingStore((state) => state.role);
   const requests = useMeetingStore((state) => state.requests);
+  const tt = useT();
+  const t = tt.share;
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -33,11 +35,9 @@ export function ShareButton() {
     };
     return (
       <div className={styles.sharedChip}>
-        <span>
-          Shared by {event.ownerName || 'the owner'} · {ROLE_LABELS[role]}
-        </span>
+        <span>{t.sharedBy(event.ownerName || t.theOwner, tt.roles[role])}</span>
         <Button size="sm" theme="secondary" outline onClick={() => void copy()}>
-          {copied ? 'Copied!' : 'Copy link'}
+          {copied ? t.copied : t.copyLink}
         </Button>
       </div>
     );
@@ -51,13 +51,9 @@ export function ShareButton() {
         outline
         className={styles.shareButton}
         onClick={() => setOpen(true)}
-        aria-label={
-          requests.length > 0
-            ? `Share — ${requests.length} access ${requests.length === 1 ? 'request' : 'requests'} waiting`
-            : 'Share'
-        }
+        aria-label={requests.length > 0 ? t.shareWaiting(requests.length) : t.share}
       >
-        Share
+        {t.share}
         {requests.length > 0 && <span className={styles.badge}>{requests.length}</span>}
       </Button>
       <ShareModal open={open} onClose={() => setOpen(false)} />

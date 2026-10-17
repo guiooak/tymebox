@@ -6,6 +6,8 @@ import type { Messages } from './en';
  * parking lot = estacionamento, report = relatório, board = quadro,
  * viewer/contributor = leitor/colaborador, time box = caixa de tempo.
  */
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+
 export const ptBR: Messages = {
   formats: {
     longDate: "EEEE, d 'de' MMMM 'de' yyyy, HH:mm'h'",
@@ -46,6 +48,7 @@ export const ptBR: Messages = {
     label: 'Idioma',
   },
   shell: {
+    documentTitle: 'Tymebox — Seus eventos em caixas de tempo',
     starting: 'Iniciando o Tymebox…',
     footer: 'Tymebox · foque só no que importa',
     home: 'Início',
@@ -157,7 +160,8 @@ export const ptBR: Messages = {
     recentEvents: 'Eventos recentes',
     viewAll: 'Ver todos',
     finishToSee: 'Finalize um evento para vê-lo aqui.',
-    recentMeta: (date, goals) => `${date} · ${goals} ${goals === 1 ? 'meta' : 'metas'}`,
+    recentMeta: (date, goals) =>
+      `${capitalize(date)} · ${goals} ${goals === 1 ? 'meta' : 'metas'}`,
     onboarding: {
       title: 'Como o Tymebox funciona',
       gotIt: 'Entendi',
@@ -216,7 +220,7 @@ export const ptBR: Messages = {
     noEventsText: 'Crie um e ele vai aparecer aqui.',
     noMatchText: 'Tente outro status ou limpe a busca.',
     meta: (when, milestones) =>
-      `${when} · ${milestones} ${milestones === 1 ? 'marco' : 'marcos'}`,
+      `${capitalize(when)} · ${milestones} ${milestones === 1 ? 'marco' : 'marcos'}`,
     reopen: 'Reabrir evento',
     runAgain: 'Rodar de novo',
     status: {
@@ -290,6 +294,7 @@ export const ptBR: Messages = {
     timeLeft: 'tempo restante',
     overdueTime: 'tempo estourado',
     notScheduled: 'ainda sem horário',
+    shouldFinishAt: (time) => `deve terminar às ${time}`,
   },
   milestones: {
     markDone: 'Concluir',
@@ -333,6 +338,11 @@ export const ptBR: Messages = {
     tendency: 'Tendência',
     progress: 'Seu progresso',
     projection: 'Projeção',
+    start: 'Início',
+    deadline: 'Prazo',
+    noneDone: 'Nenhuma tarefa concluída ainda',
+    lastDone: 'Última concluída',
+    nextTarget: 'Próxima meta',
     infoTitle: 'Este é o seu gráfico de burndown 📉',
     infoText:
       'A linha cinza é a tendência ideal, do trabalho total até zero ao longo do evento. A linha azul desce conforme você conclui as metas. A projeção verde estima sua próxima conclusão. Quando seu progresso fica acima da linha de tendência, o evento tende a atrasar — acelere ou corte escopo.',
@@ -350,9 +360,10 @@ export const ptBR: Messages = {
     create: 'Criar evento',
   },
   report: {
-    happenedOn: (date, until) => `Aconteceu ${date} até ${until}`,
-    started: (date) => `Começou ${date}`,
-    finished: (date) => `Terminou ${date}`,
+    // The weekday leads ("Sábado, 17 de outubro…"): "no/na" would depend on the day.
+    happenedOn: (date, until) => `${capitalize(date)} até ${until}`,
+    started: (date) => `Início: ${date}`,
+    finished: (date) => `Fim: ${date}`,
     streak: (n) => `🔥 ${n}º evento seguido terminando dentro do orçamento`,
     goals: 'Metas',
     doneAt: (time) => `concluída às ${time}h`,
@@ -395,8 +406,85 @@ export const ptBR: Messages = {
       goal: (name, weight, done) => `• ${name} (peso ${weight})${done}`,
       sideTopics: 'Assuntos paralelos:',
       topicDuring: (topic, goal) => `• ${topic} (durante ${goal})`,
-      happened: (date) => `Aconteceu ${date}.`,
+      happened: (date) => `Data: ${date}.`,
     },
+  },
+  share: {
+    sharedBy: (owner, role) => `Compartilhado por ${owner} · ${role}`,
+    theOwner: 'o dono',
+    copied: 'Copiado!',
+    copyLink: 'Copiar link',
+    share: 'Compartilhar',
+    shareWaiting: (n) =>
+      `Compartilhar — ${n} ${n === 1 ? 'pedido' : 'pedidos'} de acesso aguardando`,
+    requestSendFailed:
+      'Não foi possível enviar o pedido. Confira o link e tente de novo.',
+    goHome: 'Ir para o início',
+    requestSent: 'Pedido enviado',
+    requestSentText: (date) =>
+      `Você pediu acesso em ${date}. Esta página abre o evento assim que o dono aprovar.`,
+    cancelRequest: 'Cancelar pedido',
+    declined: 'O dono não aprovou seu pedido',
+    noAccess: 'Você não tem acesso a este evento',
+    askOwner: (email) =>
+      `Peça acesso ao dono. Ele vai ver seu pedido${email ? ` de ${email}` : ''} e pode liberar você como leitor ou colaborador.`,
+    missing: 'Este evento não existe, ou não foi compartilhado com você.',
+    messageLabel: 'Mensagem para o dono (opcional)',
+    messagePlaceholder: 'Estou no time que vai conduzir esta reunião…',
+    askAgain: 'Pedir de novo',
+    requestAccess: 'Pedir acesso',
+    viewerHint: 'Acompanha, só leitura',
+    contributorHint: 'Conduz o evento e edita',
+    privateLabel: 'Privado: só pessoas adicionadas',
+    privateHint: 'Quem tiver o link pode pedir acesso',
+    publicLabel: 'Qualquer pessoa com o link',
+    publicHint: 'Qualquer pessoa logada com o link pode abrir',
+    justNow: 'agora mesmo',
+    minutesAgo: (n) => `há ${n} min`,
+    hoursAgo: (n) => `há ${n} h`,
+    daysAgo: (n) => `há ${n} d`,
+    roleFor: (who) => `Papel de ${who}`,
+    approve: 'Aprovar',
+    deny: 'Recusar',
+    remove: 'Remover',
+    removeNamed: (email) => `Remover ${email}`,
+    invalidEmail: 'Digite um e-mail válido.',
+    itsYou: 'É você — você já é dono deste evento.',
+    alreadyMember: 'Essa pessoa já tem acesso. Mude o papel dela abaixo.',
+    title: (name) => `Compartilhar “${name}”`,
+    done: 'Concluir',
+    requests: 'Pedidos',
+    link: 'Link',
+    eventLink: 'Link do evento',
+    generalAccess: 'Acesso geral',
+    publicRoleLabel: 'Papel de quem tem o link',
+    publicNote: (role) =>
+      `Qualquer pessoa logada com o link pode abrir como ${role.toLowerCase()}. Eventos públicos que ela abrir aparecem em Compartilhados comigo.`,
+    privateNote:
+      'Só você e as pessoas abaixo podem abrir. Quem tiver o link pode pedir acesso.',
+    people: 'Pessoas',
+    emailPlaceholder: 'nome@empresa.com',
+    emailAria: 'E-mail para compartilhar',
+    newPersonRole: 'Papel da nova pessoa',
+    add: 'Adicionar',
+    addedHint:
+      'A pessoa vai encontrar em Compartilhados comigo ao entrar com este e-mail. Envie o link para ela saber.',
+    owner: 'Dono',
+  },
+  alerts: {
+    lateTitle: 'Tendência de atraso',
+    lateBody: (name) =>
+      `“${name}” está atrasado: o marco atual passou da parte de tempo dele.`,
+    upTitle: 'O tempo acabou',
+    upBody: (name) => `“${name}” chegou ao horário de fim planejado.`,
+  },
+  events: {
+    copyName: (name) => `${name} (cópia)`,
+    deleteTitle: 'Excluir este evento?',
+    deleteText: (name) =>
+      `“${name}” e o relatório dele serão excluídos, também para todos com quem foi compartilhado. Não dá para desfazer.`,
+    deleteConfirm: 'Excluir evento',
+    keepIt: 'Manter',
   },
   landing: {
     kicker: 'Timeboxing para reuniões e eventos',

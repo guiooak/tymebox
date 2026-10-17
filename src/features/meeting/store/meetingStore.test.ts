@@ -13,6 +13,7 @@ vi.mock('../domain/meetingRepository', () => ({
   shareWith: vi.fn(async () => {}),
   approveRequest: vi.fn(async () => {}),
   deleteMeetingEverywhere: vi.fn(async () => {}),
+  setUserLocale: vi.fn(async () => {}),
 }));
 
 const repo = await import('../domain/meetingRepository');
@@ -149,5 +150,18 @@ describe('sharing', () => {
     useMeetingStore.setState({ meetings: [{ ...meeting, owner: 'someone-else' }] });
     await useMeetingStore.getState().deleteEvent('m1');
     expect(repo.deleteMeetingEverywhere).not.toHaveBeenCalled();
+  });
+
+  it('switches the language, saving it to the profile only when signed in', async () => {
+    const { useI18nStore } = await import('../../../common/services/i18n');
+    await useMeetingStore.getState().chooseLocale('pt-BR');
+    expect(useI18nStore.getState().locale).toBe('pt-BR');
+    expect(repo.setUserLocale).toHaveBeenCalledWith('u1', 'pt-BR');
+
+    vi.clearAllMocks();
+    useMeetingStore.setState({ user: null });
+    await useMeetingStore.getState().chooseLocale('en-US');
+    expect(useI18nStore.getState().locale).toBe('en-US');
+    expect(repo.setUserLocale).not.toHaveBeenCalled();
   });
 });
