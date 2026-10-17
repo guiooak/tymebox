@@ -24,22 +24,33 @@ export function buildTendency(
   ];
 }
 
-/** Timestamp after which the remaining work sits above the tendency line — i.e.
- * the event is trending late. Returns null when that never happens (nothing left
- * to do, no work, or an invalid window). */
+/**
+ * Timestamp after which the event is trending late: the moment the tendency
+ * line drops to the weight that will be left once the *current* milestone (the
+ * first unfinished one) is done. Before that the current milestone is still
+ * within its share of the time.
+ *
+ * Measuring against the current milestone rather than all remaining work
+ * matters at the start: with nothing done yet, all remaining work equals the
+ * total, so the event would count as late from its first second.
+ *
+ * Returns null when it never happens (nothing left to do, no work, or an
+ * invalid window). With one milestone left this is the end time itself.
+ */
 export function tendencyCrossoverTs(
   items: BurndownItem[],
   startTs: number,
   endTs: number,
 ): number | null {
   const total = getTotalWeight(items);
-  const remaining = items
-    .filter((item) => !item.finishedAt)
-    .reduce((acc, item) => acc + (Number(item.weight) || 1), 0);
-  if (total <= 0 || remaining <= 0 || endTs <= startTs) {
+  const unfinished = items.filter((item) => !item.finishedAt);
+  if (total <= 0 || unfinished.length === 0 || endTs <= startTs) {
     return null;
   }
-  return endTs - (remaining / total) * (endTs - startTs);
+  const afterCurrent = unfinished
+    .slice(1)
+    .reduce((acc, item) => acc + (Number(item.weight) || 1), 0);
+  return endTs - (afterCurrent / total) * (endTs - startTs);
 }
 
 /** Step-down line: one point per completed goal at its finish time. */

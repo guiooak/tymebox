@@ -15,17 +15,17 @@ import {
   useDialog,
   type Shortcut,
 } from '../../../common/components';
-import { nowISO, toTimestamp } from '../../../common/services/datetime';
+import { nowISO } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
-import { tendencyCrossoverTs } from '../domain/burndown';
+import { alertThresholds, toBurndownItems } from '../domain/timeAlerts';
 import { createSideTopic, FIELD_LIMITS, hasSchedule, type Goal } from '../domain/types';
+import { selectAlertsOn, useAlertsStore } from '../alerts';
 import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
 import { DashboardShortcuts } from './DashboardShortcuts';
 import { DashboardSideTopics } from './DashboardSideTopics';
 import { useCountdownSeconds } from './useCountdownSeconds';
-import { useThresholdAlerts } from './useThresholdAlerts';
 import styles from './MeetingDashboard.module.css';
 
 export function MeetingDashboard() {
@@ -51,30 +51,17 @@ export function MeetingDashboard() {
   const active = !!meeting?.realStartTime;
   const scheduled = !!meeting && hasSchedule(meeting);
 
-  const burndownItems = (meeting?.goals ?? []).map((goal) => ({
-    id: goal.id,
-    title: goal.name,
-    weight: goal.weight,
-    finishedAt: goal.finishedAt || null,
-  }));
+  const burndownItems = meeting ? toBurndownItems(meeting) : [];
 
-  // Yellow countdown once progress is trending above the tendency line.
-  const warnAfter = scheduled
-    ? tendencyCrossoverTs(
-        burndownItems,
-        toTimestamp(meeting.expectedStartTime),
-        toTimestamp(meeting.expectedEndTime),
-      )
-    : null;
+  // Amber countdown once the current milestone runs over its share of the time
+  // (the same threshold the "trending late" notification uses).
+  const warnAfter = meeting ? alertThresholds(meeting).warnAfterTs : null;
 
   const [showSeconds, setShowSeconds] = useCountdownSeconds();
 
-  const alerts = useThresholdAlerts({
-    active,
-    eventName: meeting?.name ?? '',
-    warnAfterTs: warnAfter,
-    endTs: scheduled ? toTimestamp(meeting.expectedEndTime) : null,
-  });
+  // The alerts themselves are sent by ThresholdAlertsWatcher, on any screen.
+  const alerts = useAlertsStore();
+  const alertsOn = useAlertsStore(selectAlertsOn);
 
   // Short labels keep both countdown toggles on one row; the tooltip explains.
   const alertsLabel =
@@ -269,7 +256,7 @@ export function MeetingDashboard() {
             <div className={styles.toggles}>
               <div className={styles.toggle} title={alertsHint}>
                 <Switch
-                  checked={alerts.enabled}
+                  checked={alertsOn}
                   onChange={() => void alerts.toggle()}
                   label="Notify me when time runs out"
                 />

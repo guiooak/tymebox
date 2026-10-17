@@ -9,6 +9,7 @@ import {
   paths,
 } from '../common/services/router';
 import { Login, useAuthStore } from '../features/auth';
+import { ThresholdAlertsWatcher } from '../features/meeting/alerts';
 import { useMeetingStore } from '../features/meeting/store';
 import { Home } from '../features/meeting/home/Home';
 import { MeetingForm } from '../features/meeting/form/MeetingForm';
@@ -49,6 +50,7 @@ export function AppShell() {
   return (
     <div className={styles.layout}>
       {authed && <AppSidebar />}
+      {authed && <ThresholdAlertsWatcher />}
       <div className={styles.content}>
         <main className={styles.main}>
           <Routes>
