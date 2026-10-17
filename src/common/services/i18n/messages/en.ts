@@ -10,6 +10,15 @@ export const en = {
     longDate: "EEEE, MMMM do yyyy, HH:mm'h'",
     dayLabel: 'EEE, d MMM',
   },
+  /** The landing's <head>, baked into /en/index.html at build time. */
+  meta: {
+    title: 'Tymebox — Timebox your events',
+    description:
+      'Timebox your meetings and events: plan milestones, run the countdown, finish on time and see how it went.',
+    ogTitle: 'Tymebox — Every event, inside its box',
+    ogDescription:
+      'Plan milestones, run the clock and finish on time. Then see exactly how it went.',
+  },
   common: {
     loading: 'Loading…',
     close: 'Close',

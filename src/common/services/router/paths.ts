@@ -1,7 +1,12 @@
+import type { Locale } from '../i18n';
+
 /** Centralized route paths. Change a URL here, not at every call site. */
 export const paths = {
   home: '/',
   login: '/login',
+  /** The public landing, one URL per language (see landingPath). */
+  landingPt: '/pt',
+  landingEn: '/en',
   meetings: '/events',
   newMeeting: '/events/new',
   /** An event's live board: the link people share. */
@@ -11,6 +16,10 @@ export const paths = {
   liveMeeting: '/events/live',
   report: '/events/report',
 } as const;
+
+/** The landing page in a given language: /pt or /en. */
+export const landingPath = (locale: Locale) =>
+  locale === 'pt-BR' ? paths.landingPt : paths.landingEn;
 
 /** The live board of one event. */
 export const eventPath = (id: string) => `/events/${id}`;

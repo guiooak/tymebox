@@ -6,9 +6,10 @@
     "site": "tymebox",
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "trailingSlash": false,
     "headers": [
       {
-        "regex": "^/(?:[^.]*|index\\.html)$",
+        "regex": "^/(?:[^.]*|(?:pt/|en/)?index\\.html)$",
         "headers": [
           {
             "key": "Cache-Control",

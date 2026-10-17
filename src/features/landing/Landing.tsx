@@ -1,7 +1,13 @@
 import type { ReactNode } from 'react';
 import { Badge, Icon, TimeDisplay, type IconName } from '../../common/components';
 import { useT } from '../../common/services/i18n';
-import { Link, paths, useReturnPath } from '../../common/services/router';
+import {
+  landingPath,
+  Link,
+  paths,
+  useNavigation,
+  useReturnPath,
+} from '../../common/services/router';
 import { LanguageSelect } from '../../app/LanguageSelect';
 import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
@@ -124,10 +130,11 @@ function ReportCards() {
  * way in. Also shown on /login, where a guarded link (e.g. a shared event)
  * sends people, so they go back there after signing in.
  */
-export function Landing() {
+export function Landing({ localized = false }: { localized?: boolean }) {
   const returnPath = useReturnPath('');
   const fromEvent = returnPath.startsWith('/events/');
   const tt = useT();
+  const navigation = useNavigation();
   const t = tt.landing;
 
   return (
@@ -138,7 +145,15 @@ export function Landing() {
             <Logo size={30} />
           </Link>
           <div className={styles.topBarControls}>
-            <LanguageSelect />
+            <LanguageSelect
+              // On /pt and /en the language lives in the URL, so switching moves
+              // to the other one; on /login it must keep its return state.
+              onChange={
+                localized
+                  ? (locale) => navigation.replace(landingPath(locale))
+                  : undefined
+              }
+            />
             <ThemeToggle
               className={styles.themeToggle}
               labelClassName={styles.srOnly}

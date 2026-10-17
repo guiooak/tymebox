@@ -17,7 +17,14 @@ const SHORT: Record<Locale, string> = Object.fromEntries(
  * in the list. Signed out it's remembered on this device; signed in it's
  * saved to the profile too (chooseLocale).
  */
-export function LanguageSelect({ className }: { className?: string }) {
+export function LanguageSelect({
+  className,
+  onChange,
+}: {
+  className?: string;
+  /** Replaces the default switch, e.g. to also move to /pt or /en. */
+  onChange?: (locale: Locale) => void;
+}) {
   const t = useT();
   const locale = useLocale();
   const chooseLocale = useMeetingStore((state) => state.chooseLocale);
@@ -26,7 +33,7 @@ export function LanguageSelect({ className }: { className?: string }) {
     <Select<Locale>
       value={locale}
       options={OPTIONS}
-      onChange={(value) => void chooseLocale(value)}
+      onChange={(value) => (onChange ? onChange(value) : void chooseLocale(value))}
       label={t.language.label}
       className={className}
       renderValue={(option) => (

@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { Loader } from '../common/components';
-import { useT } from '../common/services/i18n';
+import { useLocale, useT } from '../common/services/i18n';
 import {
   eventPath,
   eventReportPath,
@@ -8,12 +8,13 @@ import {
   Route,
   RouteGuard,
   Routes,
+  landingPath,
   legacyRedirects,
   paths,
   useReturnPath,
 } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
-import { Landing } from '../features/landing';
+import { Landing, LocalizedLanding } from '../features/landing';
 import { ThresholdAlertsWatcher } from '../features/meeting/alerts';
 import { useMeetingStore } from '../features/meeting/store';
 import { Home } from '../features/meeting/home/Home';
@@ -31,6 +32,7 @@ export function AppShell() {
   const user = useAuthStore((state) => state.user);
   const bind = useMeetingStore((state) => state.bind);
   const t = useT();
+  const locale = useLocale();
 
   // Primitive deps: the auth store hands out a new user object on every
   // auth callback, and rebinding tears down every live subscription.
@@ -78,7 +80,30 @@ export function AppShell() {
               path={paths.login}
               element={authed ? <BackToRequestedPage /> : <Landing />}
             />
-            <Route path={paths.home} element={authed ? <Home /> : <Landing />} />
+            <Route
+              path={paths.home}
+              element={authed ? <Home /> : <Navigate to={landingPath(locale)} replace />}
+            />
+            <Route
+              path={paths.landingPt}
+              element={
+                authed ? (
+                  <Navigate to={paths.home} replace />
+                ) : (
+                  <LocalizedLanding locale="pt-BR" />
+                )
+              }
+            />
+            <Route
+              path={paths.landingEn}
+              element={
+                authed ? (
+                  <Navigate to={paths.home} replace />
+                ) : (
+                  <LocalizedLanding locale="en-US" />
+                )
+              }
+            />
             <Route path={paths.newMeeting} element={protect(<MeetingForm />)} />
             <Route path={paths.liveMeeting} element={protect(<CurrentEventRedirect />)} />
             <Route

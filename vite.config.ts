@@ -1,9 +1,13 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { localizedHtml } from './scripts/localized-html';
+
+/** Where the app is served; builds the absolute URLs in the landing's meta tags. */
+const SITE_URL = process.env.VITE_SITE_URL ?? 'https://tymebox.web.app';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), localizedHtml(SITE_URL)],
   test: {
     globals: true,
     environment: 'jsdom',

@@ -13,6 +13,14 @@ export const ptBR: Messages = {
     longDate: "EEEE, d 'de' MMMM 'de' yyyy, HH:mm'h'",
     dayLabel: "EEE, d 'de' MMM",
   },
+  meta: {
+    title: 'Tymebox — Seus eventos em caixas de tempo',
+    description:
+      'Organize reuniões e eventos em caixas de tempo: planeje marcos, rode a contagem regressiva, termine no horário e veja como foi.',
+    ogTitle: 'Tymebox — Cada evento, na sua caixa',
+    ogDescription:
+      'Planeje marcos, rode o relógio e termine no horário. Depois veja exatamente como foi.',
+  },
   common: {
     loading: 'Carregando…',
     close: 'Fechar',
