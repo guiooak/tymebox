@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Checkbox } from '../form';
 import { cx } from '../cx';
+import { Icon } from '../icons';
 import styles from './Collapse.module.css';
 
 export type CollapseProps = {
@@ -38,7 +39,7 @@ export function Collapse({
 }: CollapseProps) {
   const caret = (
     <span className={styles.caret} aria-hidden="true">
-      ▸
+      <Icon name="chevronRight" size={18} />
     </span>
   );
 

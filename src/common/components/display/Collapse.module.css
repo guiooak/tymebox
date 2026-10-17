@@ -23,11 +23,22 @@
   color: var(--tw-text);
 }
 .caretButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
   background: none;
   border: none;
-  padding: 0 var(--tw-space-1);
+  border-radius: var(--tw-radius-sm);
+  padding: 0;
   cursor: pointer;
-  line-height: 1;
+  color: var(--tw-text-muted);
+}
+.caretButton:hover {
+  background: var(--tw-surface-sunken);
+  color: var(--tw-text);
 }
 .titleSlot {
   flex: 1;
@@ -37,9 +48,13 @@
   color: var(--tw-text);
 }
 .caret {
-  color: var(--tw-text-muted);
-  display: inline-block;
+  color: inherit;
+  display: inline-flex;
+  flex-shrink: 0;
   transition: transform var(--tw-transition);
+}
+.titleButton .caret {
+  color: var(--tw-text-muted);
 }
 .open .caret {
   transform: rotate(90deg);

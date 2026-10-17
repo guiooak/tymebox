@@ -21,6 +21,7 @@ const PATHS = {
   play: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM10 8.5v7l6-3.5z',
   chart: 'M4 4v16h16M8 15l3.5-4.5 3 3L19 8',
   clock: 'M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.5V12l3 2',
+  chevronRight: 'M9 6l6 6-6 6',
   flag: 'M5.5 21V4M5.5 4.5H17l-2.5 4 2.5 4H5.5',
 } as const;
 
