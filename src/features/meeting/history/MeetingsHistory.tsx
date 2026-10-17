@@ -7,6 +7,8 @@ import {
   Container,
   Heading,
   Loader,
+  Menu,
+  type MenuItem,
   Page,
   Select,
   type SelectOption,
@@ -21,6 +23,7 @@ import {
   eventPath,
   eventReportPath,
 } from '../../../common/services/router';
+import { useDeleteEvent } from '../components';
 import { summarizeMeeting } from '../domain/metrics';
 import type { Meeting, MeetingStatus } from '../domain/types';
 import { useMeetingStore } from '../store';
@@ -60,6 +63,7 @@ export function MeetingsHistory() {
   const reopen = useMeetingStore((state) => state.reopen);
   const reopenInDashboard = useMeetingStore((state) => state.reopenInDashboard);
   const clone = useMeetingStore((state) => state.clone);
+  const onDelete = useDeleteEvent();
 
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
@@ -122,6 +126,23 @@ export function MeetingsHistory() {
     if (newId) {
       navigation.go(eventPath(newId));
     }
+  };
+
+  // The board action does what reopenInDashboard does to each kind of event.
+  const actionsFor = (meeting: Meeting): MenuItem[] => {
+    const board = meeting.realEndTime
+      ? 'Reopen event'
+      : meeting.status === 'cancelled'
+        ? 'Run again'
+        : 'Open board';
+    return [
+      ...(meeting.realEndTime
+        ? [{ label: 'View report', onSelect: () => void onOpenReport(meeting.id) }]
+        : []),
+      { label: board, onSelect: () => void onOpenDashboard(meeting.id) },
+      { label: 'Clone', onSelect: () => void onClone(meeting.id) },
+      { label: 'Delete event', danger: true, onSelect: () => void onDelete(meeting) },
+    ];
   };
 
   return (
@@ -219,31 +240,10 @@ export function MeetingsHistory() {
                         </div>
                       </div>
                       <div className={`${styles.actions} ${itemLinkAbove}`}>
-                        <Button
-                          theme="secondary"
-                          outline
-                          size="sm"
-                          onClick={() => void onOpenDashboard(meeting.id)}
-                        >
-                          Open dashboard
-                        </Button>
-                        <Button
-                          theme="secondary"
-                          outline
-                          size="sm"
-                          disabled={!meeting.realEndTime}
-                          title={
-                            meeting.realEndTime
-                              ? undefined
-                              : 'Only finished events have a report'
-                          }
-                          onClick={() => void onOpenReport(meeting.id)}
-                        >
-                          View report
-                        </Button>
-                        <Button size="sm" onClick={() => void onClone(meeting.id)}>
-                          Clone
-                        </Button>
+                        <Menu
+                          label={`Actions for ${meeting.name || 'this event'}`}
+                          items={actionsFor(meeting)}
+                        />
                       </div>
                     </Box>
                   );
