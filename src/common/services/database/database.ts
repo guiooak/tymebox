@@ -1,4 +1,16 @@
-import { child, get, onValue, push, ref, remove, set, update } from 'firebase/database';
+import {
+  child,
+  equalTo,
+  get,
+  onValue,
+  orderByChild,
+  push,
+  query,
+  ref,
+  remove,
+  set,
+  update,
+} from 'firebase/database';
 import { getDb } from './firebaseApp';
 
 /** Read a value once; returns null when the path doesn't exist. */
@@ -25,14 +37,48 @@ export async function removeAt(path: string): Promise<void> {
   await remove(ref(getDb(), path));
 }
 
-/** Subscribe to live changes at a path. Returns an unsubscribe function. */
+/**
+ * Several paths, written together or not at all. Keys are paths from the
+ * database root; a null value deletes.
+ */
+export async function writeMany(changes: Record<string, unknown>): Promise<void> {
+  await update(ref(getDb()), changes);
+}
+
+/**
+ * Subscribe to live changes at a path. Returns an unsubscribe function.
+ * `onDenied` runs when the rules refuse the read (or later revoke it); the
+ * subscription has ended by then.
+ */
 export function subscribe<T>(
   path: string,
   callback: (value: T | null) => void,
+  onDenied?: (error: Error) => void,
 ): () => void {
-  return onValue(ref(getDb(), path), (snapshot) => {
-    callback(snapshot.exists() ? (snapshot.val() as T) : null);
-  });
+  return onValue(
+    ref(getDb(), path),
+    (snapshot) => {
+      callback(snapshot.exists() ? (snapshot.val() as T) : null);
+    },
+    (error) => onDenied?.(error),
+  );
+}
+
+/** Subscribe to the children of `path` whose `field` equals `value`. */
+export function subscribeWhere<T>(
+  path: string,
+  field: string,
+  value: string,
+  callback: (value: Record<string, T> | null) => void,
+  onDenied?: (error: Error) => void,
+): () => void {
+  return onValue(
+    query(ref(getDb(), path), orderByChild(field), equalTo(value)),
+    (snapshot) => {
+      callback(snapshot.exists() ? (snapshot.val() as Record<string, T>) : null);
+    },
+    (error) => onDenied?.(error),
+  );
 }
 
 /** Generate a new push key under a path without writing anything. */

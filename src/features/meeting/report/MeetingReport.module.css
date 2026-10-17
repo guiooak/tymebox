@@ -101,3 +101,11 @@
   font-size: var(--tw-font-size-sm);
   overflow-x: auto;
 }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--tw-space-3);
+}

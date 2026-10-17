@@ -9,6 +9,8 @@ import type { Meeting } from './types';
 
 const meeting = (over: Partial<Meeting>): Meeting => ({
   id: 'm',
+  owner: 'u1',
+  ownerName: 'Ana',
   name: 'Event',
   description: '',
   expectedStartTime: '',

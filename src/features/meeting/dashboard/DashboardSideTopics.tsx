@@ -17,6 +17,8 @@ export type DashboardSideTopicsProps = {
   onRemove: (key: string) => void;
   /** Key of the card to focus when it appears (the one just added). */
   focusKey?: string | null;
+  /** Viewers see the topics but can't add, edit or remove them. */
+  readOnly?: boolean;
 };
 
 export function DashboardSideTopics({
@@ -25,6 +27,7 @@ export function DashboardSideTopics({
   onUpdate,
   onRemove,
   focusKey,
+  readOnly,
 }: DashboardSideTopicsProps) {
   const dialog = useDialog();
 
@@ -59,9 +62,11 @@ export function DashboardSideTopics({
     <Box className={styles.parkingLot}>
       <div className={styles.parkingHead}>
         <strong>Parking lot</strong>
-        <Button size="sm" onClick={onAdd}>
-          + Add side topic
-        </Button>
+        {!readOnly && (
+          <Button size="sm" onClick={onAdd}>
+            + Add side topic
+          </Button>
+        )}
       </div>
       {items.length === 0 ? (
         <BlankSlate
@@ -82,6 +87,7 @@ export function DashboardSideTopics({
                 onBlur={(value) => onBlur(item, value)}
                 onDelete={() => void onDelete(item)}
                 autoFocus={!!focusKey && item.key === focusKey}
+                readOnly={readOnly}
               />
               {item.goalName && (
                 <Badge className={styles.noteTag}>during “{item.goalName}”</Badge>

@@ -24,6 +24,10 @@ export type MeetingStatus = 'draft' | 'active' | 'cancelled' | 'finished';
 
 export type Meeting = {
   id: string;
+  /** Account that created the event; the only one who can share or delete it. */
+  owner: string;
+  /** The owner's display name, shown to the people it's shared with. */
+  ownerName: string;
   name: string;
   description: string;
   /** Both expected times are optional until the event is started. */

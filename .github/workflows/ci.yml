@@ -83,9 +83,34 @@ jobs:
   # Only ships once every check above has passed. Pushes to main go to the live
   # channel; PRs get an ephemeral preview channel. PRs from forks are skipped,
   # since they don't receive the Firebase secrets.
+  # Security rules against the Realtime Database emulator (needs Java).
+  test-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: yarn
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: yarn install --immutable
+      - run: yarn test:rules
+
   deploy:
-    needs: [lint, typecheck, test, format, build]
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Hosting waits for the rules on main: a new client against old rules (or
+    # the reverse) would fail its reads and writes until both are live.
+    needs: [lint, typecheck, test, test-rules, format, build, deploy-rules]
+    if: >-
+      always() && !cancelled()
+      && needs.lint.result == 'success' && needs.typecheck.result == 'success'
+      && needs.test.result == 'success' && needs.test-rules.result == 'success'
+      && needs.format.result == 'success' && needs.build.result == 'success'
+      && (needs.deploy-rules.result == 'success' || needs.deploy-rules.result == 'skipped')
+      && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -130,10 +155,10 @@ jobs:
   # Rules used to ship only with a manual `firebase deploy --only database`,
   # so the live rules could fall behind the code (side topics with `goalName`
   # and the `cancelled` status were rejected on production). Deploy them with
-  # every push to main. A separate job, so a rules failure never blocks hosting.
+  # every push to main. Hosting deploys after it, so client and rules move together.
   # The service account needs the "Firebase Realtime Database Admin" role.
   deploy-rules:
-    needs: [lint, typecheck, test, format, build]
+    needs: [lint, typecheck, test, test-rules, format, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

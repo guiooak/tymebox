@@ -136,3 +136,17 @@
 .loading {
   min-height: 240px;
 }
+
+/* Pending access requests on your events */
+.requests {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-2);
+  border-left: 3px solid var(--tw-primary-text);
+  margin-bottom: var(--tw-space-4);
+}
+.requestList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tw-space-2);
+}

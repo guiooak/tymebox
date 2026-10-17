@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../common/components';
-import { NavLink, paths } from '../common/services/router';
+import { NavLink, paths, eventPath } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
 import { useMeetingStore } from '../features/meeting/store';
 import { Logo, TymeboxSymbol } from '../features/brand';
@@ -50,8 +50,8 @@ export function AppSidebar() {
           <Icon name="history" className={styles.icon} />
           <span className={styles.label}>History</span>
         </NavLink>
-        {live && (
-          <NavLink to={paths.liveMeeting} className={linkClass} title="Live event">
+        {live && current && (
+          <NavLink to={eventPath(current.id)} className={linkClass} title="Live event">
             <Icon name="timer" className={styles.icon} />
             <span className={styles.label}>Live event</span>
           </NavLink>

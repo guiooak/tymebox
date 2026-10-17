@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getDatabase, type Database } from 'firebase/database';
+import { connectDatabaseEmulator, getDatabase, type Database } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,12 +14,18 @@ const firebaseConfig = {
 /** The single Firebase app instance, shared by the auth and database services. */
 export const firebaseApp: FirebaseApp = initializeApp(firebaseConfig);
 
+/** Local development against `yarn dev:emulators` (see .env.emulators). */
+export const usingEmulators = import.meta.env.VITE_USE_EMULATORS === '1';
+
 let databaseInstance: Database | null = null;
 
 /** Lazily create the Realtime Database handle (needs a configured databaseURL). */
 export function getDb(): Database {
   if (!databaseInstance) {
     databaseInstance = getDatabase(firebaseApp);
+    if (usingEmulators) {
+      connectDatabaseEmulator(databaseInstance, '127.0.0.1', 9000);
+    }
   }
   return databaseInstance;
 }

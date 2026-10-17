@@ -14,12 +14,19 @@ import {
   hoursOf,
   now,
 } from '../../../common/services/datetime';
-import { paths, useNavigation } from '../../../common/services/router';
+import {
+  paths,
+  useNavigation,
+  eventPath,
+  eventReportPath,
+} from '../../../common/services/router';
 import { useAuthStore } from '../../auth';
 import { useMeetingStore } from '../store';
 import { OnboardingCard } from './OnboardingCard';
 import { meetingTemplates } from './templates';
 import { useMeetingMetrics } from './useMeetingMetrics';
+import { AccessRequestsNotice } from './AccessRequestsNotice';
+import { SharedWithMe } from './SharedWithMe';
 import styles from './Home.module.css';
 
 function budgetLabel(ratio: number | null): { value: string; note: string } {
@@ -57,43 +64,43 @@ export function Home() {
 
   const onReopen = async (id: string) => {
     await reopen(id);
-    navigation.go(paths.report);
+    navigation.go(eventReportPath(id));
   };
 
   const onClone = async (id: string) => {
     const newId = await clone(id);
     if (newId) {
-      navigation.go(paths.liveMeeting);
+      navigation.go(eventPath(newId));
     }
   };
 
   const onTemplate = async (name: string, goals: string[]) => {
     const newId = await createFromTemplate(name, goals);
     if (newId) {
-      navigation.go(paths.liveMeeting);
+      navigation.go(eventPath(newId));
     }
   };
 
   // Surface whatever the user can pick up where they left off.
-  const resume = current?.realEndTime
-    ? {
-        label: 'View last report',
-        to: paths.report,
-        hint: 'Your most recent event is wrapped up.',
-      }
-    : current?.realStartTime
+  const resume = !current
+    ? null
+    : current.realEndTime
       ? {
-          label: 'Resume live event',
-          to: paths.liveMeeting,
-          hint: 'You have an event in progress.',
+          label: 'View last report',
+          to: eventReportPath(current.id),
+          hint: 'Your most recent event is wrapped up.',
         }
-      : current
+      : current?.realStartTime
         ? {
-            label: 'Continue planning',
-            to: paths.liveMeeting,
-            hint: 'You have a draft in the works.',
+            label: 'Resume live event',
+            to: eventPath(current.id),
+            hint: 'You have an event in progress.',
           }
-        : null;
+        : {
+            label: 'Continue planning',
+            to: eventPath(current.id),
+            hint: 'You have a draft in the works.',
+          };
 
   const budget = budgetLabel(metrics.budgetRatio);
   const lastFinished = metrics.recent[0];
@@ -137,6 +144,8 @@ export function Home() {
                 }
               />
             )}
+
+            <AccessRequestsNotice />
 
             {resume && (
               <Box className={styles.resume}>
@@ -199,7 +208,7 @@ export function Home() {
                           size="sm"
                           onClick={() => {
                             void reopen(meeting.id).then(() =>
-                              navigation.go(paths.liveMeeting),
+                              navigation.go(eventPath(meeting.id)),
                             );
                           }}
                         >
@@ -311,6 +320,8 @@ export function Home() {
                 </section>
               </>
             )}
+
+            <SharedWithMe />
           </>
         )}
       </Page>

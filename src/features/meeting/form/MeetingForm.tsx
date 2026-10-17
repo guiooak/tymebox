@@ -12,7 +12,7 @@ import {
   Page,
   Paragraph,
 } from '../../../common/components';
-import { paths, useNavigation } from '../../../common/services/router';
+import { eventPath, useNavigation } from '../../../common/services/router';
 import { FIELD_LIMITS } from '../domain/types';
 import { useMeetingStore } from '../store';
 import styles from './MeetingForm.module.css';
@@ -34,7 +34,7 @@ export function MeetingForm() {
     if (currentMeeting?.realEndTime) {
       void discardCurrent();
     } else if (currentMeeting?.realStartTime) {
-      navigation.replace(paths.liveMeeting);
+      navigation.replace(eventPath(currentMeeting.id));
     }
   }, [currentMeeting, navigation, discardCurrent]);
 
@@ -57,8 +57,10 @@ export function MeetingForm() {
     if (!name.trim()) {
       return;
     }
-    await saveDraft({ name: name.trim(), description });
-    navigation.go(paths.liveMeeting);
+    const id = await saveDraft({ name: name.trim(), description });
+    if (id) {
+      navigation.go(eventPath(id));
+    }
   };
 
   const onReset = async () => {

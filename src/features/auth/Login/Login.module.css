@@ -28,3 +28,25 @@
   color: var(--tw-danger-text);
   font-size: var(--tw-font-size-sm);
 }
+
+/* Emulator-only test sign-in */
+.testSignIn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tw-space-2);
+  margin-top: var(--tw-space-3);
+  padding-top: var(--tw-space-3);
+  border-top: 1px dashed var(--tw-border-strong);
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+}
+.testSignIn input {
+  padding: 6px 10px;
+  border: var(--tw-border);
+  border-radius: var(--tw-radius-sm);
+  font: inherit;
+  color: var(--tw-text);
+  background: var(--tw-surface);
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Badge,
   BlankSlate,
@@ -8,7 +8,6 @@ import {
   Container,
   Footer,
   InlineEdit,
-  Loader,
   Row,
   Switch,
   TimeCountdown,
@@ -16,11 +15,18 @@ import {
   type Shortcut,
 } from '../../../common/components';
 import { nowISO } from '../../../common/services/datetime';
-import { paths, useNavigation } from '../../../common/services/router';
+import {
+  eventReportPath,
+  Navigate,
+  paths,
+  useNavigation,
+} from '../../../common/services/router';
 import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
 import { alertThresholds, toBurndownItems } from '../domain/timeAlerts';
-import { FIELD_LIMITS, hasSchedule, type Goal } from '../domain/types';
+import { FIELD_LIMITS, hasSchedule, type Goal, type Meeting } from '../domain/types';
 import { selectAlertsOn, useAlertsStore } from '../alerts';
+import { can, type Role } from '../domain/access';
+import { EventGate, ShareButton } from '../share';
 import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
 import { DashboardShortcuts } from './DashboardShortcuts';
@@ -28,11 +34,20 @@ import { DashboardSideTopics } from './DashboardSideTopics';
 import { useCountdownSeconds } from './useCountdownSeconds';
 import styles from './MeetingDashboard.module.css';
 
+/** The live board of the event in the URL, for anyone allowed to open it. */
 export function MeetingDashboard() {
+  return (
+    <EventGate>
+      {(event, role) => <DashboardBoard meeting={event} role={role} />}
+    </EventGate>
+  );
+}
+
+function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
   const navigation = useNavigation();
   const dialog = useDialog();
-  const loading = useMeetingStore((state) => state.loading);
-  const meeting = useMeetingStore((state) => state.currentMeeting);
+  // Owners and contributors run the event; viewers follow along read-only.
+  const canRun = can(role, 'run');
   const automatic = useMeetingStore((state) => state.decisionsAutomaticBehavior);
   const startMeeting = useMeetingStore((state) => state.startMeeting);
   const cancelMeeting = useMeetingStore((state) => state.cancelMeeting);
@@ -49,16 +64,14 @@ export function MeetingDashboard() {
   const [focusTopicKey, setFocusTopicKey] = useState<string | null>(null);
   const setAutomatic = useMeetingStore((state) => state.setAutomatic);
 
-  const guarded = useRef(false);
+  const active = !!meeting.realStartTime;
+  const scheduled = hasSchedule(meeting);
 
-  const active = !!meeting?.realStartTime;
-  const scheduled = !!meeting && hasSchedule(meeting);
-
-  const burndownItems = meeting ? toBurndownItems(meeting) : [];
+  const burndownItems = toBurndownItems(meeting);
 
   // Amber countdown once the current milestone runs over its share of the time
   // (the same threshold the "trending late" notification uses).
-  const warnAfter = meeting ? alertThresholds(meeting).warnAfterTs : null;
+  const warnAfter = alertThresholds(meeting).warnAfterTs;
 
   const [showSeconds, setShowSeconds] = useCountdownSeconds();
 
@@ -80,28 +93,9 @@ export function MeetingDashboard() {
         ? 'Notifications are blocked: allow them in your browser settings'
         : 'Notify me when the event trends late and when time runs out';
 
-  useEffect(() => {
-    if (loading || guarded.current) {
-      return;
-    }
-    guarded.current = true;
-    void (async () => {
-      if (!meeting?.name) {
-        await dialog.alert('Set up your event before opening the dashboard.');
-        navigation.replace(paths.newMeeting);
-      } else if (meeting.realEndTime) {
-        await dialog.alert('This event is already completed.');
-        navigation.replace(paths.report);
-      }
-    })();
-  }, [loading, meeting, dialog, navigation]);
-
-  if (loading || !meeting) {
-    return (
-      <div className={styles.loading}>
-        <Loader />
-      </div>
-    );
+  // A finished event lives on its report.
+  if (meeting.realEndTime) {
+    return <Navigate to={eventReportPath(meeting.id)} replace />;
   }
 
   const goals = meeting.goals;
@@ -147,7 +141,7 @@ export function MeetingDashboard() {
 
   const onFinish = async () => {
     await finishMeeting();
-    navigation.go(paths.report);
+    navigation.go(eventReportPath(meeting.id));
   };
 
   const onAllCompleted = async () => {
@@ -194,24 +188,25 @@ export function MeetingDashboard() {
     {
       key: 'd',
       description: 'Mark the current milestone as done',
-      disabled: !active || !currentGoal,
+      disabled: !canRun || !active || !currentGoal,
       onTrigger: completeCurrentGoal,
     },
     {
       key: 'p',
       description: 'Park a side topic',
+      disabled: !canRun,
       onTrigger: parkTopic,
     },
     {
       key: 's',
       description: 'Start the event',
-      disabled: active,
+      disabled: !canRun || active,
       onTrigger: () => void onStart(),
     },
     {
       key: 'f',
       description: 'Finish the event',
-      disabled: !active,
+      disabled: !canRun || !active,
       onTrigger: () => void onFinish(),
     },
   ];
@@ -226,11 +221,14 @@ export function MeetingDashboard() {
             placeholder="Name this event"
             maxLength={FIELD_LIMITS.meetingName}
             size="lg"
+            readOnly={!canRun}
             onChange={(name) => name && void updateMeeting({ name })}
           />
           <Badge theme={active ? 'success' : 'secondary'}>
             {active ? 'Live' : 'Setting up'}
           </Badge>
+          {!canRun && <Badge>View only</Badge>}
+          <ShareButton />
         </div>
         <InlineEdit
           value={meeting.description}
@@ -239,6 +237,7 @@ export function MeetingDashboard() {
           maxLength={FIELD_LIMITS.meetingDescription}
           size="sm"
           multiline
+          readOnly={!canRun}
           className={styles.description}
           onChange={(description) => void updateMeeting({ description })}
         />
@@ -246,6 +245,7 @@ export function MeetingDashboard() {
           expectedStartTime={meeting.expectedStartTime}
           expectedEndTime={meeting.expectedEndTime}
           onChange={(patch) => void updateMeeting(patch)}
+          readOnly={!canRun}
         />
       </header>
 
@@ -305,12 +305,13 @@ export function MeetingDashboard() {
               position={doneCount + 1}
               total={goals.length}
               onComplete={completeCurrentGoal}
+              disabled={!canRun}
             />
           )}
           <GoalsDecisionCollector
             goals={goals}
-            disabled={!active}
-            editable
+            disabled={!canRun || !active}
+            editable={canRun}
             automatic={automatic}
             onToggleAutomatic={(value) => void setAutomatic(value)}
             onChangeGoal={(goalId, patch) => void updateGoal(goalId, patch)}
@@ -327,6 +328,7 @@ export function MeetingDashboard() {
             onUpdate={(key, value) => void updateSideTopic(key, value)}
             onRemove={(key) => void removeSideTopic(key)}
             focusKey={focusTopicKey}
+            readOnly={!canRun}
           />
         </Col>
       </Row>
@@ -336,7 +338,7 @@ export function MeetingDashboard() {
       </div>
 
       <Footer justifyContent="space-between">
-        {active ? (
+        {active && canRun ? (
           <Button theme="danger" outline onClick={() => void onCancel()}>
             Cancel event
           </Button>
@@ -345,15 +347,16 @@ export function MeetingDashboard() {
             Go back
           </Button>
         )}
-        {active ? (
-          <Button theme="success" onClick={() => void onFinish()}>
-            Finish event
-          </Button>
-        ) : (
-          <Button theme="success" onClick={() => void onStart()}>
-            Start event
-          </Button>
-        )}
+        {canRun &&
+          (active ? (
+            <Button theme="success" onClick={() => void onFinish()}>
+              Finish event
+            </Button>
+          ) : (
+            <Button theme="success" onClick={() => void onStart()}>
+              Start event
+            </Button>
+          ))}
       </Footer>
     </Container>
   );

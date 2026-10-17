@@ -8,6 +8,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Rules tests need the database emulator: `yarn test:rules`.
+    exclude: ['**/node_modules/**', 'src/test/rules/**'],
     css: true,
     coverage: {
       provider: 'v8',

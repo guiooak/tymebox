@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Article,
   Badge,
@@ -7,7 +7,6 @@ import {
   Container,
   Footer,
   Heading,
-  Loader,
   Page,
   useDialog,
 } from '../../../common/components';
@@ -15,8 +14,16 @@ import { findChartSvg, svgElementToPngDataUrl } from '../../../common/services/c
 import { readCssVar } from '../../../common/services/theme';
 import { formatLong, formatTime, isSameDay } from '../../../common/services/datetime';
 import { downloadUrl, printPage, toFileStem } from '../../../common/services/download';
-import { paths, useNavigation } from '../../../common/services/router';
+import {
+  eventPath,
+  Navigate,
+  paths,
+  useNavigation,
+} from '../../../common/services/router';
 import { BurndownChart } from '../components';
+import { can, type Role } from '../domain/access';
+import type { Meeting } from '../domain/types';
+import { EventGate, ShareButton } from '../share';
 import { useMeetingStore } from '../store';
 import { useReportTrend } from './useReportTrend';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
@@ -32,47 +39,32 @@ function ordinal(value: number): string {
   return `${value}${suffix}`;
 }
 
+/** The report of the finished event in the URL, for anyone allowed to open it. */
 export function MeetingReport() {
+  return <EventGate>{(event, role) => <Report meeting={event} role={role} />}</EventGate>;
+}
+
+function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const navigation = useNavigation();
   const dialog = useDialog();
-  const loading = useMeetingStore((state) => state.loading);
-  const meeting = useMeetingStore((state) => state.currentMeeting);
   const backToDashboard = useMeetingStore((state) => state.backToDashboard);
-  const discardCurrent = useMeetingStore((state) => state.discardCurrent);
 
   const chartRef = useRef<HTMLDivElement>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [chartImage, setChartImage] = useState<string | null>(null);
-  const guarded = useRef(false);
-  const trend = useReportTrend(meeting);
-
-  useEffect(() => {
-    if (loading || guarded.current) {
-      return;
-    }
-    guarded.current = true;
-    void (async () => {
-      if (!meeting?.name) {
-        await dialog.alert('There is no event to report yet.');
-        navigation.replace(paths.newMeeting);
-      } else if (!meeting.realEndTime) {
-        await dialog.alert('Finish your event to see its report.');
-        navigation.replace(paths.liveMeeting);
-      }
-    })();
-  }, [loading, meeting, dialog, navigation]);
+  // The streak compares against your own events, so it only means something
+  // on a report of yours.
+  const ownTrend = useReportTrend(meeting);
+  const trend = role === 'owner' ? ownTrend : 0;
 
   const sideTopics = useMemo(
-    () => (meeting?.sideTopics ?? []).filter((topic) => topic.value.trim()),
+    () => meeting.sideTopics.filter((topic) => topic.value.trim()),
     [meeting],
   );
 
-  if (loading || !meeting?.realEndTime) {
-    return (
-      <div className={styles.loading}>
-        <Loader />
-      </div>
-    );
+  // Until it's finished, the event's place is its live board.
+  if (!meeting.realEndTime) {
+    return <Navigate to={eventPath(meeting.id)} replace />;
   }
 
   const sameDay = isSameDay(meeting.realStartTime, meeting.realEndTime);
@@ -112,7 +104,7 @@ export function MeetingReport() {
 
   const onBackToDashboard = async () => {
     await backToDashboard();
-    navigation.go(paths.liveMeeting);
+    navigation.go(eventPath(meeting.id));
   };
 
   const onStartNew = async () => {
@@ -122,7 +114,7 @@ export function MeetingReport() {
       cancelButtonText: 'Not anymore',
     });
     if (confirmed) {
-      await discardCurrent();
+      // The new-event form lets go of a finished current event by itself.
       navigation.go(paths.newMeeting);
     }
   };
@@ -131,7 +123,10 @@ export function MeetingReport() {
     <Container className={styles.report}>
       <Page>
         <header className={styles.header}>
-          <Heading size="lg" level={1} title={meeting.name} />
+          <div className={styles.titleRow}>
+            <Heading size="lg" level={1} title={meeting.name} />
+            <ShareButton />
+          </div>
           {sameDay ? (
             <Heading size="xxs" level={2}>
               Happened on {formatLong(meeting.realStartTime)} until{' '}
@@ -224,9 +219,15 @@ export function MeetingReport() {
         </section>
 
         <Footer justifyContent="space-between">
-          <Button theme="secondary" outline onClick={() => void onBackToDashboard()}>
-            Back to dashboard
-          </Button>
+          {can(role, 'run') ? (
+            <Button theme="secondary" outline onClick={() => void onBackToDashboard()}>
+              Back to dashboard
+            </Button>
+          ) : (
+            <Button theme="secondary" outline onClick={() => navigation.go(paths.home)}>
+              Go to Home
+            </Button>
+          )}
           <div className={styles.actions}>
             <Button theme="info" outline onClick={() => void onDownloadChart()}>
               Download chart

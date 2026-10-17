@@ -1,4 +1,4 @@
-import { legacyRedirects, paths } from './paths';
+import { eventPath, eventReportPath, legacyRedirects, paths } from './paths';
 
 describe('paths', () => {
   it('names the event routes after events', () => {
@@ -19,5 +19,12 @@ describe('paths', () => {
       expect(current.has(to)).toBe(true);
       expect(to).toBe(from.replace(/^\/meetings/, '/events'));
     }
+  });
+});
+
+describe('event paths', () => {
+  it('puts the event id in the URL', () => {
+    expect(eventPath('-OAbc123')).toBe('/events/-OAbc123');
+    expect(eventReportPath('-OAbc123')).toBe('/events/-OAbc123/report');
   });
 });

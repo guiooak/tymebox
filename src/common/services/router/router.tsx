@@ -38,7 +38,10 @@ export function useCurrentPath(): string {
   return useLocation().pathname;
 }
 
-/** Generic auth-agnostic guard: redirects to `redirectTo` unless `when` is true. */
+/**
+ * Generic auth-agnostic guard: redirects to `redirectTo` unless `when` is true,
+ * remembering the page that was asked for (see `useReturnPath`).
+ */
 export function RouteGuard({
   when,
   redirectTo,
@@ -48,8 +51,17 @@ export function RouteGuard({
   redirectTo: string;
   children: ReactNode;
 }) {
+  const location = useLocation();
   if (!when) {
-    return <Navigate to={redirectTo} replace />;
+    return <Navigate to={redirectTo} replace state={{ from: location.pathname }} />;
   }
   return <>{children}</>;
+}
+
+/** The page a guard redirected away from (e.g. a shared event link), or `fallback`. */
+export function useReturnPath(fallback: string): string {
+  const state = useLocation().state as { from?: unknown } | null;
+  return typeof state?.from === 'string' && state.from.startsWith('/')
+    ? state.from
+    : fallback;
 }

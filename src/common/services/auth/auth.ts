@@ -1,15 +1,36 @@
 import {
+  connectAuthEmulator,
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithCredential,
   signInWithPopup,
   signOut,
   type User,
 } from 'firebase/auth';
-import { firebaseApp } from '../database';
+import { firebaseApp, usingEmulators } from '../database';
 
 const auth = getAuth(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
+
+if (usingEmulators) {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+}
+
+/**
+ * Emulator only: sign in as a made-up Google account, to try sharing between
+ * people locally. The Auth emulator accepts an unsigned token for this.
+ */
+export async function signInAsTestUser(
+  email: string,
+  name = email.split('@')[0],
+): Promise<void> {
+  if (!usingEmulators) {
+    throw new Error('Test sign-in only works against the Firebase emulators');
+  }
+  const token = JSON.stringify({ sub: email, email, email_verified: true, name });
+  await signInWithCredential(auth, GoogleAuthProvider.credential(token));
+}
 
 export type AuthUser = {
   uid: string;

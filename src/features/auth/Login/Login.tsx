@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Button, Paragraph } from '../../../common/components';
+import { signInAsTestUser } from '../../../common/services/auth';
+import { usingEmulators } from '../../../common/services/database';
 import { Logo } from '../../brand';
 import { useAuthStore } from '../authStore';
 import styles from './Login.module.css';
@@ -34,7 +36,42 @@ export function Login() {
           {busy ? 'Signing in…' : 'Continue with Google'}
         </Button>
         {error && <p className={styles.error}>{error}</p>}
+        {usingEmulators && <TestSignIn />}
       </div>
     </div>
+  );
+}
+
+/** Local emulators only: sign in as any made-up address to try sharing. */
+function TestSignIn() {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError(null);
+    try {
+      await signInAsTestUser(email.trim());
+    } catch {
+      setError('Couldn’t sign in to the Auth emulator. Is `yarn dev:emulators` running?');
+    }
+  };
+
+  return (
+    <form className={styles.testSignIn} onSubmit={(event) => void submit(event)}>
+      <label htmlFor="test-email">Emulator: sign in as</label>
+      <input
+        id="test-email"
+        type="email"
+        required
+        value={email}
+        placeholder="ana@example.com"
+        onChange={(event) => setEmail(event.target.value)}
+      />
+      <Button type="submit" size="sm" theme="secondary" outline>
+        Test sign-in
+      </Button>
+      {error && <p className={styles.error}>{error}</p>}
+    </form>
   );
 }

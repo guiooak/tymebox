@@ -10,7 +10,12 @@ import {
   Page,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
-import { paths, useNavigation } from '../../../common/services/router';
+import {
+  paths,
+  useNavigation,
+  eventPath,
+  eventReportPath,
+} from '../../../common/services/router';
 import { summarizeMeeting } from '../domain/metrics';
 import type { Meeting, MeetingStatus } from '../domain/types';
 import { useMeetingStore } from '../store';
@@ -90,18 +95,18 @@ export function MeetingsHistory() {
 
   const onOpenReport = async (id: string) => {
     await reopen(id);
-    navigation.go(paths.report);
+    navigation.go(eventReportPath(id));
   };
 
   const onOpenDashboard = async (id: string) => {
     await reopenInDashboard(id);
-    navigation.go(paths.liveMeeting);
+    navigation.go(eventPath(id));
   };
 
   const onClone = async (id: string) => {
     const newId = await clone(id);
     if (newId) {
-      navigation.go(paths.liveMeeting);
+      navigation.go(eventPath(newId));
     }
   };
 

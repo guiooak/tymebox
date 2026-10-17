@@ -1,59 +1,235 @@
 {
   "rules": {
+    "meetings": {
+      ".read": "auth != null && query.orderByChild === 'owner' && query.equalTo === auth.uid",
+      ".indexOn": [
+        "owner"
+      ],
+      "$id": {
+        ".read": "auth != null && (data.child('owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',')).exists() || root.child('meetingAccess/' + $id + '/visibility').val() === 'public')",
+        ".write": "auth != null && ((!data.exists() && newData.child('owner').val() === auth.uid) || (data.child('owner').val() === auth.uid && !newData.exists()))",
+        ".validate": "newData.hasChildren(['owner'])",
+        "owner": {
+          ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())"
+        },
+        "ownerName": {
+          ".write": "auth != null && root.child('meetings/' + $id + '/owner').val() === auth.uid",
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "id": {
+          ".validate": "newData.val() === $id"
+        },
+        "name": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+        "description": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 5000"
+        },
+        "expectedStartTime": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "expectedEndTime": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "realStartTime": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "realEndTime": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "status": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.val() === 'draft' || newData.val() === 'active' || newData.val() === 'cancelled' || newData.val() === 'finished'"
+        },
+        "createdAt": {
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "updatedAt": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          ".validate": "newData.isString() && newData.val().length <= 64"
+        },
+        "goals": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          "$goalId": {
+            ".validate": "newData.hasChildren(['id', 'name'])",
+            "id": {
+              ".validate": "newData.val() === $goalId"
+            },
+            "name": {
+              ".validate": "newData.isString() && newData.val().length <= 500"
+            },
+            "weight": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 100"
+            },
+            "finishedAt": {
+              ".validate": "newData.isString() && newData.val().length <= 64"
+            },
+            "decisions": {
+              ".validate": "newData.isString() && newData.val().length <= 5000"
+            },
+            "order": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "sideTopics": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || root.child('meetingAccess/' + $id + '/members/' + auth.token.email.toLowerCase().replace('.', ',') + '/role').val() === 'contributor' || (root.child('meetingAccess/' + $id + '/visibility').val() === 'public' && root.child('meetingAccess/' + $id + '/publicRole').val() === 'contributor'))",
+          "$topicKey": {
+            "id": {
+              ".validate": "newData.isString() && newData.val().length <= 128"
+            },
+            "value": {
+              ".validate": "newData.isString() && newData.val().length <= 2000"
+            },
+            "goalName": {
+              ".validate": "newData.isString() && newData.val().length <= 500"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "meetingAccess": {
+      "$id": {
+        ".write": "auth != null && ((!data.exists() && newData.child('owner').val() === auth.uid && newData.parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid) || (root.child('meetings/' + $id + '/owner').val() === auth.uid && !newData.exists()))",
+        "owner": {
+          ".read": "auth != null",
+          ".write": "auth != null && !data.exists() && newData.val() === auth.uid && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid"
+        },
+        "visibility": {
+          ".read": "auth != null",
+          ".write": "auth != null && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid",
+          ".validate": "newData.val() === 'private' || newData.val() === 'public'"
+        },
+        "publicRole": {
+          ".read": "auth != null",
+          ".write": "auth != null && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid",
+          ".validate": "newData.val() === 'viewer' || newData.val() === 'contributor'"
+        },
+        "members": {
+          ".read": "auth != null && root.child('meetings/' + $id + '/owner').val() === auth.uid",
+          ".write": "auth != null && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid",
+          "$key": {
+            ".read": "auth != null && $key === auth.token.email.toLowerCase().replace('.', ',')",
+            ".validate": "newData.hasChildren(['email', 'role', 'addedAt'])",
+            "email": {
+              ".validate": "newData.isString() && newData.val().length <= 254"
+            },
+            "role": {
+              ".validate": "newData.val() === 'viewer' || newData.val() === 'contributor'"
+            },
+            "addedAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "sharedWith": {
+      "$emailKey": {
+        ".read": "auth != null && $emailKey === auth.token.email.toLowerCase().replace('.', ',')",
+        "$id": {
+          ".write": "auth != null && (root.child('meetings/' + $id + '/owner').val() === auth.uid || newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid || ($emailKey === auth.token.email.toLowerCase().replace('.', ',') && !newData.exists()))",
+          ".validate": "newData.hasChildren(['addedAt', 'role'])",
+          "addedAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "role": {
+            ".validate": "newData.val() === 'viewer' || newData.val() === 'contributor'"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "accessRequests": {
+      "$id": {
+        ".read": "auth != null && root.child('meetings/' + $id + '/owner').val() === auth.uid",
+        "$key": {
+          ".read": "auth != null && $key === auth.token.email.toLowerCase().replace('.', ',')",
+          ".write": "auth != null && ((root.child('meetings/' + $id + '/owner').val() === auth.uid && !newData.exists()) || ($key === auth.token.email.toLowerCase().replace('.', ',') && !newData.exists()) || ($key === auth.token.email.toLowerCase().replace('.', ',') && root.child('meetings/' + $id).exists() && root.child('meetings/' + $id + '/owner').val() !== auth.uid && !root.child('meetingAccess/' + $id + '/members/' + $key).exists()))",
+          ".validate": "newData.hasChildren(['email', 'requestedAt'])",
+          "email": {
+            ".validate": "newData.val() === auth.token.email"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length <= 200"
+          },
+          "photoURL": {
+            ".validate": "newData.isString() && newData.val().length <= 2000"
+          },
+          "message": {
+            ".validate": "newData.isString() && newData.val().length <= 280"
+          },
+          "requestedAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "requestsByOwner": {
+      "$ownerUid": {
+        ".read": "auth != null && auth.uid === $ownerUid",
+        "$id": {
+          "$key": {
+            ".write": "auth != null && (auth.uid === $ownerUid || ($key === auth.token.email.toLowerCase().replace('.', ',') && root.child('meetings/' + $id + '/owner').val() === $ownerUid))",
+            ".validate": "newData.val() === true"
+          }
+        }
+      }
+    },
     "users": {
       "$uid": {
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid",
-
         "currentMeetingId": {
           ".validate": "newData.isString() && newData.val().length <= 128"
         },
-
         "settings": {
-          "decisionsAutomaticBehavior": { ".validate": "newData.isBoolean()" },
-          "$other": { ".validate": false }
-        },
-
-        "meetings": {
-          "$meetingId": {
-            ".validate": "newData.hasChildren()",
-
-            "id": { ".validate": "newData.isString() && newData.val().length <= 128" },
-            "name": { ".validate": "newData.isString() && newData.val().length <= 200" },
-            "description": { ".validate": "newData.isString() && newData.val().length <= 5000" },
-            "expectedStartTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "expectedEndTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "realStartTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "realEndTime": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "status": { ".validate": "newData.val() === 'draft' || newData.val() === 'active' || newData.val() === 'cancelled' || newData.val() === 'finished'" },
-            "createdAt": { ".validate": "newData.isString() && newData.val().length <= 64" },
-            "updatedAt": { ".validate": "newData.isString() && newData.val().length <= 64" },
-
-            "goals": {
-              "$goalIndex": {
-                "id": { ".validate": "newData.isString() && newData.val().length <= 128" },
-                "name": { ".validate": "newData.isString() && newData.val().length <= 500" },
-                "weight": { ".validate": "newData.isNumber()" },
-                "finishedAt": { ".validate": "newData.isString() && newData.val().length <= 64" },
-                "decisions": { ".validate": "newData.isString() && newData.val().length <= 5000" },
-                "$other": { ".validate": false }
-              }
-            },
-
-            "sideTopics": {
-              "$topicIndex": {
-                "id": { ".validate": "newData.isString() && newData.val().length <= 128" },
-                "value": { ".validate": "newData.isString() && newData.val().length <= 2000" },
-                "goalName": { ".validate": "newData.isString() && newData.val().length <= 500" },
-                "$other": { ".validate": false }
-              }
-            },
-
-            "$other": { ".validate": false }
+          "decisionsAutomaticBehavior": {
+            ".validate": "newData.isBoolean()"
+          },
+          "$other": {
+            ".validate": false
           }
         },
-
-        "$other": { ".validate": false }
+        "visited": {
+          "$id": {
+            ".validate": "newData.isNumber()"
+          }
+        },
+        "meetings": {
+          "$meetingId": {
+            ".validate": false
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
       }
     }
   }

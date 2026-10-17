@@ -13,6 +13,7 @@ export type PostItProps = {
   maxLength?: number;
   /** Focus the field when it mounts, e.g. for a card the user just added. */
   autoFocus?: boolean;
+  readOnly?: boolean;
 };
 
 export function PostIt({
@@ -23,13 +24,16 @@ export function PostIt({
   onDelete,
   maxLength,
   autoFocus,
+  readOnly,
 }: PostItProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useAutoGrowTextarea(ref, value);
 
   return (
     <div className={styles.postIt}>
-      <CloseButton className={styles.close} onClick={onDelete} label="Delete topic" />
+      {!readOnly && (
+        <CloseButton className={styles.close} onClick={onDelete} label="Delete topic" />
+      )}
       <div className={styles.row}>
         {prefix && <span className={styles.prefix}>{prefix}</span>}
         <textarea
@@ -40,6 +44,7 @@ export function PostIt({
           onChange={(event) => onChange(event.target.value)}
           onBlur={(event) => onBlur?.(event.currentTarget.value)}
           autoFocus={autoFocus}
+          readOnly={readOnly}
           rows={1}
         />
       </div>
