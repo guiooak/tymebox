@@ -19,7 +19,7 @@ function buildReportText(meeting: Meeting): string {
   lines.push('Goals:');
   for (const goal of meeting.goals) {
     const done = goal.finishedAt
-      ? ` — done at ${formatTime(goal.finishedAt)}`
+      ? ` — done at ${formatTime(goal.finishedAt)}h`
       : ' — not done';
     lines.push(`• ${goal.name} (weight ${goal.weight})${done}`);
     if (goal.decisions) {

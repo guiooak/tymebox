@@ -165,7 +165,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
                   <strong>{goal.name}</strong>
                   <span className={styles.goalMeta}>
                     {goal.finishedAt
-                      ? `done at ${formatTime(goal.finishedAt)}`
+                      ? `done at ${formatTime(goal.finishedAt)}h`
                       : 'not done'}{' '}
                     · weight {goal.weight}
                   </span>
