@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { Loader } from '../common/components';
+import { useT } from '../common/services/i18n';
 import {
   eventPath,
   eventReportPath,
@@ -29,6 +30,7 @@ export function AppShell() {
   const status = useAuthStore((state) => state.status);
   const user = useAuthStore((state) => state.user);
   const bind = useMeetingStore((state) => state.bind);
+  const t = useT();
 
   // Primitive deps: the auth store hands out a new user object on every
   // auth callback, and rebinding tears down every live subscription.
@@ -46,7 +48,7 @@ export function AppShell() {
   if (status === 'loading') {
     return (
       <div className={styles.loading}>
-        <Loader label="Starting Tymebox…" />
+        <Loader label={t.shell.starting} />
       </div>
     );
   }

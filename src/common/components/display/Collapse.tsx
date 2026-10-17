@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useT } from '../../services/i18n';
 import { Checkbox } from '../form';
 import { cx } from '../cx';
 import { Icon } from '../icons';
@@ -37,6 +38,7 @@ export function Collapse({
   checkbox,
   children,
 }: CollapseProps) {
+  const t = useT();
   const caret = (
     <span className={styles.caret} aria-hidden="true">
       <Icon name="chevronRight" size={18} />
@@ -53,7 +55,9 @@ export function Collapse({
               type="button"
               className={styles.caretButton}
               aria-expanded={open}
-              aria-label={typeof title === 'string' ? `Toggle ${title}` : 'Toggle'}
+              aria-label={
+                typeof title === 'string' ? t.common.toggleNamed(title) : t.common.toggle
+              }
               onClick={() => onToggleOpen(!open)}
             >
               {caret}

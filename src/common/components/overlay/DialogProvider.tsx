@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { Button } from '../buttons';
+import { useT } from '../../services/i18n';
 import { uid } from '../../services/uid';
 import { Modal } from './Modal';
 import {
@@ -20,6 +21,7 @@ type DialogItem =
 
 export function DialogProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<DialogItem[]>([]);
+  const t = useT();
 
   const remove = useCallback((id: string) => {
     setItems((current) => current.filter((item) => item.id !== id));
@@ -71,7 +73,7 @@ export function DialogProvider({ children }: { children: ReactNode }) {
               closeOnOverlayClick={closeOnOverlayClick}
               footer={
                 <Button theme={buttonTheme ?? 'primary'} onClick={() => settle(true)}>
-                  {buttonText ?? 'OK'}
+                  {buttonText ?? t.common.ok}
                 </Button>
               }
             >
@@ -99,13 +101,13 @@ export function DialogProvider({ children }: { children: ReactNode }) {
             footer={
               <>
                 <Button theme="secondary" outline onClick={() => settle(false)}>
-                  {cancelButtonText ?? 'Cancel'}
+                  {cancelButtonText ?? t.common.cancel}
                 </Button>
                 <Button
                   theme={confirmButtonTheme ?? 'primary'}
                   onClick={() => settle(true)}
                 >
-                  {confirmButtonText ?? 'Confirm'}
+                  {confirmButtonText ?? t.common.confirm}
                 </Button>
               </>
             }

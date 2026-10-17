@@ -7,6 +7,7 @@ import {
   useState,
   type CSSProperties,
   type KeyboardEvent,
+  type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../cx';
@@ -30,6 +31,8 @@ export type SelectProps<T extends string> = {
   disabled?: boolean;
   className?: string;
   id?: string;
+  /** What the closed control shows; defaults to the selected option's label. */
+  renderValue?: (option: SelectOption<T>) => ReactNode;
 };
 
 const GAP = 4;
@@ -54,6 +57,7 @@ export function Select<T extends string>({
   disabled,
   className,
   id,
+  renderValue,
 }: SelectProps<T>) {
   const autoId = useId();
   const baseId = id ?? autoId;
@@ -229,7 +233,9 @@ export function Select<T extends string>({
           }
         }}
       >
-        <span className={styles.value}>{selected?.label ?? ''}</span>
+        <span className={styles.value}>
+          {selected ? (renderValue ? renderValue(selected) : selected.label) : ''}
+        </span>
         <Icon name="chevronDown" size={16} className={styles.chevron} />
       </button>
       {open &&

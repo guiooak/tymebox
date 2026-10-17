@@ -6,7 +6,16 @@ import {
   isSameDay as isSameDayFn,
   parseISO,
 } from 'date-fns';
+import { enUS, ptBR, type Locale as DateLocale } from 'date-fns/locale';
+import { getLocale, getT, type Locale } from '../i18n';
 import type { DateInput, DurationParts } from './types';
+
+const DATE_LOCALES: Record<Locale, DateLocale> = { 'en-US': enUS, 'pt-BR': ptBR };
+
+/** date-fns locale for the active interface language. */
+export function getDateLocale(): DateLocale {
+  return DATE_LOCALES[getLocale()];
+}
 
 /** Coerce any accepted input into a native Date. */
 export function toDate(input: DateInput): Date {
@@ -58,14 +67,14 @@ export function formatTime(input: DateInput): string {
   return format(toDate(input), 'HH:mm');
 }
 
-/** Long form, e.g. "Monday, March 3rd 2026, 14:05". */
+/** Long form in the active language, e.g. "Monday, March 3rd 2026, 14:05h". */
 export function formatLong(input: DateInput): string {
-  return format(toDate(input), "EEEE, MMMM do yyyy, HH:mm'h'");
+  return format(toDate(input), getT().formats.longDate, { locale: getDateLocale() });
 }
 
 /** Day label used on the burndown axis, e.g. "Mon, 3 Mar". */
 export function formatDayLabel(input: DateInput): string {
-  return format(toDate(input), 'EEE, d MMM');
+  return format(toDate(input), getT().formats.dayLabel, { locale: getDateLocale() });
 }
 
 /** Break a millisecond span into clock parts, tracking sign. */

@@ -1,4 +1,5 @@
 import { addHours, diffMs, nowISO, toISO } from '../../../common/services/datetime';
+import { useI18nStore, type Locale } from '../../../common/services/i18n';
 import { createStore } from '../../../common/services/state';
 import { uid as makeId } from '../../../common/services/uid';
 import {
@@ -100,6 +101,8 @@ export type MeetingState = {
   reopenInDashboard: (id: string) => Promise<void>;
   clone: (id: string) => Promise<string | null>;
   createFromTemplate: (name: string, goalNames: string[]) => Promise<string | null>;
+  /** Switch the interface language; signed in, it's saved to the profile too. */
+  chooseLocale: (locale: Locale) => Promise<void>;
   setAutomatic: (value: boolean) => Promise<void>;
 
   updateMeeting: (patch: MeetingEditableFields) => Promise<void>;
@@ -312,6 +315,17 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
 
       const offUser = repo.subscribeUserData(user.uid, (data) => {
         userLoaded = true;
+        // The profile's language wins, so an account looks the same on every
+        // device. With none saved yet, keep what was picked here (e.g. on the
+        // landing page) and save it to the profile.
+        const i18n = useI18nStore.getState();
+        if (data.locale) {
+          if (data.locale !== i18n.locale) {
+            i18n.setLocale(data.locale);
+          }
+        } else {
+          void repo.setUserLocale(user.uid, i18n.locale);
+        }
         set({
           currentMeetingId: data.currentMeetingId,
           decisionsAutomaticBehavior: data.decisionsAutomaticBehavior,
@@ -569,6 +583,14 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       await repo.createMeeting(meeting);
       await repo.setCurrentMeetingId(user.uid, meeting.id);
       return meeting.id;
+    },
+
+    chooseLocale: async (locale) => {
+      useI18nStore.getState().setLocale(locale);
+      const user = get().user;
+      if (user) {
+        await repo.setUserLocale(user.uid, locale);
+      }
     },
 
     setAutomatic: async (value) => {

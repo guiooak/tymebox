@@ -6,6 +6,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from 'react';
+import { getT } from '../../services/i18n';
 import { useDialog } from '../overlay';
 import { FormContext, type FieldRecord, type FormContextValue } from './formContext';
 
@@ -80,10 +81,10 @@ export function Form({
     const confirmed =
       !confirmReset ||
       (await dialog.confirm({
-        text: 'Are you sure you want to reset it at all?',
+        text: getT().common.resetConfirm,
         confirmButtonTheme: 'danger',
-        confirmButtonText: 'Yes, do it',
-        cancelButtonText: 'Not anymore',
+        confirmButtonText: getT().common.yesDoIt,
+        cancelButtonText: getT().common.notAnymore,
       }));
     if (confirmed) {
       onReset?.();

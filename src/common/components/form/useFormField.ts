@@ -1,4 +1,5 @@
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { getT } from '../../services/i18n';
 import { uid } from '../../services/uid';
 import { FormContext } from './formContext';
 
@@ -21,13 +22,13 @@ export type UseFormFieldOptions = {
 function computeError(value: string, options: UseFormFieldOptions): string | null {
   const trimmed = value?.trim?.() ?? '';
   if (options.required && !trimmed) {
-    return 'This field is required';
+    return getT().common.required;
   }
   if (options.minLength && value.length < options.minLength) {
-    return `Use at least ${options.minLength} characters`;
+    return getT().common.minLength(options.minLength);
   }
   if (options.maxLength && value.length > options.maxLength) {
-    return `Use at most ${options.maxLength} characters`;
+    return getT().common.maxLength(options.maxLength);
   }
   if (value && options.validate) {
     const result = options.validate(value);

@@ -177,6 +177,7 @@ rules = {
                 "currentMeetingId": {".validate": s(128)},
                 "settings": {
                     "decisionsAutomaticBehavior": {".validate": "newData.isBoolean()"},
+                    "locale": {".validate": "newData.val() === 'en-US' || newData.val() === 'pt-BR'"},
                     "$other": {".validate": False},
                 },
                 "visited": {"$id": {".validate": "newData.isNumber()"}},

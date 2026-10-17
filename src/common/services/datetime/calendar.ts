@@ -16,7 +16,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from 'date-fns';
-import { toDate } from './datetime';
+import { getDateLocale, toDate } from './datetime';
 import type { DateInput } from './types';
 
 /** Six-week (42-day) grid covering the month containing `view`. */
@@ -41,7 +41,8 @@ export function isSameWeek(a: DateInput, b: DateInput): boolean {
 
 /** Month + year title, e.g. "March 2026". */
 export function formatMonthYear(view: DateInput): string {
-  return format(toDate(view), 'LLLL yyyy');
+  const label = format(toDate(view), 'LLLL yyyy', { locale: getDateLocale() });
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 export function hoursOf(input: DateInput): number {
@@ -66,4 +67,13 @@ export function withTime(base: DateInput, hours: number, minutes: number): Date 
   return setMinutes(setHours(toDate(base), hours), minutes);
 }
 
-export const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
+/** Two-letter weekday headers, Sunday first, in the active language. */
+export function weekdayLabels(): string[] {
+  // 4 January 2026 is a Sunday.
+  return Array.from({ length: 7 }, (_, index) => {
+    const label = format(new Date(2026, 0, 4 + index), 'EEEEEE', {
+      locale: getDateLocale(),
+    });
+    return label.charAt(0).toUpperCase() + label.slice(1, 2);
+  });
+}

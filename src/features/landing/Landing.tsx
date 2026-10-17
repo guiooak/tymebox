@@ -1,29 +1,15 @@
 import type { ReactNode } from 'react';
 import { Badge, Icon, TimeDisplay, type IconName } from '../../common/components';
+import { useT } from '../../common/services/i18n';
 import { useReturnPath } from '../../common/services/router';
+import { LanguageSelect } from '../../app/LanguageSelect';
 import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
 import { LandingDemo } from './LandingDemo';
 import { SignInButton, TestSignIn } from './SignInPanel';
 import styles from './Landing.module.css';
 
-const STEPS: { icon: IconName; title: string; text: string }[] = [
-  {
-    icon: 'pencil',
-    title: 'Plan',
-    text: 'Name it, set the time box and list the milestones, or start from a Weekly planning, Retro or 1:1 template.',
-  },
-  {
-    icon: 'play',
-    title: 'Run',
-    text: 'The countdown keeps everyone honest. Check milestones off as you go and park side topics for later.',
-  },
-  {
-    icon: 'chart',
-    title: 'Review',
-    text: 'A report with the burndown, the timing against plan and the parking lot. Print it or paste it in chat.',
-  },
-];
+const STEP_ICONS: IconName[] = ['pencil', 'play', 'chart'];
 
 function Feature({
   eyebrow,
@@ -53,15 +39,16 @@ function Feature({
 }
 
 function CountdownStates() {
+  const t = useT().landing.countdown;
   return (
     <div className={styles.states}>
-      <TimeDisplay theme="secondary" header="On track" footer="2 of 4 milestones">
+      <TimeDisplay theme="secondary" header={t.onTrack} footer={t.onTrackNote}>
         <span className={styles.mono}>14:20</span>
       </TimeDisplay>
-      <TimeDisplay theme="warning" header="Trending late" footer="1 milestone behind">
+      <TimeDisplay theme="warning" header={t.late} footer={t.lateNote}>
         <span className={styles.mono}>06:45</span>
       </TimeDisplay>
-      <TimeDisplay theme="danger" header="Overdue" footer="over the box by">
+      <TimeDisplay theme="danger" header={t.overdue} footer={t.overdueNote}>
         <span className={styles.mono}>+03:10</span>
       </TimeDisplay>
     </div>
@@ -69,13 +56,10 @@ function CountdownStates() {
 }
 
 function ParkingLot() {
+  const t = useT().landing.parking;
   return (
     <div className={styles.parking}>
-      {[
-        ['Pick the sprint goal', 'Should the API work wait for the redesign?'],
-        ['Size the top stories', 'Who owns the flaky deploy job?'],
-        ['Agree on owners', 'Revisit the on-call rota next week'],
-      ].map(([goal, topic]) => (
+      {t.topics.map(([goal, topic]) => (
         <div key={topic} className={styles.topic}>
           <span className={styles.topicGoal}>{goal}</span>
           {topic}
@@ -86,16 +70,17 @@ function ParkingLot() {
 }
 
 function SharePeople() {
+  const t = useT().landing.sharing;
   const people = [
-    { initial: 'A', name: 'Ana Souza', role: 'Owner' },
-    { initial: 'B', name: 'bruno@team.com', role: 'Contributor' },
-    { initial: 'C', name: 'carla@team.com', role: 'Viewer' },
+    { initial: 'A', name: 'Ana Souza', role: t.owner },
+    { initial: 'B', name: 'bruno@team.com', role: t.contributor },
+    { initial: 'C', name: 'carla@team.com', role: t.viewer },
   ];
   return (
     <div className={styles.share}>
       <div className={styles.shareHead}>
-        <strong>Share “Sprint planning”</strong>
-        <Badge theme="warning">1 request</Badge>
+        <strong>{t.shareTitle}</strong>
+        <Badge theme="warning">{t.requests}</Badge>
       </div>
       <ul className={styles.people}>
         {people.map((person) => (
@@ -108,26 +93,27 @@ function SharePeople() {
       </ul>
       <div className={styles.shareLink}>
         <Icon name="flag" size={16} />
-        Private: people with the link can ask for access
+        {t.privateNote}
       </div>
     </div>
   );
 }
 
 function ReportCards() {
+  const t = useT().landing.report;
   return (
     <div className={styles.report}>
       <div className={styles.reportCards}>
-        <TimeDisplay theme="success" header="Total duration" footer="saved 02m 00s">
+        <TimeDisplay theme="success" header={t.totalDuration} footer={t.saved}>
           <span className={styles.mono}>28m 00s</span>
         </TimeDisplay>
-        <TimeDisplay theme="success" header="End" footer="planned 10:30">
+        <TimeDisplay theme="success" header={t.end} footer={t.planned}>
           <span className={styles.mono}>10:28</span>
         </TimeDisplay>
       </div>
       <div className={styles.streak}>
-        <Badge theme="success">On budget</Badge>
-        3rd event in a row under budget 🔥
+        <Badge theme="success">{t.onBudget}</Badge>
+        {t.streak}
       </div>
     </div>
   );
@@ -141,17 +127,21 @@ function ReportCards() {
 export function Landing() {
   const returnPath = useReturnPath('');
   const fromEvent = returnPath.startsWith('/events/');
+  const t = useT().landing;
 
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>
           <Logo size={30} />
-          <ThemeToggle
-            className={styles.themeToggle}
-            labelClassName={styles.srOnly}
-            iconClassName={styles.themeIcon}
-          />
+          <div className={styles.topBarControls}>
+            <LanguageSelect />
+            <ThemeToggle
+              className={styles.themeToggle}
+              labelClassName={styles.srOnly}
+              iconClassName={styles.themeIcon}
+            />
+          </div>
         </div>
       </header>
 
@@ -162,28 +152,23 @@ export function Landing() {
               {fromEvent ? (
                 <span className={styles.notice}>
                   <Icon name="flag" size={16} />
-                  Sign in to open the event you were sent.
+                  {t.fromEvent}
                 </span>
               ) : (
-                <span className={styles.kicker}>Timeboxing for meetings and events</span>
+                <span className={styles.kicker}>{t.kicker}</span>
               )}
               <h1 className={styles.headline}>
-                Every event, <span className={styles.accent}>inside its box.</span>
+                {t.headline} <span className={styles.accent}>{t.headlineAccent}</span>
               </h1>
-              <p className={styles.heroLead}>
-                Plan milestones, run the clock and finish on time. Then see exactly how it
-                went.
-              </p>
+              <p className={styles.heroLead}>{t.lead}</p>
               <div className={styles.ctaRow}>
                 <SignInButton />
                 <a className={styles.secondaryLink} href="#how-it-works">
-                  See how it works
+                  {t.howItWorksLink}
                   <Icon name="chevronDown" size={16} />
                 </a>
               </div>
-              <p className={styles.reassure}>
-                Free · No setup · Private until you share it
-              </p>
+              <p className={styles.reassure}>{t.reassure}</p>
               <TestSignIn />
             </div>
             <div className={styles.heroDemo}>
@@ -194,13 +179,13 @@ export function Landing() {
 
         <section id="how-it-works" className={styles.section}>
           <div className={styles.inner}>
-            <span className={styles.eyebrow}>How it works</span>
-            <h2 className={styles.sectionTitle}>Three steps, one box.</h2>
+            <span className={styles.eyebrow}>{t.howItWorks}</span>
+            <h2 className={styles.sectionTitle}>{t.stepsTitle}</h2>
             <ol className={styles.steps}>
-              {STEPS.map((step, index) => (
-                <li key={step.title} className={styles.step}>
+              {t.steps.map((step, index) => (
+                <li key={index} className={styles.step}>
                   <span className={styles.stepIcon}>
-                    <Icon name={step.icon} size={22} />
+                    <Icon name={STEP_ICONS[index]} size={22} />
                   </span>
                   <span className={styles.stepNumber}>0{index + 1}</span>
                   <h3 className={styles.stepTitle}>{step.title}</h3>
@@ -214,29 +199,29 @@ export function Landing() {
         <section className={`${styles.section} ${styles.features}`}>
           <div className={styles.inner}>
             <Feature
-              eyebrow="Countdown"
-              title="Know you’re late before you are."
-              text="The clock compares your pace with the plan. It stays calm while you’re on track, turns amber when you fall a milestone behind and red once you’re over the box."
+              eyebrow={t.countdown.eyebrow}
+              title={t.countdown.title}
+              text={t.countdown.text}
               visual={<CountdownStates />}
             />
             <Feature
               flip
-              eyebrow="Parking lot"
-              title="Park it, don’t lose it."
-              text="Good tangents get a card on the side, tagged with the milestone they came up in. The meeting keeps moving and nothing is forgotten."
+              eyebrow={t.parking.eyebrow}
+              title={t.parking.title}
+              text={t.parking.text}
               visual={<ParkingLot />}
             />
             <Feature
-              eyebrow="Sharing"
-              title="Run it together."
-              text="Share by email as viewer or contributor, or open it to anyone with the link. People without access can ask for it, and you approve from the event."
+              eyebrow={t.sharing.eyebrow}
+              title={t.sharing.title}
+              text={t.sharing.text}
               visual={<SharePeople />}
             />
             <Feature
               flip
-              eyebrow="Report"
-              title="See how it really went."
-              text="When you finish, the report shows the burndown, start, end and duration against plan, and your on-budget streak. Copy it, print it or save a PDF."
+              eyebrow={t.report.eyebrow}
+              title={t.report.title}
+              text={t.report.text}
               visual={<ReportCards />}
             />
           </div>
@@ -246,12 +231,8 @@ export function Landing() {
           <div className={styles.closingInner}>
             <TymeboxSymbol size={88} variant="full" />
             <div className={styles.closingText}>
-              <h2 className={styles.sectionTitle}>
-                Your next meeting has a box. Use it.
-              </h2>
-              <p className={styles.lead}>
-                Sign in with Google and plan your first event in under a minute.
-              </p>
+              <h2 className={styles.sectionTitle}>{t.closingTitle}</h2>
+              <p className={styles.lead}>{t.closingText}</p>
             </div>
             <SignInButton />
           </div>
@@ -261,7 +242,7 @@ export function Landing() {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <TymeboxSymbol size={20} />
-          <span>© {new Date().getFullYear()} Tymebox · Focus only on what matters</span>
+          <span>{t.footer(new Date().getFullYear())}</span>
         </div>
       </footer>
     </div>

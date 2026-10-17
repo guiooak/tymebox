@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import '@fontsource/roboto/500.css';
 import { Button } from '../../common/components';
 import { signInAsTestUser } from '../../common/services/auth';
+import { useT } from '../../common/services/i18n';
 import { usingEmulators } from '../../common/services/database';
 import { useAuthStore } from '../auth';
 import styles from './Landing.module.css';
@@ -37,6 +38,7 @@ function GoogleMark() {
  */
 export function SignInButton() {
   const signIn = useAuthStore((state) => state.signIn);
+  const t = useT().landing;
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -46,7 +48,7 @@ export function SignInButton() {
     try {
       await signIn();
     } catch {
-      setError('Sign-in failed. Please try again.');
+      setError(t.signInFailed);
     } finally {
       setBusy(false);
     }
@@ -61,7 +63,7 @@ export function SignInButton() {
         disabled={busy}
       >
         <GoogleMark />
-        <span>{busy ? 'Signing in…' : 'Continue with Google'}</span>
+        <span>{busy ? t.signingIn : t.google}</span>
       </button>
       {error && (
         <p className={styles.error} role="alert">
@@ -75,6 +77,7 @@ export function SignInButton() {
 /** Local emulators only: sign in as any made-up address to try sharing. */
 export function TestSignIn() {
   const [email, setEmail] = useState('');
+  const t = useT().landing;
   const [error, setError] = useState<string | null>(null);
 
   if (!usingEmulators) {
@@ -87,13 +90,13 @@ export function TestSignIn() {
     try {
       await signInAsTestUser(email.trim());
     } catch {
-      setError('Couldn’t sign in to the Auth emulator. Is `yarn dev:emulators` running?');
+      setError(t.testSignInFailed);
     }
   };
 
   return (
     <form className={styles.testSignIn} onSubmit={(event) => void submit(event)}>
-      <label htmlFor="test-email">Emulator: sign in as</label>
+      <label htmlFor="test-email">{t.testSignIn}</label>
       <input
         id="test-email"
         type="email"
@@ -103,7 +106,7 @@ export function TestSignIn() {
         onChange={(event) => setEmail(event.target.value)}
       />
       <Button type="submit" size="sm" theme="secondary" outline>
-        Test sign-in
+        {t.testSignInButton}
       </Button>
       {error && <p className={styles.error}>{error}</p>}
     </form>

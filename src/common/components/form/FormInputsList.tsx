@@ -1,4 +1,5 @@
 import { useRef, type KeyboardEvent } from 'react';
+import { useT } from '../../services/i18n';
 import { uid } from '../../services/uid';
 import { Button, CloseButton } from '../buttons';
 import { cx } from '../cx';
@@ -28,11 +29,13 @@ export function FormInputsList({
   label,
   value,
   onChange,
-  placeholder = 'Goal',
+  placeholder,
   showWeight = true,
   required,
   showErrors,
 }: FormInputsListProps) {
+  const t = useT();
+  const itemName = placeholder ?? t.common.goal;
   const rows = value.length > 0 ? value : [newInputsListItem()];
 
   // Id of a freshly added row to move focus into once it mounts.
@@ -66,7 +69,8 @@ export function FormInputsList({
   };
 
   const hasAnyName = rows.some((row) => row.name.trim());
-  const error = required && showErrors && !hasAnyName ? `${label} is required` : null;
+  const error =
+    required && showErrors && !hasAnyName ? t.common.namedRequired(label) : null;
 
   return (
     <div>
@@ -82,7 +86,7 @@ export function FormInputsList({
                 }
               }}
               className={cx(styles.control, styles.grow)}
-              placeholder={`${placeholder} ${index + 1}`}
+              placeholder={`${itemName} ${index + 1}`}
               value={row.name}
               onChange={(event) => update(row.id, { name: event.target.value })}
               onKeyDown={(event) => onNameKeyDown(event, index)}
@@ -92,12 +96,12 @@ export function FormInputsList({
                 className={cx(styles.control, styles.weight)}
                 type="number"
                 min={1}
-                placeholder="Weight"
+                placeholder={t.common.weight}
                 value={row.weight}
                 onChange={(event) => update(row.id, { weight: event.target.value })}
               />
             )}
-            <CloseButton onClick={() => remove(row.id)} label="Remove goal" />
+            <CloseButton onClick={() => remove(row.id)} label={t.common.removeGoal} />
           </div>
         ))}
         <Button
@@ -107,7 +111,7 @@ export function FormInputsList({
           outline
           onClick={add}
         >
-          + Add {placeholder.toLowerCase()}
+          {t.common.addNamed(itemName)}
         </Button>
         {error && <span className={styles.error}>{error}</span>}
       </div>

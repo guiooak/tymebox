@@ -24,6 +24,7 @@ import {
   eventReportPath,
 } from '../../../common/services/router';
 import { useDeleteEvent } from '../components';
+import { useT } from '../../../common/services/i18n';
 import { summarizeMeeting } from '../domain/metrics';
 import type { Meeting, MeetingStatus } from '../domain/types';
 import { useMeetingStore } from '../store';
@@ -32,32 +33,28 @@ import styles from './MeetingsHistory.module.css';
 type Filter = 'all' | MeetingStatus;
 type SortKey = 'newest' | 'oldest' | 'name';
 
-const FILTERS: Array<{ key: Filter; label: string }> = [
-  { key: 'all', label: 'All' },
-  { key: 'draft', label: 'Drafts' },
-  { key: 'active', label: 'Live' },
-  { key: 'finished', label: 'Finished' },
-  { key: 'cancelled', label: 'Cancelled' },
-];
+const FILTERS: Filter[] = ['all', 'draft', 'active', 'finished', 'cancelled'];
 
-const SORT_OPTIONS: ReadonlyArray<SelectOption<SortKey>> = [
-  { value: 'newest', label: 'Newest first' },
-  { value: 'oldest', label: 'Oldest first' },
-  { value: 'name', label: 'Name (A–Z)' },
-];
+const SORT_KEYS: SortKey[] = ['newest', 'oldest', 'name'];
 
 /** Whichever date best describes when the event happened. */
-function whenLabel(meeting: Meeting): string {
+function whenLabel(meeting: Meeting, notScheduled: string): string {
   const stamp =
     meeting.realEndTime ||
     meeting.realStartTime ||
     meeting.expectedStartTime ||
     meeting.createdAt;
-  return stamp ? formatLong(stamp) : 'Not scheduled';
+  return stamp ? formatLong(stamp) : notScheduled;
 }
 
 export function MeetingsHistory() {
   const navigation = useNavigation();
+  const tt = useT();
+  const t = tt.history;
+  const sortOptions: SelectOption<SortKey>[] = SORT_KEYS.map((key) => ({
+    value: key,
+    label: t.sort[key],
+  }));
   const meetings = useMeetingStore((state) => state.meetings);
   const loading = useMeetingStore((state) => state.loading);
   const reopen = useMeetingStore((state) => state.reopen);
@@ -131,17 +128,21 @@ export function MeetingsHistory() {
   // The board action does what reopenInDashboard does to each kind of event.
   const actionsFor = (meeting: Meeting): MenuItem[] => {
     const board = meeting.realEndTime
-      ? 'Reopen event'
+      ? t.reopen
       : meeting.status === 'cancelled'
-        ? 'Run again'
-        : 'Open board';
+        ? t.runAgain
+        : tt.home.openBoard;
     return [
       ...(meeting.realEndTime
-        ? [{ label: 'View report', onSelect: () => void onOpenReport(meeting.id) }]
+        ? [{ label: tt.home.viewReport, onSelect: () => void onOpenReport(meeting.id) }]
         : []),
       { label: board, onSelect: () => void onOpenDashboard(meeting.id) },
-      { label: 'Clone', onSelect: () => void onClone(meeting.id) },
-      { label: 'Delete event', danger: true, onSelect: () => void onDelete(meeting) },
+      { label: tt.home.clone, onSelect: () => void onClone(meeting.id) },
+      {
+        label: tt.home.deleteEvent,
+        danger: true,
+        onSelect: () => void onDelete(meeting),
+      },
     ];
   };
 
@@ -150,32 +151,30 @@ export function MeetingsHistory() {
       <Page>
         <header className={styles.head}>
           <Heading size="md" level={1}>
-            My events
+            {t.title}
           </Heading>
-          <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
+          <Button onClick={() => navigation.go(paths.newMeeting)}>
+            {tt.home.newEvent}
+          </Button>
         </header>
 
         {loading ? (
-          <Loader className={styles.loading} label="Loading your events…" />
+          <Loader className={styles.loading} label={tt.home.loadingEvents} />
         ) : (
           <>
             <div className={styles.toolbar}>
-              <div
-                className={styles.filters}
-                role="tablist"
-                aria-label="Filter by status"
-              >
-                {FILTERS.map((item) => (
+              <div className={styles.filters} role="tablist" aria-label={t.filterAria}>
+                {FILTERS.map((key) => (
                   <button
-                    key={item.key}
+                    key={key}
                     type="button"
                     role="tab"
-                    aria-selected={filter === item.key}
-                    className={filter === item.key ? styles.filterActive : styles.filter}
-                    onClick={() => setFilter(item.key)}
+                    aria-selected={filter === key}
+                    className={filter === key ? styles.filterActive : styles.filter}
+                    onClick={() => setFilter(key)}
                   >
-                    {item.label}
-                    <span className={styles.count}>{counts[item.key] ?? 0}</span>
+                    {t.filters[key]}
+                    <span className={styles.count}>{counts[key] ?? 0}</span>
                   </button>
                 ))}
               </div>
@@ -184,15 +183,15 @@ export function MeetingsHistory() {
                   className={styles.search}
                   type="search"
                   value={query}
-                  placeholder="Search events…"
-                  aria-label="Search events"
+                  placeholder={t.search}
+                  aria-label={t.searchAria}
                   onChange={(event) => setQuery(event.target.value)}
                 />
                 <Select<SortKey>
                   value={sort}
-                  options={SORT_OPTIONS}
+                  options={sortOptions}
                   onChange={setSort}
-                  label="Sort events"
+                  label={t.sortAria}
                 />
               </div>
             </div>
@@ -200,16 +199,8 @@ export function MeetingsHistory() {
             {visible.length === 0 ? (
               <BlankSlate
                 art={meetings.length === 0 ? 'events' : 'search'}
-                title={
-                  meetings.length === 0
-                    ? 'No events yet'
-                    : 'Nothing matches those filters'
-                }
-                description={
-                  meetings.length === 0
-                    ? 'Create one and it will show up here.'
-                    : 'Try a different status, or clear the search.'
-                }
+                title={meetings.length === 0 ? t.noEvents : t.noMatch}
+                description={meetings.length === 0 ? t.noEventsText : t.noMatchText}
               />
             ) : (
               <div className={styles.list}>
@@ -223,7 +214,7 @@ export function MeetingsHistory() {
                       <div className={styles.info}>
                         <div className={styles.titleRow}>
                           <ItemLink onClick={() => void onOpen(meeting)}>
-                            <strong>{meeting.name || 'Untitled event'}</strong>
+                            <strong>{meeting.name || tt.common.untitledEvent}</strong>
                           </ItemLink>
                           <Badge theme={summary.status.theme}>
                             {summary.status.label}
@@ -235,13 +226,18 @@ export function MeetingsHistory() {
                           )}
                         </div>
                         <div className={styles.meta}>
-                          {whenLabel(meeting)} · {meeting.goals.length} milestones
+                          {t.meta(
+                            whenLabel(meeting, t.notScheduled),
+                            meeting.goals.length,
+                          )}
                           {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
                         </div>
                       </div>
                       <div className={`${styles.actions} ${itemLinkAbove}`}>
                         <Menu
-                          label={`Actions for ${meeting.name || 'this event'}`}
+                          label={tt.common.actionsFor(
+                            meeting.name || tt.common.thisEvent,
+                          )}
                           items={actionsFor(meeting)}
                         />
                       </div>

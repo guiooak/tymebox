@@ -7,6 +7,7 @@ import {
   writeMany,
 } from '../../../common/services/database';
 import { nowISO } from '../../../common/services/datetime';
+import { isLocale, type Locale } from '../../../common/services/i18n';
 import {
   emailKey,
   requestPhoto,
@@ -47,6 +48,8 @@ type Unsubscribe = () => void;
 export type UserData = {
   currentMeetingId: string | null;
   decisionsAutomaticBehavior: boolean;
+  /** The interface language saved in the profile, if any. */
+  locale: Locale | null;
   visitedIds: string[];
   /** Events from before sharing, still to be moved to meetings/$id. */
   legacy: Record<string, RawMeeting>;
@@ -54,7 +57,7 @@ export type UserData = {
 
 type RawUserNode = {
   currentMeetingId?: string | null;
-  settings?: { decisionsAutomaticBehavior?: boolean };
+  settings?: { decisionsAutomaticBehavior?: boolean; locale?: string };
   visited?: Record<string, number>;
   meetings?: Record<string, RawMeeting | null> | Array<RawMeeting | null>;
 };
@@ -80,6 +83,7 @@ export function subscribeUserData(
     callback({
       currentMeetingId: node?.currentMeetingId ?? null,
       decisionsAutomaticBehavior: node?.settings?.decisionsAutomaticBehavior ?? true,
+      locale: isLocale(node?.settings?.locale) ? node.settings.locale : null,
       visitedIds: Object.keys(node?.visited ?? {}),
       legacy: legacyEntries(node?.meetings),
     });
@@ -121,6 +125,10 @@ export function subscribeSharedWith(
 
 export async function setCurrentMeetingId(uid: string, id: string | null): Promise<void> {
   await updateAt(userPath(uid), { currentMeetingId: id });
+}
+
+export async function setUserLocale(uid: string, locale: Locale): Promise<void> {
+  await updateAt(`${userPath(uid)}/settings`, { locale });
 }
 
 export async function setAutomaticBehavior(uid: string, value: boolean): Promise<void> {

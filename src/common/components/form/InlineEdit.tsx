@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useT } from '../../services/i18n';
 import { cx } from '../cx';
 import { useAutoGrowTextarea } from '../useAutoGrowTextarea';
 import styles from './InlineEdit.module.css';
@@ -26,13 +27,15 @@ export function InlineEdit({
   value,
   onChange,
   label,
-  placeholder = 'Click to add',
+  placeholder,
   multiline,
   readOnly,
   size = 'md',
   maxLength,
   className,
 }: InlineEditProps) {
+  const t = useT();
+  const shownPlaceholder = placeholder ?? t.common.clickToAdd;
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +83,7 @@ export function InlineEdit({
   if (readOnly) {
     return (
       <span className={cx(styles.text, styles[size], !value && styles.empty, className)}>
-        {value || placeholder}
+        {value || shownPlaceholder}
       </span>
     );
   }
@@ -89,7 +92,7 @@ export function InlineEdit({
     return (
       <button
         type="button"
-        aria-label={`Edit ${label}`}
+        aria-label={t.common.editNamed(label)}
         className={cx(
           styles.trigger,
           styles.text,
@@ -99,7 +102,7 @@ export function InlineEdit({
         )}
         onClick={startEditing}
       >
-        {value || placeholder}
+        {value || shownPlaceholder}
       </button>
     );
   }
@@ -110,7 +113,7 @@ export function InlineEdit({
       aria-label={label}
       className={cx(styles.field, styles[size], className)}
       value={draft}
-      placeholder={placeholder}
+      placeholder={shownPlaceholder}
       maxLength={maxLength}
       rows={1}
       onChange={(event) => setDraft(event.target.value)}
@@ -123,7 +126,7 @@ export function InlineEdit({
       aria-label={label}
       className={cx(styles.field, styles[size], className)}
       value={draft}
-      placeholder={placeholder}
+      placeholder={shownPlaceholder}
       maxLength={maxLength}
       onChange={(event) => setDraft(event.target.value)}
       onBlur={commit}

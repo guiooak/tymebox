@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CloseButton } from '../common/components';
+import { getT, useT } from '../common/services/i18n';
 import styles from './SaveErrorToast.module.css';
 
 const HIDE_AFTER_MS = 8000;
@@ -25,6 +26,7 @@ function isSaveError(reason: unknown): boolean {
  */
 export function SaveErrorToast() {
   const [message, setMessage] = useState<string | null>(null);
+  const t = useT();
 
   useEffect(() => {
     const onRejection = (event: PromiseRejectionEvent) => {
@@ -33,8 +35,8 @@ export function SaveErrorToast() {
       }
       setMessage(
         /permission/i.test(String((event.reason as { message?: unknown }).message ?? ''))
-          ? 'Your last change wasn’t saved: the server refused it. Reload and try again; if it keeps happening, the database rules may be out of date.'
-          : 'Your last change wasn’t saved. Check your connection and try again.',
+          ? getT().shell.saveRefused
+          : getT().shell.saveFailed,
       );
     };
     window.addEventListener('unhandledrejection', onRejection);
@@ -55,7 +57,7 @@ export function SaveErrorToast() {
   return (
     <div className={styles.toast} role="alert">
       <span>{message}</span>
-      <CloseButton onClick={() => setMessage(null)} label="Dismiss" />
+      <CloseButton onClick={() => setMessage(null)} label={t.common.dismiss} />
     </div>
   );
 }

@@ -41,6 +41,11 @@
   justify-content: space-between;
   min-height: 64px;
 }
+.topBarControls {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+}
 .themeToggle {
   display: inline-grid;
   place-items: center;

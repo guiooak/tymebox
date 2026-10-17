@@ -11,10 +11,11 @@ import {
   nowISO,
   toDate,
   toISO,
-  WEEKDAY_LABELS,
+  weekdayLabels,
   withDay,
   withTime,
 } from '../../services/datetime';
+import { useT } from '../../services/i18n';
 import { cx } from '../cx';
 import styles from './DatePicker.module.css';
 
@@ -40,6 +41,7 @@ export function DatePicker({
   id,
   defaultOpen = false,
 }: DatePickerProps) {
+  const t = useT();
   const [open, setOpen] = useState(defaultOpen);
   const [view, setView] = useState(() => (value ? toDate(value) : new Date()));
   const containerRef = useRef<HTMLDivElement>(null);
@@ -88,7 +90,7 @@ export function DatePicker({
         className={cx(styles.trigger, invalid && styles.invalid)}
         onClick={() => setOpen((current) => !current)}
       >
-        {selected ? formatLong(selected) : 'Select date & time'}
+        {selected ? formatLong(selected) : t.common.selectDateTime}
       </button>
 
       {open && (
@@ -97,6 +99,7 @@ export function DatePicker({
             <button
               type="button"
               className={styles.nav}
+              aria-label={t.common.previousMonth}
               onClick={() => setView(addMonths(view, -1))}
             >
               ‹
@@ -105,6 +108,7 @@ export function DatePicker({
             <button
               type="button"
               className={styles.nav}
+              aria-label={t.common.nextMonth}
               onClick={() => setView(addMonths(view, 1))}
             >
               ›
@@ -112,8 +116,8 @@ export function DatePicker({
           </div>
 
           <div className={styles.weekdays}>
-            {WEEKDAY_LABELS.map((label) => (
-              <span key={label}>{label}</span>
+            {weekdayLabels().map((label, index) => (
+              <span key={index}>{label}</span>
             ))}
           </div>
 
@@ -135,7 +139,7 @@ export function DatePicker({
           </div>
 
           <div className={styles.timeRow}>
-            <label htmlFor={`${id ?? 'dp'}-time`}>Time</label>
+            <label htmlFor={`${id ?? 'dp'}-time`}>{t.common.time}</label>
             <input
               id={`${id ?? 'dp'}-time`}
               type="time"

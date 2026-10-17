@@ -213,6 +213,9 @@
           "decisionsAutomaticBehavior": {
             ".validate": "newData.isBoolean()"
           },
+          "locale": {
+            ".validate": "newData.val() === 'en-US' || newData.val() === 'pt-BR'"
+          },
           "$other": {
             ".validate": false
           }

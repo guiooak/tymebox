@@ -4,6 +4,7 @@ import {
   eventReportPath,
   useNavigation,
 } from '../../../common/services/router';
+import { useT } from '../../../common/services/i18n';
 import { useMeetingStore } from '../store';
 import styles from './Home.module.css';
 
@@ -14,6 +15,7 @@ import styles from './Home.module.css';
 export function AccessRequestsNotice() {
   const navigation = useNavigation();
   const counts = useMeetingStore((state) => state.requestCounts);
+  const t = useT();
   const meetings = useMeetingStore((state) => state.meetings);
 
   const pending = Object.entries(counts)
@@ -27,9 +29,7 @@ export function AccessRequestsNotice() {
 
   return (
     <Box className={styles.requests}>
-      <strong>
-        {total === 1 ? '1 person is' : `${total} people are`} asking for access
-      </strong>
+      <strong>{t.home.requests.asking(total)}</strong>
       <div className={styles.requestList}>
         {pending.map(({ meeting, count }) =>
           meeting ? (
@@ -46,14 +46,12 @@ export function AccessRequestsNotice() {
                 )
               }
             >
-              {meeting.name || 'Untitled event'} ({count})
+              {meeting.name || t.common.untitledEvent} ({count})
             </Button>
           ) : null,
         )}
       </div>
-      <span className={styles.meta}>
-        Open the event and use Share to approve or deny.
-      </span>
+      <span className={styles.meta}>{t.home.requests.hint}</span>
     </Box>
   );
 }

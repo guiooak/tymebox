@@ -1,4 +1,5 @@
 import type { Theme } from '../../../common/components';
+import { getT } from '../../../common/services/i18n';
 import {
   diffMs,
   formatDuration,
@@ -69,15 +70,16 @@ export type MeetingSummary = {
   sortTs: number;
 };
 
-const STATUS_LABELS: Record<Meeting['status'], { label: string; theme: Theme }> = {
-  draft: { label: 'Draft', theme: 'secondary' },
-  active: { label: 'Live', theme: 'success' },
-  cancelled: { label: 'Cancelled', theme: 'warning' },
-  finished: { label: 'Finished', theme: 'primary' },
+const STATUS_THEMES: Record<Meeting['status'], Theme> = {
+  draft: 'secondary',
+  active: 'success',
+  cancelled: 'warning',
+  finished: 'primary',
 };
 
 /** Row-level facts for the history list: status, how long it took, how it went. */
 export function summarizeMeeting(meeting: Meeting): MeetingSummary {
+  const t = getT().history;
   const expected = Math.abs(diffMs(meeting.expectedStartTime, meeting.expectedEndTime));
   const real = Math.abs(diffMs(meeting.realStartTime, meeting.realEndTime));
   const duration = real > 0 ? real : expected;
@@ -88,15 +90,18 @@ export function summarizeMeeting(meeting: Meeting): MeetingSummary {
     const pct = Math.round((overrun / expected) * 100);
     outcome =
       pct > 0
-        ? { label: `${pct}% over budget`, theme: pct > 25 ? 'danger' : 'warning' }
+        ? { label: t.overBudget(pct), theme: pct > 25 ? 'danger' : 'warning' }
         : {
-            label: pct < 0 ? `${Math.abs(pct)}% under budget` : 'On budget',
+            label: pct < 0 ? t.underBudget(Math.abs(pct)) : t.onBudget,
             theme: 'success',
           };
   }
 
   return {
-    status: STATUS_LABELS[meeting.status] ?? STATUS_LABELS.draft,
+    status: {
+      label: t.status[meeting.status] ?? t.status.draft,
+      theme: STATUS_THEMES[meeting.status] ?? STATUS_THEMES.draft,
+    },
     durationLabel: duration > 0 ? formatDuration(duration) : '',
     outcome,
     sortTs: Math.max(

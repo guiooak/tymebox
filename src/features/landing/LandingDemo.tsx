@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Badge, Icon, TimeDisplay } from '../../common/components';
+import { useT } from '../../common/services/i18n';
 import { usePrefersReducedMotion } from '../../common/services/motion';
 import styles from './LandingDemo.module.css';
 
@@ -12,11 +13,12 @@ const HOLD_SECONDS = 360;
 /** Shown when motion is reduced: mid-event, two milestones in. */
 const STILL_FRAME = 16 * 60;
 
+/** When each of the four milestones (named in the catalog) gets checked off. */
 const MILESTONES = [
-  { name: 'Review last sprint', doneAt: 5 * 60 },
-  { name: 'Pick the sprint goal', doneAt: 12 * 60 },
-  { name: 'Size the top stories', doneAt: 26 * 60 },
-  { name: 'Agree on owners', doneAt: 28 * 60 },
+  { doneAt: 5 * 60 },
+  { doneAt: 12 * 60 },
+  { doneAt: 26 * 60 },
+  { doneAt: 28 * 60 },
 ];
 const FINISHED_AT = MILESTONES[MILESTONES.length - 1].doneAt;
 
@@ -87,6 +89,7 @@ function MiniBurndown({ now }: { now: number }) {
  */
 export function LandingDemo() {
   const reduceMotion = usePrefersReducedMotion();
+  const t = useT().landing.demo;
   const rootRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   const [elapsed, setElapsed] = useState(0);
@@ -121,23 +124,19 @@ export function LandingDemo() {
   const frame = frameAt(reduceMotion ? STILL_FRAME : elapsed);
   const theme = frame.finished ? 'success' : frame.late ? 'warning' : 'secondary';
   const status = frame.finished
-    ? { theme: 'info' as const, label: 'Finished' }
+    ? { theme: 'info' as const, label: t.finished }
     : frame.late
-      ? { theme: 'warning' as const, label: 'Trending late' }
-      : { theme: 'success' as const, label: 'Live' };
+      ? { theme: 'warning' as const, label: t.late }
+      : { theme: 'success' as const, label: t.live };
 
   return (
     <div ref={rootRef} className={styles.board}>
-      <p className={styles.srOnly}>
-        A sample 30-minute sprint planning running on Tymebox: the countdown runs, four
-        milestones are checked off one by one, the burndown follows them, and the event
-        finishes two minutes early.
-      </p>
+      <p className={styles.srOnly}>{t.summary}</p>
       <div className={styles.frame} aria-hidden="true">
         <div className={styles.head}>
           <div>
-            <span className={styles.eyebrow}>Event</span>
-            <strong className={styles.title}>Sprint planning</strong>
+            <span className={styles.eyebrow}>{t.event}</span>
+            <strong className={styles.title}>{t.name}</strong>
           </div>
           <Badge theme={status.theme}>{status.label}</Badge>
         </div>
@@ -145,11 +144,11 @@ export function LandingDemo() {
         <TimeDisplay
           prominent
           theme={theme}
-          header={frame.finished ? 'Finished' : 'Time left'}
+          header={frame.finished ? t.finished : t.timeLeft}
           footer={
             frame.finished
-              ? `${clock(frame.left)} saved`
-              : `${frame.done} of ${MILESTONES.length} milestones`
+              ? t.saved(clock(frame.left))
+              : t.progress(frame.done, MILESTONES.length)
           }
         >
           <span className={styles.countdown}>{clock(frame.left)}</span>
@@ -161,7 +160,7 @@ export function LandingDemo() {
             const current = index === frame.done && !frame.finished;
             return (
               <li
-                key={milestone.name}
+                key={index}
                 className={[
                   styles.milestone,
                   done && styles.done,
@@ -173,11 +172,11 @@ export function LandingDemo() {
                 <span className={styles.check}>
                   {done && <Icon name="check" size={14} />}
                 </span>
-                <span className={styles.name}>{milestone.name}</span>
+                <span className={styles.name}>{t.milestones[index]}</span>
                 {done ? (
                   <span className={styles.time}>{clock(milestone.doneAt)}</span>
                 ) : (
-                  current && <span className={styles.now}>Now</span>
+                  current && <span className={styles.now}>{t.now}</span>
                 )}
               </li>
             );
@@ -187,10 +186,10 @@ export function LandingDemo() {
         <div className={styles.chartBox}>
           <div className={styles.chartLegend}>
             <span>
-              <i className={styles.legendTendency} /> Tendency
+              <i className={styles.legendTendency} /> {t.tendency}
             </span>
             <span>
-              <i className={styles.legendProgress} /> Your progress
+              <i className={styles.legendProgress} /> {t.yourProgress}
             </span>
           </div>
           <MiniBurndown now={frame.now} />

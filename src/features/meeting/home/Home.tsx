@@ -26,33 +26,37 @@ import {
 } from '../../../common/services/router';
 import { useAuthStore } from '../../auth';
 import { useDeleteEvent } from '../components';
+import { useT, type Messages } from '../../../common/services/i18n';
 import { useMeetingStore } from '../store';
 import { OnboardingCard } from './OnboardingCard';
-import { meetingTemplates } from './templates';
+import { MEETING_TEMPLATES } from './templates';
 import { useMeetingMetrics } from './useMeetingMetrics';
 import { AccessRequestsNotice } from './AccessRequestsNotice';
 import { SharedWithMe } from './SharedWithMe';
 import styles from './Home.module.css';
 
-function budgetLabel(ratio: number | null): { value: string; note: string } {
+function budgetLabel(
+  ratio: number | null,
+  t: Messages['home']['budget'],
+): { value: string; note: string } {
   if (ratio == null) {
-    return { value: '—', note: 'No finished events yet' };
+    return { value: t.none, note: t.noneNote };
   }
   const pct = Math.round((ratio - 1) * 100);
   if (pct === 0) {
-    return { value: 'On budget', note: 'Right on the clock' };
+    return { value: t.onBudget, note: t.onBudgetNote };
   }
   return pct > 0
-    ? { value: `${pct}% over`, note: 'Ran longer than planned' }
-    : { value: `${Math.abs(pct)}% under`, note: 'Beat the clock' };
+    ? { value: t.over(pct), note: t.overNote }
+    : { value: t.under(Math.abs(pct)), note: t.underNote };
 }
 
-function greeting(): string {
+function greeting(t: Messages['home']): string {
   const hour = hoursOf(now());
   if (hour < 12) {
-    return 'Good morning';
+    return t.morning;
   }
-  return hour < 18 ? 'Good afternoon' : 'Good evening';
+  return hour < 18 ? t.afternoon : t.evening;
 }
 
 export function Home() {
@@ -65,6 +69,8 @@ export function Home() {
   const createFromTemplate = useMeetingStore((state) => state.createFromTemplate);
   const onDelete = useDeleteEvent();
   const metrics = useMeetingMetrics();
+  const tt = useT();
+  const t = tt.home;
 
   const firstName = user?.displayName?.split(' ')[0];
 
@@ -97,23 +103,23 @@ export function Home() {
     ? null
     : current.realEndTime
       ? {
-          label: 'View last report',
+          label: t.resume.reportLabel,
           to: eventReportPath(current.id),
-          hint: 'Your most recent event is wrapped up.',
+          hint: t.resume.reportHint,
         }
       : current?.realStartTime
         ? {
-            label: 'Resume live event',
+            label: t.resume.liveLabel,
             to: eventPath(current.id),
-            hint: 'You have an event in progress.',
+            hint: t.resume.liveHint,
           }
         : {
-            label: 'Continue planning',
+            label: t.resume.draftLabel,
             to: eventPath(current.id),
-            hint: 'You have a draft in the works.',
+            hint: t.resume.draftHint,
           };
 
-  const budget = budgetLabel(metrics.budgetRatio);
+  const budget = budgetLabel(metrics.budgetRatio, t.budget);
   const lastFinished = metrics.recent[0];
 
   return (
@@ -122,37 +128,27 @@ export function Home() {
         <header className={styles.head}>
           <div>
             <Heading size="md" level={1}>
-              {greeting()}
-              {firstName ? `, ${firstName}` : ''}
+              {t.greeting(greeting(t), firstName)}
             </Heading>
             {metrics.thisWeek > 0 && (
               <p className={styles.meta}>
-                {metrics.thisWeek} event{metrics.thisWeek === 1 ? '' : 's'} finished this
-                week
-                {metrics.onBudgetStreak > 1
-                  ? ` · ${metrics.onBudgetStreak} in a row on budget 🔥`
-                  : ''}
+                {t.thisWeek(metrics.thisWeek)}
+                {metrics.onBudgetStreak > 1 ? t.streakInline(metrics.onBudgetStreak) : ''}
               </p>
             )}
           </div>
           <div className={styles.actions}>
-            <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
+            <Button onClick={() => navigation.go(paths.newMeeting)}>{t.newEvent}</Button>
           </div>
         </header>
 
         {loading ? (
-          <Loader className={styles.loading} label="Loading your events…" />
+          <Loader className={styles.loading} label={t.loadingEvents} />
         ) : (
           <>
             {metrics.total === 0 && (
               <OnboardingCard
-                onTrySample={() =>
-                  void onTemplate('Sample event', [
-                    'Look around the board',
-                    'Add a milestone of your own',
-                    'Finish and read the report',
-                  ])
-                }
+                onTrySample={() => void onTemplate(t.sample.name, t.sample.goals)}
               />
             )}
 
@@ -161,7 +157,7 @@ export function Home() {
             {resume && (
               <Box className={styles.resume}>
                 <div>
-                  <strong>{current?.name || 'Untitled event'}</strong>
+                  <strong>{current?.name || tt.common.untitledEvent}</strong>
                   <div className={styles.meta}>{resume.hint}</div>
                 </div>
                 <Button
@@ -176,7 +172,7 @@ export function Home() {
 
             <section className={styles.templatesSection}>
               <Heading size="sm" level={2}>
-                Start something
+                {t.startSomething}
               </Heading>
               <div className={styles.templates}>
                 {lastFinished && (
@@ -185,30 +181,33 @@ export function Home() {
                     className={styles.template}
                     onClick={() => void onClone(lastFinished.id)}
                   >
-                    <strong>Repeat “{lastFinished.name}”</strong>
+                    <strong>{t.repeat(lastFinished.name)}</strong>
                     <span className={styles.meta}>
-                      {lastFinished.goals.length} milestones · your last event
+                      {t.repeatHint(lastFinished.goals.length)}
                     </span>
                   </button>
                 )}
-                {meetingTemplates.map((template) => (
-                  <button
-                    key={template.id}
-                    type="button"
-                    className={styles.template}
-                    onClick={() => void onTemplate(template.name, template.goals)}
-                  >
-                    <strong>{template.label}</strong>
-                    <span className={styles.meta}>{template.hint}</span>
-                  </button>
-                ))}
+                {MEETING_TEMPLATES.map((id) => {
+                  const template = t.templates[id];
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      className={styles.template}
+                      onClick={() => void onTemplate(template.label, template.goals)}
+                    >
+                      <strong>{template.label}</strong>
+                      <span className={styles.meta}>{template.hint}</span>
+                    </button>
+                  );
+                })}
               </div>
             </section>
 
             {metrics.upcoming.length > 0 && (
               <section className={styles.recentSection}>
                 <Heading size="sm" level={2}>
-                  Starting soon
+                  {t.startingSoon}
                 </Heading>
                 <div className={styles.list}>
                   {metrics.upcoming.map((meeting) => (
@@ -225,16 +224,16 @@ export function Home() {
                         </div>
                       </div>
                       <div className={`${styles.actions} ${itemLinkAbove}`}>
-                        <Badge theme="info">Scheduled</Badge>
+                        <Badge theme="info">{tt.status.scheduled}</Badge>
                         <Menu
-                          label={`Actions for ${meeting.name}`}
+                          label={tt.common.actionsFor(meeting.name)}
                           items={[
                             {
-                              label: 'Open board',
+                              label: t.openBoard,
                               onSelect: () => void onOpenBoard(meeting.id),
                             },
                             {
-                              label: 'Delete event',
+                              label: t.deleteEvent,
                               danger: true,
                               onSelect: () => void onDelete(meeting),
                             },
@@ -251,15 +250,15 @@ export function Home() {
               <Box className={styles.emptyEvents}>
                 <BlankSlate
                   art="events"
-                  title="No events yet"
-                  description="Plan your first one and it’ll come to life here."
+                  title={t.noEvents}
+                  description={t.noEventsText}
                   action={
                     <Button
                       theme="secondary"
                       outline
                       onClick={() => navigation.go(paths.newMeeting)}
                     >
-                      Plan an event
+                      {t.planEvent}
                     </Button>
                   }
                 />
@@ -269,7 +268,7 @@ export function Home() {
                 <div className={styles.metrics}>
                   <Box className={styles.metric}>
                     <span className={styles.metricValue}>{budget.value}</span>
-                    <span className={styles.metricLabel}>Time vs budget</span>
+                    <span className={styles.metricLabel}>{t.timeVsBudget}</span>
                     <span className={styles.metricNote}>{budget.note}</span>
                   </Box>
                   <Box className={styles.metric}>
@@ -278,27 +277,25 @@ export function Home() {
                         ? '—'
                         : `${Math.round(metrics.goalCompletion * 100)}%`}
                     </span>
-                    <span className={styles.metricLabel}>Goals completed</span>
-                    <span className={styles.metricNote}>
-                      Weighted across finished events
-                    </span>
+                    <span className={styles.metricLabel}>{t.goalsCompleted}</span>
+                    <span className={styles.metricNote}>{t.goalsCompletedNote}</span>
                   </Box>
                   <Box className={styles.metric}>
                     <span className={styles.metricValue}>{metrics.thisMonth}</span>
-                    <span className={styles.metricLabel}>This month</span>
+                    <span className={styles.metricLabel}>{t.thisMonth}</span>
                     <span className={styles.metricNote}>
-                      {metrics.finished} finished all-time
+                      {t.finishedAllTime(metrics.finished)}
                     </span>
                   </Box>
                   <Box className={styles.metric}>
                     <span className={styles.metricValue}>
                       {metrics.onBudgetStreak > 0 ? `${metrics.onBudgetStreak} 🔥` : '—'}
                     </span>
-                    <span className={styles.metricLabel}>On-budget streak</span>
+                    <span className={styles.metricLabel}>{t.streak}</span>
                     <span className={styles.metricNote}>
                       {metrics.totalSpentMs > 0
-                        ? `${formatDuration(metrics.totalSpentMs)} spent in total`
-                        : 'Finish an event on time to start one'}
+                        ? t.spentTotal(formatDuration(metrics.totalSpentMs))
+                        : t.streakEmpty}
                     </span>
                   </Box>
                 </div>
@@ -306,7 +303,7 @@ export function Home() {
                 <section className={styles.recentSection}>
                   <div className={styles.sectionHead}>
                     <Heading size="sm" level={2}>
-                      Recent events
+                      {t.recentEvents}
                     </Heading>
                     <Button
                       size="sm"
@@ -314,11 +311,11 @@ export function Home() {
                       outline
                       onClick={() => navigation.go(paths.meetings)}
                     >
-                      View all
+                      {t.viewAll}
                     </Button>
                   </div>
                   {metrics.recent.length === 0 ? (
-                    <p className={styles.meta}>Finish an event to see it here.</p>
+                    <p className={styles.meta}>{t.finishToSee}</p>
                   ) : (
                     <div className={styles.list}>
                       {metrics.recent.map((meeting) => (
@@ -331,24 +328,26 @@ export function Home() {
                               <strong>{meeting.name}</strong>
                             </ItemLink>
                             <div className={styles.meta}>
-                              {formatLong(meeting.realEndTime)} · {meeting.goals.length}{' '}
-                              goals
+                              {t.recentMeta(
+                                formatLong(meeting.realEndTime),
+                                meeting.goals.length,
+                              )}
                             </div>
                           </div>
                           <div className={`${styles.actions} ${itemLinkAbove}`}>
                             <Menu
-                              label={`Actions for ${meeting.name}`}
+                              label={tt.common.actionsFor(meeting.name)}
                               items={[
                                 {
-                                  label: 'View report',
+                                  label: t.viewReport,
                                   onSelect: () => void onReopen(meeting.id),
                                 },
                                 {
-                                  label: 'Clone',
+                                  label: t.clone,
                                   onSelect: () => void onClone(meeting.id),
                                 },
                                 {
-                                  label: 'Delete event',
+                                  label: t.deleteEvent,
                                   danger: true,
                                   onSelect: () => void onDelete(meeting),
                                 },

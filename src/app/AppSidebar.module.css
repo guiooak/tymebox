@@ -71,6 +71,13 @@
 .signOut {
   color: var(--tw-primary-text);
 }
+.language {
+  width: 100%;
+}
+/* Too narrow for the selector; expand the menu to change the language. */
+.collapsed .language {
+  display: none;
+}
 .themeToggle {
   composes: signOut;
   color: var(--tw-text-muted);
@@ -210,7 +217,8 @@
     padding: 0 var(--tw-space-1);
   }
   .user .signOut,
-  .user .themeToggle {
+  .user .themeToggle,
+  .user .language {
     width: auto;
     white-space: nowrap;
   }

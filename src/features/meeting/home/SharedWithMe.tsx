@@ -14,18 +14,18 @@ import {
   eventReportPath,
   useNavigation,
 } from '../../../common/services/router';
-import { ROLE_LABELS } from '../domain/access';
+import { useT } from '../../../common/services/i18n';
 import { useMeetingStore, type SharedEventSummary } from '../store';
 import styles from './Home.module.css';
 
-const STATUS: Record<
+const STATUS_THEME: Record<
   SharedEventSummary['status'],
-  { label: string; theme: 'success' | 'secondary' | 'info' | 'danger' }
+  'success' | 'secondary' | 'info' | 'danger'
 > = {
-  active: { label: 'Live', theme: 'success' },
-  draft: { label: 'Setting up', theme: 'secondary' },
-  finished: { label: 'Finished', theme: 'info' },
-  cancelled: { label: 'Cancelled', theme: 'danger' },
+  active: 'success',
+  draft: 'secondary',
+  finished: 'info',
+  cancelled: 'danger',
 };
 
 /**
@@ -36,6 +36,7 @@ export function SharedWithMe() {
   const navigation = useNavigation();
   const events = useMeetingStore((state) => state.sharedEvents);
   const loading = useMeetingStore((state) => state.sharedLoading);
+  const t = useT();
 
   if (loading) {
     return null;
@@ -45,20 +46,19 @@ export function SharedWithMe() {
     <section className={styles.recentSection} aria-labelledby="shared-with-me">
       <div className={styles.sectionHead}>
         <Heading size="sm" level={2}>
-          <span id="shared-with-me">Shared with me</span>
+          <span id="shared-with-me">{t.home.shared.title}</span>
         </Heading>
       </div>
       {events.length === 0 ? (
         <BlankSlate
           art="events"
           compact
-          title="Nothing shared with you yet"
-          description="Events people share with your email, and public ones you open, show up here."
+          title={t.home.shared.emptyTitle}
+          description={t.home.shared.emptyText}
         />
       ) : (
         <div className={styles.list}>
           {events.map((event) => {
-            const status = STATUS[event.status];
             const finished = event.status === 'finished';
             const open = () =>
               navigation.go(finished ? eventReportPath(event.id) : eventPath(event.id));
@@ -66,25 +66,29 @@ export function SharedWithMe() {
               <Box key={event.id} className={`${styles.item} ${itemLinkContainer}`}>
                 <div>
                   <ItemLink onClick={open}>
-                    <strong>{event.name || 'Untitled event'}</strong>
+                    <strong>{event.name || t.common.untitledEvent}</strong>
                   </ItemLink>
                   <div className={styles.meta}>
-                    by {event.ownerName || 'someone'}
+                    {t.home.shared.by(event.ownerName || t.home.shared.someone)}
                     {finished && event.realEndTime
                       ? ` · ${formatLong(event.realEndTime)}`
                       : ''}
                   </div>
                 </div>
                 <div className={`${styles.actions} ${itemLinkAbove}`}>
-                  <Badge theme={status.theme}>{status.label}</Badge>
+                  <Badge theme={STATUS_THEME[event.status]}>
+                    {t.status[event.status]}
+                  </Badge>
                   <Badge>
-                    {event.via === 'public' ? 'Public link' : ROLE_LABELS[event.via]}
+                    {event.via === 'public'
+                      ? t.home.shared.publicLink
+                      : t.roles[event.via]}
                   </Badge>
                   <Menu
-                    label={`Actions for ${event.name || 'this event'}`}
+                    label={t.common.actionsFor(event.name || t.common.thisEvent)}
                     items={[
                       {
-                        label: finished ? 'View report' : 'Open board',
+                        label: finished ? t.home.viewReport : t.home.openBoard,
                         onSelect: open,
                       },
                     ]}

@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { Icon, type IconName } from '../common/components';
+import { useT } from '../common/services/i18n';
 import { useThemeStore, type ThemeMode } from '../common/services/theme';
 
 const ORDER: ThemeMode[] = ['system', 'light', 'dark'];
 
-const LABEL: Record<ThemeMode, { icon: IconName; text: string }> = {
-  system: { icon: 'system', text: 'System theme' },
-  light: { icon: 'sun', text: 'Light theme' },
-  dark: { icon: 'moon', text: 'Dark theme' },
+const ICON: Record<ThemeMode, IconName> = {
+  system: 'system',
+  light: 'sun',
+  dark: 'moon',
 };
 
 export type ThemeToggleProps = {
@@ -25,21 +26,23 @@ export function ThemeToggle({
   const mode = useThemeStore((state) => state.mode);
   const setMode = useThemeStore((state) => state.setMode);
   const listenToSystem = useThemeStore((state) => state.listenToSystem);
+  const t = useT();
 
   useEffect(() => listenToSystem(), [listenToSystem]);
 
   const next = ORDER[(ORDER.indexOf(mode) + 1) % ORDER.length];
-  const current = LABEL[mode];
+  const current = t.shell.theme[mode];
+  const upcoming = t.shell.theme[next];
 
   return (
     <button
       className={className}
       onClick={() => setMode(next)}
-      title={`${current.text} — switch to ${LABEL[next].text.toLowerCase()}`}
-      aria-label={`${current.text}. Switch to ${LABEL[next].text.toLowerCase()}`}
+      title={t.shell.theme.switchTitle(current, upcoming)}
+      aria-label={t.shell.theme.switchTo(current, upcoming)}
     >
-      <Icon name={current.icon} className={iconClassName} />
-      <span className={labelClassName}>{current.text}</span>
+      <Icon name={ICON[mode]} className={iconClassName} />
+      <span className={labelClassName}>{current}</span>
     </button>
   );
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useT } from '../../services/i18n';
 import styles from './InfoButton.module.css';
 
 export type InfoButtonProps = {
@@ -7,9 +8,15 @@ export type InfoButtonProps = {
   label?: string;
 };
 
-export function InfoButton({ children, onClick, label = 'More info' }: InfoButtonProps) {
+export function InfoButton({ children, onClick, label }: InfoButtonProps) {
+  const t = useT();
   return (
-    <button type="button" aria-label={label} className={styles.info} onClick={onClick}>
+    <button
+      type="button"
+      aria-label={label ?? t.common.moreInfo}
+      className={styles.info}
+      onClick={onClick}
+    >
       {children ?? 'i'}
     </button>
   );
