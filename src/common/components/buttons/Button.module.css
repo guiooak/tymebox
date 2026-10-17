@@ -64,6 +64,21 @@
 .dark {
   background: var(--tw-dark);
 }
+/* Low emphasis: the secondary outline's colour, with the border only on hover. */
+.tertiary {
+  background: transparent;
+  color: var(--tw-secondary-text);
+  white-space: nowrap;
+  transition:
+    filter var(--tw-transition),
+    background var(--tw-transition),
+    border-color var(--tw-transition);
+}
+.tertiary:not(:disabled):hover,
+.tertiary:focus-visible {
+  border-color: currentColor;
+  filter: none;
+}
 
 .outline {
   background: transparent;

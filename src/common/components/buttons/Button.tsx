@@ -5,9 +5,13 @@ import styles from './Button.module.css';
 
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
+/** The colour themes, plus `tertiary`: a quiet text-coloured button whose
+ * border only shows on hover, for low-emphasis actions. */
+export type ButtonTheme = Theme | 'tertiary';
+
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
-  theme?: Theme;
+  theme?: ButtonTheme;
   size?: ButtonSize;
   outline?: boolean;
   block?: boolean;
