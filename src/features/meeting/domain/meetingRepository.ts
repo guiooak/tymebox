@@ -6,6 +6,7 @@ import {
   write,
 } from '../../../common/services/database';
 import { nowISO } from '../../../common/services/datetime';
+import { toSideTopics } from './sideTopics';
 import type { Goal, Meeting, SideTopic } from './types';
 
 const userPath = (uid: string) => `users/${uid}`;
@@ -44,12 +45,9 @@ function normalizeGoal(goal: Partial<Goal>): Goal {
   };
 }
 
-function normalizeSideTopic(topic: Partial<SideTopic>): SideTopic {
-  return {
-    id: topic.id ?? '',
-    value: topic.value ?? '',
-    goalName: topic.goalName ?? '',
-  };
+/** The stored shape of a topic (the key is the path, not a field). */
+function persistedTopic({ id, value, goalName }: SideTopic) {
+  return { id, value, goalName };
 }
 
 function normalizeMeeting(raw: Partial<Meeting>): Meeting {
@@ -62,7 +60,7 @@ function normalizeMeeting(raw: Partial<Meeting>): Meeting {
     realStartTime: raw.realStartTime ?? '',
     realEndTime: raw.realEndTime ?? '',
     goals: toArray<Partial<Goal>>(raw.goals).map(normalizeGoal),
-    sideTopics: toArray<Partial<SideTopic>>(raw.sideTopics).map(normalizeSideTopic),
+    sideTopics: toSideTopics(raw.sideTopics),
     status: raw.status ?? 'draft',
     createdAt: raw.createdAt ?? '',
     updatedAt: raw.updatedAt ?? '',
@@ -87,7 +85,11 @@ export function newMeetingId(uid: string): string {
 }
 
 export async function saveMeeting(uid: string, meeting: Meeting): Promise<void> {
-  await write(meetingPath(uid, meeting.id), { ...meeting, updatedAt: nowISO() });
+  await write(meetingPath(uid, meeting.id), {
+    ...meeting,
+    sideTopics: meeting.sideTopics.map(persistedTopic),
+    updatedAt: nowISO(),
+  });
 }
 
 export async function patchMeeting(
@@ -96,6 +98,52 @@ export async function patchMeeting(
   patch: Partial<Meeting>,
 ): Promise<void> {
   await updateAt(meetingPath(uid, id), { ...patch, updatedAt: nowISO() });
+}
+
+/*
+ * Side topics are written one at a time, at their own path. Rewriting the whole
+ * list from a component's copy let an older copy land after a newer change and
+ * drop a just-added topic.
+ */
+
+/** Reserve the key for a new topic; it sorts after every existing one. */
+export function newSideTopicKey(uid: string, meetingId: string): string {
+  return newKey(`${meetingPath(uid, meetingId)}/sideTopics`);
+}
+
+export async function putSideTopic(
+  uid: string,
+  meetingId: string,
+  key: string,
+  topic: SideTopic,
+): Promise<void> {
+  await updateAt(meetingPath(uid, meetingId), {
+    [`sideTopics/${key}`]: persistedTopic(topic),
+    updatedAt: nowISO(),
+  });
+}
+
+export async function setSideTopicValue(
+  uid: string,
+  meetingId: string,
+  key: string,
+  value: string,
+): Promise<void> {
+  await updateAt(meetingPath(uid, meetingId), {
+    [`sideTopics/${key}/value`]: value,
+    updatedAt: nowISO(),
+  });
+}
+
+export async function deleteSideTopic(
+  uid: string,
+  meetingId: string,
+  key: string,
+): Promise<void> {
+  await updateAt(meetingPath(uid, meetingId), {
+    [`sideTopics/${key}`]: null,
+    updatedAt: nowISO(),
+  });
 }
 
 export async function removeMeeting(uid: string, id: string): Promise<void> {

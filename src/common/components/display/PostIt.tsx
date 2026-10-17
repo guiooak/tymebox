@@ -7,9 +7,12 @@ export type PostItProps = {
   value: string;
   prefix?: string;
   onChange: (value: string) => void;
-  onBlur?: () => void;
+  /** Called with the field's current text, which can be ahead of `value`. */
+  onBlur?: (value: string) => void;
   onDelete?: () => void;
   maxLength?: number;
+  /** Focus the field when it mounts, e.g. for a card the user just added. */
+  autoFocus?: boolean;
 };
 
 export function PostIt({
@@ -19,6 +22,7 @@ export function PostIt({
   onBlur,
   onDelete,
   maxLength,
+  autoFocus,
 }: PostItProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
   useAutoGrowTextarea(ref, value);
@@ -34,7 +38,8 @@ export function PostIt({
           value={value}
           maxLength={maxLength}
           onChange={(event) => onChange(event.target.value)}
-          onBlur={onBlur}
+          onBlur={(event) => onBlur?.(event.currentTarget.value)}
+          autoFocus={autoFocus}
           rows={1}
         />
       </div>

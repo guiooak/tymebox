@@ -13,6 +13,11 @@ export type SideTopic = {
   value: string;
   /** Name of the goal that was open when the topic was parked ('' when none). */
   goalName: string;
+  /**
+   * The topic's key in the database, set when it is read and used to edit or
+   * delete just this topic. Never written back as a field.
+   */
+  key?: string;
 };
 
 export type MeetingStatus = 'draft' | 'active' | 'cancelled' | 'finished';

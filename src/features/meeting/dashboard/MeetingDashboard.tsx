@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Badge,
   BlankSlate,
@@ -19,7 +19,7 @@ import { nowISO } from '../../../common/services/datetime';
 import { paths, useNavigation } from '../../../common/services/router';
 import { BurndownChart, GoalFocusCard, GoalsDecisionCollector } from '../components';
 import { alertThresholds, toBurndownItems } from '../domain/timeAlerts';
-import { createSideTopic, FIELD_LIMITS, hasSchedule, type Goal } from '../domain/types';
+import { FIELD_LIMITS, hasSchedule, type Goal } from '../domain/types';
 import { selectAlertsOn, useAlertsStore } from '../alerts';
 import { useMeetingStore } from '../store';
 import { DashboardSchedule } from './DashboardSchedule';
@@ -43,7 +43,10 @@ export function MeetingDashboard() {
   const removeGoal = useMeetingStore((state) => state.removeGoal);
   const duplicateGoal = useMeetingStore((state) => state.duplicateGoal);
   const reorderGoals = useMeetingStore((state) => state.reorderGoals);
-  const setSideTopics = useMeetingStore((state) => state.setSideTopics);
+  const addSideTopic = useMeetingStore((state) => state.addSideTopic);
+  const updateSideTopic = useMeetingStore((state) => state.updateSideTopic);
+  const removeSideTopic = useMeetingStore((state) => state.removeSideTopic);
+  const [focusTopicKey, setFocusTopicKey] = useState<string | null>(null);
   const setAutomatic = useMeetingStore((state) => state.setAutomatic);
 
   const guarded = useRef(false);
@@ -178,6 +181,15 @@ export function MeetingDashboard() {
     }
   };
 
+  // Parks a topic under the milestone in progress and focuses its card, from
+  // the button or the P shortcut alike.
+  const parkTopic = () => {
+    const key = addSideTopic(currentGoal?.name ?? '');
+    if (key) {
+      setFocusTopicKey(key);
+    }
+  };
+
   const shortcuts: Shortcut[] = [
     {
       key: 'd',
@@ -188,11 +200,7 @@ export function MeetingDashboard() {
     {
       key: 'p',
       description: 'Park a side topic',
-      onTrigger: () =>
-        void setSideTopics([
-          ...meeting.sideTopics,
-          createSideTopic(currentGoal?.name ?? ''),
-        ]),
+      onTrigger: parkTopic,
     },
     {
       key: 's',
@@ -315,8 +323,10 @@ export function MeetingDashboard() {
           />
           <DashboardSideTopics
             items={meeting.sideTopics}
-            activeGoalName={currentGoal?.name ?? ''}
-            onChange={(items) => void setSideTopics(items)}
+            onAdd={parkTopic}
+            onUpdate={(key, value) => void updateSideTopic(key, value)}
+            onRemove={(key) => void removeSideTopic(key)}
+            focusKey={focusTopicKey}
           />
         </Col>
       </Row>

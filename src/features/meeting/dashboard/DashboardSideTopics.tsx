@@ -6,37 +6,42 @@ import {
   PostIt,
   useDialog,
 } from '../../../common/components';
-import { createSideTopic, FIELD_LIMITS, type SideTopic } from '../domain/types';
+import { FIELD_LIMITS, type SideTopic } from '../domain/types';
 import styles from './MeetingDashboard.module.css';
 
 export type DashboardSideTopicsProps = {
   items: SideTopic[];
-  onChange: (items: SideTopic[]) => void;
-  /** Milestone open when a topic is parked — recorded so tangents stay traceable. */
-  activeGoalName?: string;
+  /** Park a new topic; the parent decides which card gets focus. */
+  onAdd: () => void;
+  onUpdate: (key: string, value: string) => void;
+  onRemove: (key: string) => void;
+  /** Key of the card to focus when it appears (the one just added). */
+  focusKey?: string | null;
 };
 
 export function DashboardSideTopics({
   items,
-  onChange,
-  activeGoalName = '',
+  onAdd,
+  onUpdate,
+  onRemove,
+  focusKey,
 }: DashboardSideTopicsProps) {
   const dialog = useDialog();
 
-  const add = () => onChange([...items, createSideTopic(activeGoalName)]);
-  const update = (id: string, value: string) =>
-    onChange(items.map((item) => (item.id === id ? { ...item, value } : item)));
-  const removeById = (id: string) => onChange(items.filter((item) => item.id !== id));
-
-  const onBlur = (item: SideTopic) => {
-    if (!item.value.trim()) {
-      removeById(item.id);
+  // A topic left empty is dropped when the field loses focus. Judge emptiness
+  // from what's in the field now, not from the last rendered copy.
+  const onBlur = (item: SideTopic, value: string) => {
+    if (item.key && !value.trim()) {
+      onRemove(item.key);
     }
   };
 
   const onDelete = async (item: SideTopic) => {
+    if (!item.key) {
+      return;
+    }
     if (!item.value.trim()) {
-      removeById(item.id);
+      onRemove(item.key);
       return;
     }
     const confirmed = await dialog.confirm({
@@ -46,7 +51,7 @@ export function DashboardSideTopics({
       cancelButtonText: 'Not anymore',
     });
     if (confirmed) {
-      removeById(item.id);
+      onRemove(item.key);
     }
   };
 
@@ -54,7 +59,7 @@ export function DashboardSideTopics({
     <Box className={styles.parkingLot}>
       <div className={styles.parkingHead}>
         <strong>Parking lot</strong>
-        <Button size="sm" onClick={add}>
+        <Button size="sm" onClick={onAdd}>
           + Add side topic
         </Button>
       </div>
@@ -68,14 +73,15 @@ export function DashboardSideTopics({
       ) : (
         <div className={styles.notes}>
           {items.map((item, index) => (
-            <div key={item.id} className={styles.note}>
+            <div key={item.key ?? item.id} className={styles.note}>
               <PostIt
                 prefix={`${index + 1}.`}
                 value={item.value}
                 maxLength={FIELD_LIMITS.sideTopic}
-                onChange={(value) => update(item.id, value)}
-                onBlur={() => onBlur(item)}
+                onChange={(value) => item.key && onUpdate(item.key, value)}
+                onBlur={(value) => onBlur(item, value)}
                 onDelete={() => void onDelete(item)}
+                autoFocus={!!focusKey && item.key === focusKey}
               />
               {item.goalName && (
                 <Badge className={styles.noteTag}>during “{item.goalName}”</Badge>

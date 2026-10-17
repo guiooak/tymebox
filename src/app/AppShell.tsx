@@ -18,6 +18,7 @@ import { MeetingReport } from '../features/meeting/report/MeetingReport';
 import { MeetingsHistory } from '../features/meeting/history/MeetingsHistory';
 import { AppFooter } from './AppFooter';
 import { AppSidebar } from './AppSidebar';
+import { SaveErrorToast } from './SaveErrorToast';
 import styles from './App.module.css';
 
 export function AppShell() {
@@ -51,6 +52,7 @@ export function AppShell() {
     <div className={styles.layout}>
       {authed && <AppSidebar />}
       {authed && <ThresholdAlertsWatcher />}
+      {authed && <SaveErrorToast />}
       <div className={styles.content}>
         <main className={styles.main}>
           <Routes>

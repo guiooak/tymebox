@@ -4,12 +4,12 @@ import { uid as makeId } from '../../../common/services/uid';
 import * as repo from '../domain/meetingRepository';
 import {
   createGoal,
+  createSideTopic,
   duplicateGoal as cloneGoal,
   moveItem,
   resetGoalsProgress,
   type Goal,
   type Meeting,
-  type SideTopic,
 } from '../domain/types';
 
 /** The only two things asked for up front — everything else is filled in on the board. */
@@ -46,7 +46,10 @@ export type MeetingState = {
   duplicateGoal: (goalId: string) => Promise<void>;
   moveGoal: (goalId: string, offset: number) => Promise<void>;
   reorderGoals: (from: number, to: number) => Promise<void>;
-  setSideTopics: (sideTopics: SideTopic[]) => Promise<void>;
+  /** Parks a new topic and returns its key (null without a current event). */
+  addSideTopic: (goalName: string) => string | null;
+  updateSideTopic: (key: string, value: string) => Promise<void>;
+  removeSideTopic: (key: string) => Promise<void>;
   setAutomatic: (value: boolean) => Promise<void>;
   reopen: (id: string) => Promise<void>;
   reopenInDashboard: (id: string) => Promise<void>;
@@ -252,13 +255,36 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       await patchGoals((goals) => moveItem(goals, from, to));
     },
 
-    setSideTopics: async (sideTopics) => {
+    // One topic per write, at its own path, so an add can never be undone by an
+    // older copy of the list landing later.
+    addSideTopic: (goalName) => {
+      const uid = requireUid();
+      const current = get().currentMeeting;
+      if (!current) {
+        return null;
+      }
+      const key = repo.newSideTopicKey(uid, current.id);
+      // Fire and forget: a rejected write surfaces through SaveErrorToast.
+      void repo.putSideTopic(uid, current.id, key, createSideTopic(goalName));
+      return key;
+    },
+
+    updateSideTopic: async (key, value) => {
       const uid = requireUid();
       const current = get().currentMeeting;
       if (!current) {
         return;
       }
-      await repo.patchMeeting(uid, current.id, { sideTopics });
+      await repo.setSideTopicValue(uid, current.id, key, value);
+    },
+
+    removeSideTopic: async (key) => {
+      const uid = requireUid();
+      const current = get().currentMeeting;
+      if (!current) {
+        return;
+      }
+      await repo.deleteSideTopic(uid, current.id, key);
     },
 
     setAutomatic: async (value) => {
