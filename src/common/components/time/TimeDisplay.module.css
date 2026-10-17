@@ -2,6 +2,10 @@
   position: relative;
   overflow: hidden;
   text-align: center;
+  /* The tint says early/on time/late; browsers drop background colours when
+   * printing unless told to keep them ("Background graphics" is off by default). */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   transition:
     background var(--tw-transition),
     box-shadow var(--tw-transition);

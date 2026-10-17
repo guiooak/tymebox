@@ -1,4 +1,7 @@
 .badge {
+  /* Keep status colours in printed reports (e.g. the on-budget streak). */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   display: inline-flex;
   align-items: center;
   gap: var(--tw-space-1);
