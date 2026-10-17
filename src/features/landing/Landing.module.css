@@ -174,19 +174,74 @@
   flex-direction: column;
   gap: var(--tw-space-2);
 }
+/* Google's sign-in button, to their branding guidelines: these colours are
+ * theirs, not ours, so they live here instead of in the tokens. */
 .google {
-  gap: var(--tw-space-3);
-  padding-left: 8px;
-  border-radius: var(--tw-radius);
-  box-shadow: var(--tw-shadow);
+  --g-bg: #ffffff;
+  --g-border: #747775;
+  --g-text: #1f1f1f;
+  --g-state: #303030;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--g-border);
+  border-radius: 20px;
+  background: var(--g-bg);
+  color: var(--g-text);
+  font-family: 'Roboto', arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  white-space: nowrap;
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.218s;
+}
+:global([data-theme='dark']) .google {
+  --g-bg: #131314;
+  --g-border: #8e918f;
+  --g-text: #e3e3e3;
+  --g-state: #e3e3e3;
+}
+/* The guidelines' state layer: the label's colour at 8% on hover, 12% on focus. */
+.google::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--g-state);
+  opacity: 0;
+  transition: opacity 0.218s;
+}
+.google:not(:disabled):hover {
+  box-shadow:
+    0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+.google:not(:disabled):hover::before {
+  opacity: 0.08;
+}
+.google:focus-visible {
+  outline: 2px solid var(--tw-primary-text);
+  outline-offset: 2px;
+}
+.google:focus-visible::before {
+  opacity: 0.12;
+}
+.google:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.google > * {
+  position: relative;
 }
 .googleMark {
-  display: inline-grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--tw-radius-sm);
-  background: var(--tw-white);
+  flex: none;
+  width: 20px;
+  height: 20px;
 }
 .error {
   margin: 0;
