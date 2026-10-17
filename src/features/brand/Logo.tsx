@@ -5,7 +5,7 @@ import styles from './Logo.module.css';
 export type LogoProps = {
   /** Height of the symbol in px; the wordmark scales from it (manual §03). */
   size?: number;
-  /** Horizontal for navigation, vertical for splash-like spots (Login). */
+  /** Horizontal for navigation, vertical for splash-like spots. */
   layout?: 'horizontal' | 'vertical';
 };
 

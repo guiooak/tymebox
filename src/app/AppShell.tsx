@@ -11,7 +11,8 @@ import {
   paths,
   useReturnPath,
 } from '../common/services/router';
-import { Login, useAuthStore } from '../features/auth';
+import { useAuthStore } from '../features/auth';
+import { Landing } from '../features/landing';
 import { ThresholdAlertsWatcher } from '../features/meeting/alerts';
 import { useMeetingStore } from '../features/meeting/store';
 import { Home } from '../features/meeting/home/Home';
@@ -67,9 +68,9 @@ export function AppShell() {
           <Routes>
             <Route
               path={paths.login}
-              element={authed ? <BackToRequestedPage /> : <Login />}
+              element={authed ? <BackToRequestedPage /> : <Landing />}
             />
-            <Route path={paths.home} element={protect(<Home />)} />
+            <Route path={paths.home} element={authed ? <Home /> : <Landing />} />
             <Route path={paths.newMeeting} element={protect(<MeetingForm />)} />
             <Route path={paths.liveMeeting} element={protect(<CurrentEventRedirect />)} />
             <Route

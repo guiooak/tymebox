@@ -1,0 +1,180 @@
+.board {
+  position: relative;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-4);
+  padding: var(--tw-space-5);
+  background: var(--tw-surface);
+  border: var(--tw-border);
+  border-radius: var(--tw-radius-xl);
+  box-shadow: var(--tw-shadow-lg);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+}
+.eyebrow {
+  display: block;
+  font-size: var(--tw-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tw-text-muted);
+}
+.title {
+  font-size: var(--tw-font-size-lg);
+  font-weight: var(--tw-font-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.countdown {
+  font-family: var(--tw-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3rem);
+  font-weight: var(--tw-font-weight-bold);
+  letter-spacing: -0.02em;
+}
+
+.milestones {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-1);
+}
+.milestone {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+  padding: var(--tw-space-2) var(--tw-space-3);
+  border-radius: var(--tw-radius);
+  font-size: var(--tw-font-size-sm);
+  transition:
+    background var(--tw-transition-slow),
+    color var(--tw-transition-slow);
+}
+.check {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--tw-border-strong);
+  border-radius: var(--tw-radius-sm);
+  color: var(--tw-on-primary);
+  transition:
+    background var(--tw-transition),
+    border-color var(--tw-transition);
+}
+.name {
+  flex: 1;
+  min-width: 0;
+}
+.time {
+  font-family: var(--tw-font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
+.now {
+  font-size: var(--tw-font-size-xs);
+  font-weight: var(--tw-font-weight-semibold);
+  color: var(--tw-primary-text);
+  padding: 1px 8px;
+  border-radius: var(--tw-radius-pill);
+  background: color-mix(in srgb, var(--tw-primary) 12%, transparent);
+}
+.done {
+  color: var(--tw-text-muted);
+}
+.done .name {
+  text-decoration: line-through;
+  text-decoration-color: var(--tw-text-subtle);
+}
+.done .check {
+  background: var(--tw-primary);
+  border-color: var(--tw-primary);
+  animation: pop var(--tw-duration-celebrate) var(--tw-ease-spring);
+}
+.current {
+  background: var(--tw-surface-sunken);
+  box-shadow: inset 3px 0 0 var(--tw-primary);
+  font-weight: var(--tw-font-weight-semibold);
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.chartBox {
+  padding: var(--tw-space-3);
+  border-radius: var(--tw-radius);
+  background: var(--tw-surface-sunken);
+}
+.chartLegend {
+  display: flex;
+  gap: var(--tw-space-4);
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+  margin-bottom: var(--tw-space-1);
+}
+.chartLegend i {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.legendTendency {
+  border-top: 2px dashed var(--tw-chart-tendency);
+}
+.legendProgress {
+  border-top: 2px solid var(--tw-chart-progress);
+}
+.chart {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.grid {
+  stroke: var(--tw-chart-grid);
+  stroke-width: 1;
+}
+.tendency {
+  stroke: var(--tw-chart-tendency);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+.progress {
+  fill: none;
+  stroke: var(--tw-chart-progress);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.dot {
+  fill: var(--tw-chart-progress);
+  stroke: var(--tw-surface-sunken);
+  stroke-width: 2;
+}
