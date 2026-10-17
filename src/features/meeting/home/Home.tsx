@@ -118,13 +118,6 @@ export function Home() {
             )}
           </div>
           <div className={styles.actions}>
-            <Button
-              theme="secondary"
-              outline
-              onClick={() => navigation.go(paths.meetings)}
-            >
-              View all history
-            </Button>
             <Button onClick={() => navigation.go(paths.newMeeting)}>+ New event</Button>
           </div>
         </header>
