@@ -24,8 +24,11 @@ export function EventGate({ children }: EventGateProps) {
   const view = useMeetingStore((state) => state.eventView);
   const event = useMeetingStore((state) => state.event);
   const role = useMeetingStore((state) => state.role);
+  // On a fresh load this effect runs before AppShell's (children first), so
+  // the store has no user yet; open the event once it does.
+  const uid = useMeetingStore((state) => state.user?.uid);
 
-  useEffect(() => (id ? openEvent(id) : undefined), [id, openEvent]);
+  useEffect(() => (id && uid ? openEvent(id) : undefined), [id, uid, openEvent]);
 
   if (!id) {
     return <Navigate to={paths.home} replace />;
