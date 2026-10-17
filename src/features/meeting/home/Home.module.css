@@ -71,6 +71,10 @@
   color: var(--tw-primary-text);
 }
 
+/* Same rhythm as the sections around it, so "Shared with me" doesn't sit on it. */
+.emptyEvents {
+  margin-bottom: var(--tw-space-6);
+}
 .templatesSection,
 .recentSection {
   display: flex;

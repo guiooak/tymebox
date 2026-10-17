@@ -231,7 +231,7 @@ export function Home() {
             )}
 
             {metrics.total === 0 ? (
-              <Box>
+              <Box className={styles.emptyEvents}>
                 <BlankSlate
                   art="events"
                   title="No events yet"
