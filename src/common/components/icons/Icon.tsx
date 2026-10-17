@@ -22,6 +22,8 @@ const PATHS = {
   chart: 'M4 4v16h16M8 15l3.5-4.5 3 3L19 8',
   clock: 'M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.5V12l3 2',
   chevronRight: 'M9 6l6 6-6 6',
+  chevronDown: 'M6 9l6 6 6-6',
+  check: 'M5 12.5l4.5 4.5L19 7.5',
   flag: 'M5.5 21V4M5.5 4.5H17l-2.5 4 2.5 4H5.5',
 } as const;
 

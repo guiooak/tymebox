@@ -12,6 +12,8 @@ export { FormResetButton } from './FormResetButton';
 export { Checkbox } from './Checkbox';
 export { SlimCheckbox } from './SlimCheckbox';
 export { Switch } from './Switch';
+export { Select } from './Select';
+export type { SelectOption, SelectProps } from './Select';
 export { useFormField } from './useFormField';
 export type { InputsListItem } from './FormInputsList';
 export type { FieldValidator } from './useFormField';

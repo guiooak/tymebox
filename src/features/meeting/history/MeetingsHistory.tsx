@@ -8,6 +8,8 @@ import {
   Heading,
   Loader,
   Page,
+  Select,
+  type SelectOption,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import {
@@ -32,10 +34,10 @@ const FILTERS: Array<{ key: Filter; label: string }> = [
   { key: 'cancelled', label: 'Cancelled' },
 ];
 
-const SORTS: Array<{ key: SortKey; label: string }> = [
-  { key: 'newest', label: 'Newest first' },
-  { key: 'oldest', label: 'Oldest first' },
-  { key: 'name', label: 'Name (A–Z)' },
+const SORT_OPTIONS: ReadonlyArray<SelectOption<SortKey>> = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'oldest', label: 'Oldest first' },
+  { value: 'name', label: 'Name (A–Z)' },
 ];
 
 /** Whichever date best describes when the event happened. */
@@ -153,18 +155,12 @@ export function MeetingsHistory() {
                   aria-label="Search events"
                   onChange={(event) => setQuery(event.target.value)}
                 />
-                <select
-                  className={styles.sort}
+                <Select<SortKey>
                   value={sort}
-                  aria-label="Sort events"
-                  onChange={(event) => setSort(event.target.value as SortKey)}
-                >
-                  {SORTS.map((item) => (
-                    <option key={item.key} value={item.key}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
+                  options={SORT_OPTIONS}
+                  onChange={setSort}
+                  label="Sort events"
+                />
               </div>
             </div>
 

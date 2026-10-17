@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Button, Modal } from '../../../common/components';
+import { Button, Modal, Select, type SelectOption } from '../../../common/components';
 import { eventPath } from '../../../common/services/router';
 import {
   emailKey,
@@ -23,25 +23,48 @@ export function eventLink(id: string): string {
   return `${window.location.origin}${eventPath(id)}`;
 }
 
+const ROLE_OPTIONS: ReadonlyArray<SelectOption<GrantedRole>> = [
+  { value: 'viewer', label: ROLE_LABELS.viewer, description: 'Follows along, read-only' },
+  {
+    value: 'contributor',
+    label: ROLE_LABELS.contributor,
+    description: 'Runs the event and edits it',
+  },
+];
+
+const VISIBILITY_OPTIONS: ReadonlyArray<SelectOption<Visibility>> = [
+  {
+    value: 'private',
+    label: 'Private: only people added',
+    description: 'Others with the link can ask for access',
+  },
+  {
+    value: 'public',
+    label: 'Anyone with the link',
+    description: 'Anyone signed in who has the link can open it',
+  },
+];
+
 function RoleSelect({
   value,
   onChange,
   label,
+  size = 'md',
 }: {
   value: GrantedRole;
   onChange: (role: GrantedRole) => void;
   label: string;
+  /** Small next to the small buttons of a person's row. */
+  size?: 'sm' | 'md';
 }) {
   return (
-    <select
-      className={styles.select}
+    <Select<GrantedRole>
       value={value}
-      aria-label={label}
-      onChange={(event) => onChange(event.target.value as GrantedRole)}
-    >
-      <option value="viewer">{ROLE_LABELS.viewer}</option>
-      <option value="contributor">{ROLE_LABELS.contributor}</option>
-    </select>
+      options={ROLE_OPTIONS}
+      onChange={onChange}
+      label={label}
+      size={size}
+    />
   );
 }
 
@@ -94,7 +117,12 @@ function RequestRow({ request }: { request: AccessRequest }) {
         {request.message && <q className={styles.message}>{request.message}</q>}
       </div>
       <div className={styles.personActions}>
-        <RoleSelect value={role} onChange={setRole} label={`Role for ${request.email}`} />
+        <RoleSelect
+          size="sm"
+          value={role}
+          onChange={setRole}
+          label={`Role for ${request.email}`}
+        />
         <Button
           size="sm"
           disabled={busy}
@@ -127,6 +155,7 @@ function MemberRow({ member }: { member: Member }) {
       </div>
       <div className={styles.personActions}>
         <RoleSelect
+          size="sm"
           value={member.role}
           onChange={(role) => void setMemberRole(member, role)}
           label={`Role for ${member.email}`}
@@ -243,15 +272,12 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
         <section className={styles.section}>
           <h4 className={styles.sectionTitle}>General access</h4>
           <div className={styles.linkRow}>
-            <select
-              className={styles.select}
+            <Select<Visibility>
               value={access.visibility}
-              aria-label="General access"
-              onChange={(change) => onVisibility(change.target.value as Visibility)}
-            >
-              <option value="private">Private: only people added</option>
-              <option value="public">Anyone with the link (signed in)</option>
-            </select>
+              options={VISIBILITY_OPTIONS}
+              onChange={onVisibility}
+              label="General access"
+            />
             {access.visibility === 'public' && (
               <RoleSelect
                 value={access.publicRole}

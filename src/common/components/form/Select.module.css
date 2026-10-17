@@ -1,0 +1,104 @@
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  /* The chevron sits in its own space, clear of the right edge. */
+  gap: var(--tw-space-3);
+  max-width: 100%;
+  border: var(--tw-border);
+  border-radius: var(--tw-radius-sm);
+  background: var(--tw-surface);
+  color: var(--tw-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color var(--tw-transition),
+    background var(--tw-transition);
+}
+.md {
+  min-height: 36px;
+  padding: 6px 12px 6px 14px;
+  font-size: var(--tw-font-size-sm);
+}
+.sm {
+  min-height: 30px;
+  padding: 4px 10px 4px 12px;
+  font-size: var(--tw-font-size-sm);
+}
+.trigger:hover:not(:disabled) {
+  border-color: var(--tw-border-strong);
+}
+.trigger:focus-visible,
+.open {
+  outline: 2px solid var(--tw-primary-text);
+  outline-offset: 1px;
+}
+.trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.value {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chevron {
+  flex-shrink: 0;
+  color: var(--tw-text-muted);
+  transition: transform var(--tw-transition);
+}
+.open .chevron {
+  transform: rotate(180deg);
+}
+
+/* The list lives in a portal on <body>: fixed, above modals. */
+.list {
+  position: fixed;
+  z-index: 1200;
+  max-width: calc(100vw - 16px);
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--tw-space-1);
+  list-style: none;
+  background: var(--tw-surface-raised);
+  border: var(--tw-border);
+  border-radius: var(--tw-radius);
+  box-shadow: var(--tw-shadow-lg);
+  font-size: var(--tw-font-size-sm);
+  outline: none;
+}
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-4);
+  padding: 8px 10px;
+  border-radius: var(--tw-radius-sm);
+  color: var(--tw-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.active {
+  background: var(--tw-surface-sunken);
+}
+.selected {
+  font-weight: var(--tw-font-weight-semibold);
+}
+.optionText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.description {
+  font-weight: var(--tw-font-weight-normal);
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+  white-space: normal;
+}
+.check {
+  flex-shrink: 0;
+  color: var(--tw-primary-text);
+}

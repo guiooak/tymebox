@@ -80,8 +80,7 @@
   gap: var(--tw-space-2);
   align-items: center;
 }
-.input,
-.select {
+.input {
   padding: 7px 10px;
   border: var(--tw-border);
   border-radius: var(--tw-radius-sm);
@@ -94,8 +93,7 @@
   flex: 1 1 220px;
   min-width: 0;
 }
-.input:focus,
-.select:focus {
+.input:focus {
   outline: 2px solid var(--tw-primary-text);
   outline-offset: 1px;
 }

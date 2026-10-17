@@ -55,8 +55,7 @@
   display: flex;
   gap: var(--tw-space-2);
 }
-.search,
-.sort {
+.search {
   padding: 6px 12px;
   border: var(--tw-border);
   border-radius: var(--tw-radius-sm);
