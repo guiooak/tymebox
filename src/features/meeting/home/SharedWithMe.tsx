@@ -1,4 +1,4 @@
-import { Badge, BlankSlate, Box, Button, Heading } from '../../../common/components';
+import { Badge, BlankSlate, Box, Heading, Menu } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import {
   eventPath,
@@ -67,16 +67,18 @@ export function SharedWithMe() {
                   <Badge>
                     {event.via === 'public' ? 'Public link' : ROLE_LABELS[event.via]}
                   </Badge>
-                  <Button
-                    size="sm"
-                    onClick={() =>
-                      navigation.go(
-                        finished ? eventReportPath(event.id) : eventPath(event.id),
-                      )
-                    }
-                  >
-                    {finished ? 'View report' : 'Open'}
-                  </Button>
+                  <Menu
+                    label={`Actions for ${event.name || 'this event'}`}
+                    items={[
+                      {
+                        label: finished ? 'View report' : 'Open board',
+                        onSelect: () =>
+                          navigation.go(
+                            finished ? eventReportPath(event.id) : eventPath(event.id),
+                          ),
+                      },
+                    ]}
+                  />
                 </div>
               </Box>
             );

@@ -68,6 +68,8 @@ export function OnboardingCard({ onTrySample }: OnboardingCardProps) {
       </ol>
       <Button
         size="sm"
+        theme="secondary"
+        outline
         onClick={() => {
           dismiss();
           onTrySample();

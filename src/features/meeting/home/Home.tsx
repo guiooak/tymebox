@@ -6,6 +6,7 @@ import {
   Container,
   Heading,
   Loader,
+  Menu,
   Page,
 } from '../../../common/components';
 import {
@@ -153,7 +154,13 @@ export function Home() {
                   <strong>{current?.name || 'Untitled event'}</strong>
                   <div className={styles.meta}>{resume.hint}</div>
                 </div>
-                <Button onClick={() => navigation.go(resume.to)}>{resume.label}</Button>
+                <Button
+                  theme="secondary"
+                  outline
+                  onClick={() => navigation.go(resume.to)}
+                >
+                  {resume.label}
+                </Button>
               </Box>
             )}
 
@@ -204,16 +211,18 @@ export function Home() {
                       </div>
                       <div className={styles.actions}>
                         <Badge theme="info">Scheduled</Badge>
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            void reopen(meeting.id).then(() =>
-                              navigation.go(eventPath(meeting.id)),
-                            );
-                          }}
-                        >
-                          Open board
-                        </Button>
+                        <Menu
+                          label={`Actions for ${meeting.name}`}
+                          items={[
+                            {
+                              label: 'Open board',
+                              onSelect: () =>
+                                void reopen(meeting.id).then(() =>
+                                  navigation.go(eventPath(meeting.id)),
+                                ),
+                            },
+                          ]}
+                        />
                       </div>
                     </Box>
                   ))}
@@ -228,7 +237,11 @@ export function Home() {
                   title="No events yet"
                   description="Plan your first one and it’ll come to life here."
                   action={
-                    <Button onClick={() => navigation.go(paths.newMeeting)}>
+                    <Button
+                      theme="secondary"
+                      outline
+                      onClick={() => navigation.go(paths.newMeeting)}
+                    >
                       Plan an event
                     </Button>
                   }
@@ -301,17 +314,19 @@ export function Home() {
                             </div>
                           </div>
                           <div className={styles.actions}>
-                            <Button
-                              theme="secondary"
-                              outline
-                              size="sm"
-                              onClick={() => void onReopen(meeting.id)}
-                            >
-                              View report
-                            </Button>
-                            <Button size="sm" onClick={() => void onClone(meeting.id)}>
-                              Clone
-                            </Button>
+                            <Menu
+                              label={`Actions for ${meeting.name}`}
+                              items={[
+                                {
+                                  label: 'View report',
+                                  onSelect: () => void onReopen(meeting.id),
+                                },
+                                {
+                                  label: 'Clone',
+                                  onSelect: () => void onClone(meeting.id),
+                                },
+                              ]}
+                            />
                           </div>
                         </Box>
                       ))}

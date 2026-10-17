@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { cx } from '../cx';
+import { Icon } from '../icons';
 import styles from './Menu.module.css';
 
 export type MenuItem = {
@@ -53,7 +54,7 @@ export function Menu({ items, label, className }: MenuProps) {
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
-        ⋮
+        <Icon name="moreVertical" size={18} />
       </button>
       {open && (
         <div className={styles.list} role="menu">

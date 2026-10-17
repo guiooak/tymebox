@@ -3,17 +3,20 @@
   display: inline-flex;
 }
 .trigger {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
   border: none;
   background: none;
   color: var(--tw-text-muted);
-  font-size: var(--tw-font-size-lg);
-  line-height: 1;
-  padding: 2px 6px;
   border-radius: var(--tw-radius-sm);
   cursor: pointer;
   transition: background var(--tw-transition);
 }
-.trigger:hover {
+.trigger:hover,
+.trigger[aria-expanded='true'] {
   background: var(--tw-surface-sunken);
   color: var(--tw-text);
 }
