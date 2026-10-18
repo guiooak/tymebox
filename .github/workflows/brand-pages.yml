@@ -1,11 +1,13 @@
-# Publishes the logo manual and style guide (docs/brand) to GitHub Pages:
-# https://guiooak.github.io/tymebox/
-name: Brand manual
+# The style guide moved to https://guiooak.github.io/tymebox-style-guide/
+# (repo guiooak/tymebox-style-guide, which publishes docs/brand from here).
+# This keeps the old address, https://guiooak.github.io/tymebox/, working by
+# redirecting it there.
+name: Brand manual redirect
 
 on:
   push:
     branches: [main]
-    paths: ['docs/brand/**', '.github/workflows/brand-pages.yml']
+    paths: ['.github/workflows/brand-pages.yml']
   workflow_dispatch:
 
 permissions:
@@ -24,12 +26,26 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v7
-      - name: Build the site
+      - name: Build the redirect
         run: |
           mkdir -p site
-          cp -R docs/brand/. site/
-          cp docs/brand/tymebox-brand-manual.html site/index.html
+          for page in index.html tymebox-brand-manual.html; do
+            cat > "site/$page" <<'HTML'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8" />
+              <title>Tymebox style guide</title>
+              <link rel="canonical" href="https://guiooak.github.io/tymebox-style-guide/" />
+              <meta http-equiv="refresh" content="0; url=https://guiooak.github.io/tymebox-style-guide/" />
+            </head>
+            <body>
+              <p>The Tymebox style guide moved to
+                <a href="https://guiooak.github.io/tymebox-style-guide/">guiooak.github.io/tymebox-style-guide</a>.</p>
+            </body>
+          </html>
+          HTML
+          done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

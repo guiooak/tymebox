@@ -1,13 +1,56 @@
-# Tymebox ⏳
+<p align="center">
+  <img src="public/icon-192.png" alt="Tymebox" width="96" height="96" />
+</p>
 
-> Improve your meeting time with focus only on what matters.
+<h1 align="center">Tymebox</h1>
 
-A tool for running **timeboxed meetings**: name an event, fill in the board as
-you go (milestones, start/end time, weights — all editable at any moment), run
-it live (countdown + burndown chart + goal decision collector + side‑topic
-parking lot), then get a report you can copy, print or export. A React rewrite
-of the original Vue app, with Google sign‑in and Firebase Realtime Database
-persistence (including a per‑user history of past meetings).
+<p align="center"><strong>Every event, inside its box.</strong><br />
+Plan milestones, run the clock and finish on time. Then see exactly how it went.</p>
+
+<p align="center">
+  <a href="https://tymebox.web.app"><strong>Open Tymebox →</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://guiooak.github.io/tymebox-style-guide/">Style guide</a>
+</p>
+
+---
+
+Tymebox is a timeboxing tool for meetings and events. You give an event a
+name and a time box, list the milestones it needs to land, and run it live:
+the countdown tells you when you're falling behind, before you're late. When
+it's over, you get a report you can send to everyone who was there.
+
+**Try it at [tymebox.web.app](https://tymebox.web.app)**, free, with your
+Google account. It's in English and Brazilian Portuguese.
+
+### What it does
+
+- **Plan in seconds.** A title is all it takes. Add milestones, times and
+  notes on the board whenever you like, or start from a Weekly planning,
+  Retro or 1:1 template.
+- **Run it live.** A countdown that turns amber when you fall a milestone
+  behind and red once you're over the box, a burndown chart, and optional
+  browser notifications.
+- **Park tangents.** Side topics go to a parking lot, tagged with the
+  milestone they came up in, so the meeting keeps moving.
+- **Run it together.** Share an event by email as viewer or contributor, or
+  open it to anyone with the link. People without access can ask for it.
+- **Report and send.** Each finished event gets a report with the burndown,
+  timing against plan and an on-budget streak. Copy it into an email (styled,
+  with the chart), print it or save a PDF.
+
+### Style guide
+
+The logo manual and style guide (symbol, lockups, colours, type, components)
+is published at
+**[guiooak.github.io/tymebox-style-guide](https://guiooak.github.io/tymebox-style-guide/)**.
+Its source is [`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html)
+in this repository; see [Brand](#brand) below.
+
+## For developers
+
+A React rewrite of the original Vue app, with Google sign-in and Firebase
+Realtime Database persistence.
 
 ## Stack
 
@@ -67,7 +110,7 @@ yarn dev:emulators   # terminal 1: Auth + Database emulators (UI on :4000)
 yarn dev:local       # terminal 2: the app against them (.env.emulators)
 ```
 
-The Login page then also offers **Emulator: sign in as**, which takes any
+The landing page then also offers **Emulator: sign in as**, which takes any
 made-up email. To try sharing, open the app on two origins with separate
 sessions, for example `localhost:5173` for one person and
 `bruno.localhost:5173` for the other.
@@ -112,7 +155,12 @@ their owner signs in.
 ## Brand
 
 The logo manual and style guide (v3.0) live in
-[`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html):
+[`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html)
+and are published at
+[guiooak.github.io/tymebox-style-guide](https://guiooak.github.io/tymebox-style-guide/)
+by the [tymebox-style-guide](https://github.com/guiooak/tymebox-style-guide)
+repository, which picks up changes here daily (or on demand from its Actions
+tab). The old address, `guiooak.github.io/tymebox/`, redirects there. The manual covers
 symbol versions and construction, lockups, clear space and minimum sizes, logo
 colour per background, misuse examples, colour scales with WCAG contrast,
 typography, spacing/radius/elevation tokens and the app's components. Open it in
@@ -150,11 +198,20 @@ Yarn release is pinned in‑repo (`yarnPath`).
   skipped). Requires repo secrets: `FIREBASE_SERVICE_ACCOUNT`,
   `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*` build vars.
 
+## Languages
+
+The interface is in English (US) and Brazilian Portuguese. Strings live in
+typed catalogs, `src/common/services/i18n/messages/{en,ptBR}.ts`; the typecheck
+fails when the two drift apart. Signed out, the choice is kept on the device;
+signed in, it's saved to the profile. The public landing has one URL per
+language (`/en`, `/pt`), each with its own HTML for search engines and link
+previews; app URLs stay language-neutral.
+
 ## Not included yet
 
-PWA support and the full unit/integration test suite are planned as a follow‑up
+PWA support is planned as a follow-up
 (see `.ai/plans/2026-06-03-02-timebox-works-pwa-and-tests.md`).
 
-Sending a report **by email** and **shareable read‑only report links** are
-scoped but unbuilt — both need infrastructure the app doesn't have yet. See
+Reports go out by copying them into an email; sending one **from the app**
+still needs mail infrastructure the app doesn't have. See
 `.ai/plans/2026-08-01-01-report-delivery-scoping.md`.
