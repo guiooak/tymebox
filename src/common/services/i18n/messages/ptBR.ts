@@ -406,7 +406,8 @@ export const ptBR: Messages = {
     chartAlt: 'Gráfico de burndown',
     emailKicker: 'Relatório do evento',
     emailOpen: 'Abrir o relatório no Tymebox',
-    emailFooter: 'Enviado pelo Tymebox · foque só no que importa',
+    emailFooterBefore: 'Enviado pelo Tymebox',
+    emailFooterAfter: 'foque só no que importa',
     copyFailed: 'Não foi possível copiar. O navegador bloqueou a área de transferência.',
     text: {
       goals: 'Metas:',

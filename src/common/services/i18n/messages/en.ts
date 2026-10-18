@@ -406,7 +406,9 @@ export const en = {
     chartAlt: 'Burndown chart',
     emailKicker: 'Event report',
     emailOpen: 'Open the report in Tymebox',
-    emailFooter: 'Sent with Tymebox · focus only on what matters',
+    // The footer reads "Sent with Tymebox [logo] focus only on what matters".
+    emailFooterBefore: 'Sent with Tymebox',
+    emailFooterAfter: 'focus only on what matters',
     copyFailed: 'Couldn’t copy. Your browser blocked the clipboard.',
     text: {
       goals: 'Goals:',

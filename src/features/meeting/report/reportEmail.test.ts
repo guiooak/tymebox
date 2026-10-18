@@ -57,9 +57,9 @@ describe('reportEmail', () => {
     expect(html).toContain('href="https://tymebox.web.app/events/m1/report"');
     expect(html).toContain('done at 10:20h · weight 1');
     expect(html).toContain('not done · weight 2');
-    // A small coloured logo, centred in the footer.
+    // A small coloured logo, centred in the footer, in place of the "·".
     expect(html).toMatch(
-      /<td align="center"[^>]*><table[^>]*align="center"><tr><td[^>]*><img src="data:image\/png;base64,[^"]+" alt="Tymebox" width="20"/,
+      /Sent with Tymebox<\/td><td[^>]*><img src="data:image\/png;base64,[^"]+" alt="Tymebox" width="20"[^>]*><\/td><td[^>]*>focus only on what matters/,
     );
   });
 
