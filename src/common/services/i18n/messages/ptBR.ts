@@ -412,7 +412,8 @@ export const ptBR: Messages = {
       goals: 'Metas:',
       doneAt: (time) => ` — concluída às ${time}h`,
       notDone: ' — não concluída',
-      goal: (name, weight, done) => `• ${name} (peso ${weight})${done}`,
+      goal: (name, done, weight) =>
+        weight === undefined ? `• ${name}${done}` : `• ${name} (peso ${weight})${done}`,
       sideTopics: 'Assuntos paralelos:',
       topicDuring: (topic, goal) => `• ${topic} (durante ${goal})`,
       happened: (date) => `Data: ${date}.`,

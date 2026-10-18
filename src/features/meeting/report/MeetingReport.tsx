@@ -29,6 +29,7 @@ import { useMeetingStore } from '../store';
 import { useReportTrend } from './useReportTrend';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
 import { TimeCardsGrid } from './TimeCardsGrid';
+import { weightsVary } from './weights';
 import styles from './MeetingReport.module.css';
 
 /** The report of the finished event in the URL, for anyone allowed to open it. */
@@ -51,6 +52,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const ownTrend = useReportTrend(meeting);
   const trend = role === 'owner' ? ownTrend : 0;
 
+  const showWeights = weightsVary(meeting.goals);
   const sideTopics = useMemo(
     () => meeting.sideTopics.filter((topic) => topic.value.trim()),
     [meeting],
@@ -164,8 +166,8 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
                 <div className={styles.goalHead}>
                   <strong>{goal.name}</strong>
                   <span className={styles.goalMeta}>
-                    {goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone}{' '}
-                    · {t.weight(goal.weight)}
+                    {goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone}
+                    {showWeights && ` · ${t.weight(goal.weight)}`}
                   </span>
                 </div>
                 {goal.decisions && <p className={styles.decisions}>{goal.decisions}</p>}

@@ -57,6 +57,10 @@ describe('reportEmail', () => {
     expect(html).toContain('href="https://tymebox.web.app/events/m1/report"');
     expect(html).toContain('done at 10:20h · weight 1');
     expect(html).toContain('not done · weight 2');
+    // A small coloured logo, centred in the footer.
+    expect(html).toMatch(
+      /<td align="center"[^>]*><table[^>]*align="center"><tr><td[^>]*><img src="data:image\/png;base64,[^"]+" alt="Tymebox" width="20"/,
+    );
   });
 
   it('styles everything inline, with no stylesheet or class to lose on paste', () => {
@@ -70,7 +74,7 @@ describe('reportEmail', () => {
       { ...meeting, description: '', sideTopics: [] },
       { ...options, chartImage: null, streak: 0 },
     );
-    expect(html).not.toContain('<img');
+    expect(html).not.toContain('alt="Burndown chart"');
     expect(html).not.toContain('in a row');
     expect(html).not.toContain('Side topics');
   });
@@ -80,5 +84,17 @@ describe('reportEmail', () => {
     expect(text).toContain('• Wins (weight 1) — done at 10:20h');
     expect(text).toContain('• Hiring "plan" (during Wins)');
     expect(text.endsWith(options.reportUrl)).toBe(true);
+  });
+
+  it('leaves weights out when every milestone has the same one', () => {
+    const even = {
+      ...meeting,
+      goals: meeting.goals.map((goal) => ({ ...goal, weight: 1 })),
+    };
+    const html = reportEmailFragment(even, options);
+    expect(html).not.toMatch(/weight \d/);
+    expect(html).toContain('done at 10:20h<');
+    expect(reportText(even)).toContain('• Wins — done at 10:20h');
+    expect(reportText(even)).not.toMatch(/weight \d/);
   });
 });

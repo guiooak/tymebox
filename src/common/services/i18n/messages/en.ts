@@ -412,8 +412,8 @@ export const en = {
       goals: 'Goals:',
       doneAt: (time: string) => ` — done at ${time}h`,
       notDone: ' — not done',
-      goal: (name: string, weight: number, done: string) =>
-        `• ${name} (weight ${weight})${done}`,
+      goal: (name: string, done: string, weight?: number) =>
+        weight === undefined ? `• ${name}${done}` : `• ${name} (weight ${weight})${done}`,
       sideTopics: 'Side topics:',
       topicDuring: (topic: string, goal: string) => `• ${topic} (during ${goal})`,
       happened: (date: string) => `Happened ${date}.`,

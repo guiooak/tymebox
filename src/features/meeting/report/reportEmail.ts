@@ -2,7 +2,9 @@ import type { Theme } from '../../../common/components';
 import { formatLong, formatTime, isSameDay } from '../../../common/services/datetime';
 import { getT } from '../../../common/services/i18n';
 import type { Meeting } from '../domain/types';
+import { LOGO_MARK_PNG } from './logoMark';
 import { timeCards } from './timeCards';
+import { weightsVary } from './weights';
 
 /*
  * The report as an e-mail: one self-contained HTML block with every style
@@ -104,8 +106,10 @@ export function reportEmailFragment(
   }
 
   parts.push(sectionTitle(t.goals));
+  const showWeights = weightsVary(meeting.goals);
   for (const goal of meeting.goals) {
-    const meta = `${goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone} · ${t.weight(goal.weight)}`;
+    const status = goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone;
+    const meta = showWeights ? `${status} · ${t.weight(goal.weight)}` : status;
     const notes = goal.decisions.trim()
       ? `<tr><td colspan="2" style="padding:6px 0 0;font-family:${SANS};font-size:14px;line-height:1.55;color:${C.muted};">${prose(goal.decisions)}</td></tr>`
       : '';
@@ -139,25 +143,25 @@ export function reportEmailFragment(
   }
 
   parts.push(sectionTitle(t.timing));
-  // Gaps without negative margins (Outlook ignores those): the outer cells pad inward only.
-  const gaps = ['0 6px 0 0', '0 3px', '0 0 0 6px'];
-  const cells = timeCards(meeting)
-    .map(
-      (card, index) =>
-        `<td width="33%" valign="top" style="padding:${gaps[index] ?? '0 3px'};"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${TINT[card.theme]};border-radius:10px;border-collapse:separate;"><tr><td align="center" style="padding:16px 10px;font-family:${SANS};color:${C.text};"><div style="font-size:12px;letter-spacing:0.04em;text-transform:uppercase;opacity:0.85;">${escapeHtml(card.label)}</div><div style="margin:10px 0;font-family:${MONO};font-size:24px;font-weight:700;">${escapeHtml(card.actual)}</div><div style="font-size:12px;color:${C.muted};">${escapeHtml(card.planned)}</div>${
-          card.message
-            ? `<div style="margin-top:4px;font-size:12px;">${escapeHtml(card.message)}</div>`
-            : ''
-        }</td></tr></table></td>`,
-    )
-    .join('');
+  // One row of cells carrying the colours, with spacer cells between them: cells
+  // in a row share its height, so the three cards always line up, in every
+  // client (no flexbox, no negative margins).
+  const cards = timeCards(meeting).map(
+    (card) =>
+      `<td width="32%" align="center" valign="top" style="padding:16px 10px;background:${TINT[card.theme]};border-radius:10px;font-family:${SANS};color:${C.text};"><div style="font-size:12px;letter-spacing:0.04em;text-transform:uppercase;opacity:0.85;">${escapeHtml(card.label)}</div><div style="margin:10px 0;font-family:${MONO};font-size:24px;font-weight:700;">${escapeHtml(card.actual)}</div><div style="font-size:12px;color:${C.muted};">${escapeHtml(card.planned)}</div>${
+        card.message
+          ? `<div style="margin-top:4px;font-size:12px;">${escapeHtml(card.message)}</div>`
+          : ''
+      }</td>`,
+  );
+  const spacer = '<td width="2%" style="font-size:0;line-height:0;">&nbsp;</td>';
   parts.push(
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${cells}</tr></table>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;"><tr>${cards.join(spacer)}</tr></table>`,
   );
 
   parts.push(
     `<p style="margin:28px 0 0;"><a href="${escapeHtml(options.reportUrl)}" style="display:inline-block;padding:10px 18px;border-radius:10px;background:${C.primary};color:#ffffff;font-family:${SANS};font-size:14px;font-weight:600;text-decoration:none;">${escapeHtml(t.emailOpen)}</a></p>`,
-    `<p style="margin:20px 0 0;padding-top:16px;border-top:1px solid ${C.border};font-family:${SANS};font-size:12px;color:${C.muted};">${escapeHtml(t.emailFooter)}</p>`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0;border-top:1px solid ${C.border};"><tr><td align="center" style="padding-top:16px;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td valign="middle" style="padding-right:8px;"><img src="${LOGO_MARK_PNG}" alt="Tymebox" width="20" height="20" style="display:block;width:20px;height:20px;border:0;" /></td><td valign="middle" style="font-family:${SANS};font-size:12px;color:${C.muted};">${escapeHtml(t.emailFooter)}</td></tr></table></td></tr></table>`,
   );
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.page};"><tr><td align="center" style="padding:24px 12px;"><table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background:${C.surface};border:1px solid ${C.border};border-radius:14px;border-collapse:separate;"><tr><td style="padding:28px;text-align:left;">${parts.join('')}</td></tr></table></td></tr></table>`;
@@ -171,9 +175,10 @@ export function reportText(meeting: Meeting, reportUrl?: string): string {
     lines.push(meeting.description, '');
   }
   lines.push(t.goals);
+  const showWeights = weightsVary(meeting.goals);
   for (const goal of meeting.goals) {
     const done = goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone;
-    lines.push(t.goal(goal.name, goal.weight, done));
+    lines.push(t.goal(goal.name, done, showWeights ? goal.weight : undefined));
     if (goal.decisions) {
       lines.push(`    ${goal.decisions}`);
     }
