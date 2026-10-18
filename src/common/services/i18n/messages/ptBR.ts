@@ -578,7 +578,8 @@ export const ptBR: Messages = {
     closingTitle: 'Sua próxima reunião tem uma caixa. Use.',
     closingText:
       'Entre com o Google e planeje seu primeiro evento em menos de um minuto.',
-    footer: (year) => `© ${year} Tymebox · Foque só no que importa`,
+    footerBefore: (year) => `© ${year} Tymebox`,
+    footerAfter: 'Foque só no que importa',
     google: 'Continuar com o Google',
     signingIn: 'Entrando…',
     signInFailed: 'Não foi possível entrar. Tente de novo.',

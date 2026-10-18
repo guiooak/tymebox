@@ -259,8 +259,9 @@ export function Landing({ localized = false }: { localized?: boolean }) {
 
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
+          <span>{t.footerBefore(new Date().getFullYear())}</span>
           <TymeboxSymbol size={20} />
-          <span>{t.footer(new Date().getFullYear())}</span>
+          <span>{t.footerAfter}</span>
         </div>
       </footer>
     </div>

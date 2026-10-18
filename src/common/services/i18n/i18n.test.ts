@@ -32,6 +32,7 @@ const SAME_IN_BOTH = new Set([
   'landing.parking.topics',
   'home.budget.none',
   'home.greeting',
+  'landing.footerBefore',
   'home.templates.retro.label',
   'home.templates.oneOnOne.label',
   'share.link',
