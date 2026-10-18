@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 import {
   BlankSlate,
   Box,
@@ -35,6 +35,32 @@ export type GoalsDecisionCollectorProps = {
   /** Asked before dropping a milestone that already holds notes. */
   onConfirmRemove?: (goal: Goal) => Promise<boolean>;
 };
+
+/**
+ * The drag image is a snapshot the browser takes of the dragged element, and
+ * it can pick up the rows around it. Hand it a copy of just this row instead:
+ * same width, off-screen, removed once the browser has taken the picture.
+ */
+function setDragGhost(event: DragEvent<HTMLDivElement>) {
+  const row = event.currentTarget;
+  const rect = row.getBoundingClientRect();
+  const ghost = row.cloneNode(true) as HTMLElement;
+  Object.assign(ghost.style, {
+    position: 'fixed',
+    top: '-10000px',
+    left: '-10000px',
+    width: `${rect.width}px`,
+    pointerEvents: 'none',
+  });
+  document.body.appendChild(ghost);
+  event.dataTransfer.setDragImage(
+    ghost,
+    event.clientX - rect.left,
+    event.clientY - rect.top,
+  );
+  event.dataTransfer.effectAllowed = 'move';
+  window.setTimeout(() => ghost.remove(), 0);
+}
 
 export function GoalsDecisionCollector({
   goals,
@@ -208,7 +234,10 @@ export function GoalsDecisionCollector({
               dragOverIndex === index && styles.dropTarget,
               celebrating === goal.id && styles.celebrate,
             )}
-            onDragStart={() => setDragIndex(index)}
+            onDragStart={(event) => {
+              setDragIndex(index);
+              setDragGhost(event);
+            }}
             onDragOver={(event) => {
               if (dragIndex == null) {
                 return;
