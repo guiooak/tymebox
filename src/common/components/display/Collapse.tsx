@@ -76,7 +76,7 @@ export function Collapse({
         )}
         {actions}
         {checkbox && (
-          <span onClick={(event) => event.stopPropagation()}>
+          <span className={styles.checkbox} onClick={(event) => event.stopPropagation()}>
             <Checkbox
               label={checkbox.label}
               checked={checkbox.checked}

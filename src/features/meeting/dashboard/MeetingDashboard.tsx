@@ -250,8 +250,8 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
         />
       </header>
 
-      <Row>
-        <Col grow={1}>
+      <Row className={styles.board}>
+        <Col grow={1} className={styles.boardCol}>
           <div className={styles.countdownBlock}>
             <TimeCountdown
               timeFrom={meeting.expectedStartTime || null}
@@ -281,7 +281,7 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
               </div>
             </div>
           </div>
-          <Box className={styles.block}>
+          <Box className={`${styles.block} ${styles.burndown}`}>
             {scheduled ? (
               <BurndownChart
                 startTime={meeting.expectedStartTime}
@@ -299,38 +299,44 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
             )}
           </Box>
         </Col>
-        <Col grow={1}>
+        <Col grow={1} className={styles.boardCol}>
           {active && (
-            <GoalFocusCard
-              goal={currentGoal}
-              position={doneCount + 1}
-              total={goals.length}
-              onComplete={completeCurrentGoal}
-              disabled={!canRun}
-            />
+            <div className={styles.focus}>
+              <GoalFocusCard
+                goal={currentGoal}
+                position={doneCount + 1}
+                total={goals.length}
+                onComplete={completeCurrentGoal}
+                disabled={!canRun}
+              />
+            </div>
           )}
-          <GoalsDecisionCollector
-            goals={goals}
-            disabled={!canRun || !active}
-            editable={canRun}
-            automatic={automatic}
-            onToggleAutomatic={(value) => void setAutomatic(value)}
-            onChangeGoal={(goalId, patch) => void updateGoal(goalId, patch)}
-            onAllCompleted={() => void onAllCompleted()}
-            onAddGoal={(name) => void addGoal(name)}
-            onRemoveGoal={(goalId) => void removeGoal(goalId)}
-            onDuplicateGoal={(goalId) => void duplicateGoal(goalId)}
-            onReorderGoals={(from, to) => void reorderGoals(from, to)}
-            onConfirmRemove={onConfirmRemoveGoal}
-          />
-          <DashboardSideTopics
-            items={meeting.sideTopics}
-            onAdd={parkTopic}
-            onUpdate={(key, value) => void updateSideTopic(key, value)}
-            onRemove={(key) => void removeSideTopic(key)}
-            focusKey={focusTopicKey}
-            readOnly={!canRun}
-          />
+          <div className={styles.milestones}>
+            <GoalsDecisionCollector
+              goals={goals}
+              disabled={!canRun || !active}
+              editable={canRun}
+              automatic={automatic}
+              onToggleAutomatic={(value) => void setAutomatic(value)}
+              onChangeGoal={(goalId, patch) => void updateGoal(goalId, patch)}
+              onAllCompleted={() => void onAllCompleted()}
+              onAddGoal={(name) => void addGoal(name)}
+              onRemoveGoal={(goalId) => void removeGoal(goalId)}
+              onDuplicateGoal={(goalId) => void duplicateGoal(goalId)}
+              onReorderGoals={(from, to) => void reorderGoals(from, to)}
+              onConfirmRemove={onConfirmRemoveGoal}
+            />
+          </div>
+          <div className={styles.parking}>
+            <DashboardSideTopics
+              items={meeting.sideTopics}
+              onAdd={parkTopic}
+              onUpdate={(key, value) => void updateSideTopic(key, value)}
+              onRemove={(key) => void removeSideTopic(key)}
+              focusKey={focusTopicKey}
+              readOnly={!canRun}
+            />
+          </div>
         </Col>
       </Row>
 
@@ -350,15 +356,45 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
         )}
         {canRun &&
           (active ? (
-            <Button theme="success" onClick={() => void onFinish()}>
+            <Button
+              theme="success"
+              className={styles.notOnPhone}
+              onClick={() => void onFinish()}
+            >
               {t.finishEvent}
             </Button>
           ) : (
-            <Button theme="success" onClick={() => void onStart()}>
+            <Button
+              theme="success"
+              className={styles.notOnPhone}
+              onClick={() => void onStart()}
+            >
               {t.startEvent}
             </Button>
           ))}
       </Footer>
+
+      {/* Phones: the run controls stay pinned above the tab bar, within reach. */}
+      {canRun && (
+        <div className={styles.phoneActions}>
+          {active ? (
+            <>
+              {currentGoal && (
+                <Button theme="secondary" outline onClick={completeCurrentGoal}>
+                  {tt.milestones.markDone}
+                </Button>
+              )}
+              <Button theme="success" onClick={() => void onFinish()}>
+                {t.finishEvent}
+              </Button>
+            </>
+          ) : (
+            <Button theme="success" onClick={() => void onStart()}>
+              {t.startEvent}
+            </Button>
+          )}
+        </div>
+      )}
     </Container>
   );
 }

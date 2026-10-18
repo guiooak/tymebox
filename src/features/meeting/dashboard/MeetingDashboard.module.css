@@ -13,7 +13,8 @@
 .headTop {
   display: flex;
   align-items: center;
-  gap: var(--tw-space-3);
+  flex-wrap: wrap;
+  gap: var(--tw-space-2) var(--tw-space-3);
 }
 .headTop > :first-child {
   flex: 1;
@@ -183,4 +184,77 @@
 }
 .noteTag {
   align-self: flex-start;
+}
+
+/* Narrow (phones, tablets in portrait): one column, in the order you use
+ * it live — clock, current milestone, milestones, parking lot, then the
+ * chart. The columns dissolve so their blocks can be reordered. */
+.focus,
+.milestones,
+.parking {
+  min-width: 0;
+}
+@media (max-width: 900px) {
+  .board {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+  .boardCol {
+    display: contents;
+  }
+  .countdownBlock {
+    order: 1;
+    margin-bottom: 0;
+  }
+  .focus {
+    order: 2;
+  }
+  .milestones {
+    order: 3;
+  }
+  .parking {
+    order: 4;
+  }
+  .parking > * {
+    margin-top: 0;
+  }
+  .burndown {
+    order: 5;
+    margin-bottom: 0;
+  }
+}
+
+/* The run controls: in the footer from tablets up; pinned on phones. */
+.phoneActions {
+  display: none;
+}
+@media (max-width: 640px) {
+  .headTop > :first-child {
+    flex-basis: 100%;
+  }
+  .notOnPhone {
+    display: none;
+  }
+  .phoneActions {
+    position: sticky;
+    bottom: var(--tw-bottom-bar, 0px);
+    z-index: 10;
+    display: flex;
+    gap: var(--tw-space-2);
+    margin: var(--tw-space-4) calc(-1 * var(--tw-gutter)) 0;
+    padding: var(--tw-space-3) var(--tw-gutter);
+    background: color-mix(in srgb, var(--tw-bg) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: var(--tw-border);
+  }
+  .phoneActions > * {
+    flex: 1;
+  }
+}
+
+/* No keyboard to speak of on touch-only devices. */
+@media (hover: none) and (pointer: coarse) {
+  .shortcutsRow {
+    display: none;
+  }
 }

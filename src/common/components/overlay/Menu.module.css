@@ -56,3 +56,14 @@
 .danger {
   color: var(--tw-danger-text);
 }
+
+/* Touch: a full 44px target, and roomier items. */
+@media (pointer: coarse) {
+  .trigger {
+    width: 44px;
+    height: 44px;
+  }
+  .item {
+    min-height: 44px;
+  }
+}

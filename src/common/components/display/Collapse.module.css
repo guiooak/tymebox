@@ -81,3 +81,24 @@
   border-top: var(--tw-border);
   padding-top: var(--tw-space-3);
 }
+
+.checkbox {
+  flex-shrink: 0;
+}
+/* Phones: the box alone; "Done" stays its accessible name. */
+@media (max-width: 640px) {
+  .checkbox label > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+@media (pointer: coarse) {
+  .caretButton {
+    width: 44px;
+    height: 44px;
+  }
+}
