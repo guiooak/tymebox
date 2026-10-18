@@ -94,3 +94,10 @@
   border: var(--tw-border);
   border-radius: var(--tw-radius-sm);
 }
+
+/* Touch: a wider calendar with roomier days. */
+@media (pointer: coarse) {
+  .popover {
+    width: min(320px, calc(100vw - 2 * var(--tw-gutter)));
+  }
+}

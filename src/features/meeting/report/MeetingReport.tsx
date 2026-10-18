@@ -21,6 +21,7 @@ import {
   useNavigation,
 } from '../../../common/services/router';
 import { useT } from '../../../common/services/i18n';
+import { useIsPhone } from '../../../common/services/viewport';
 import { BurndownChart } from '../components';
 import { can, type Role } from '../domain/access';
 import type { Meeting } from '../domain/types';
@@ -56,6 +57,7 @@ export function MeetingReport() {
 function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const navigation = useNavigation();
   const dialog = useDialog();
+  const isPhone = useIsPhone();
   const tt = useT();
   const t = tt.report;
   const backToDashboard = useMeetingStore((state) => state.backToDashboard);
@@ -221,6 +223,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
           </Heading>
           <BurndownChart
             ref={chartRef}
+            height={isPhone ? 220 : undefined}
             startTime={meeting.expectedStartTime}
             endTime={meeting.expectedEndTime}
             items={burndownItems}
@@ -236,7 +239,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
           />
         </section>
 
-        <Footer justifyContent="space-between">
+        <Footer justifyContent="space-between" className={styles.footer}>
           {can(role, 'run') ? (
             <Button theme="tertiary" onClick={() => void onBackToDashboard()}>
               {t.reopen}

@@ -19,3 +19,10 @@
 .toast > span {
   flex: 1;
 }
+
+/* Phones: above the bottom tab bar, clear of the home indicator. */
+@media (max-width: 640px) {
+  .toast {
+    bottom: calc(65px + env(safe-area-inset-bottom, 0px) + var(--tw-space-3));
+  }
+}

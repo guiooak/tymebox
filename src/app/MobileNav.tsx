@@ -94,7 +94,7 @@ export function BottomTabBar() {
   const t = useT();
   const items = useNavItems();
   return (
-    <nav className={styles.tabBar} aria-label={t.shell.mainNav}>
+    <nav className={styles.tabBar} aria-label={t.shell.mainNav} data-tab-bar>
       {items.map((item) => (
         <NavLink
           key={item.to}

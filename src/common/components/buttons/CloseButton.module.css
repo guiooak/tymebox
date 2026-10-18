@@ -11,3 +11,11 @@
 .close:hover {
   color: var(--tw-text);
 }
+
+/* Touch: a full 44px tap area. */
+@media (pointer: coarse) {
+  .close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

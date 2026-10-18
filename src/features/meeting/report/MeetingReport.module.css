@@ -106,3 +106,27 @@
   flex-wrap: wrap;
   gap: var(--tw-space-3);
 }
+
+/* Phones: the actions stack full width, primary last within thumb's reach. */
+@media (max-width: 640px) {
+  .footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .footer > *,
+  .actions {
+    width: 100%;
+  }
+  .actions {
+    flex-direction: column;
+  }
+  .actions > * {
+    width: 100%;
+  }
+  .goal {
+    padding: var(--tw-space-3) var(--tw-space-4);
+  }
+  .section {
+    margin-top: var(--tw-space-6);
+  }
+}

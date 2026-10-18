@@ -166,3 +166,19 @@
   font-size: var(--tw-font-size-sm);
   color: var(--tw-text-muted);
 }
+
+/* Phones: a person's role and button go under their name (lined up with it,
+ * past the avatar), and the link's Copy button takes its own full row. */
+@media (max-width: 640px) {
+  .personActions {
+    flex-basis: 100%;
+    padding-left: calc(32px + var(--tw-space-3));
+  }
+  .linkRow > button,
+  .addRow > button {
+    flex: 1 1 100%;
+  }
+  .row > * {
+    flex: 1 1 100%;
+  }
+}

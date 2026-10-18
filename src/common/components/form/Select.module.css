@@ -102,3 +102,13 @@
   flex-shrink: 0;
   color: var(--tw-primary-text);
 }
+
+/* Touch: 44px trigger and options. */
+@media (pointer: coarse) {
+  .trigger {
+    min-height: 44px;
+  }
+  .option {
+    min-height: 44px;
+  }
+}

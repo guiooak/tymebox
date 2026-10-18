@@ -67,3 +67,24 @@
 .body.clearClose {
   padding-right: calc(var(--tw-space-5) + 2rem);
 }
+
+/* Phones: a bottom sheet — full width, from the bottom edge, thumb-reachable
+ * buttons stacked with the main one on top. */
+@media (max-width: 640px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .dialog {
+    max-width: none !important;
+    border-radius: var(--tw-radius-xl) var(--tw-radius-xl) 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .footer > button {
+    width: 100%;
+  }
+}

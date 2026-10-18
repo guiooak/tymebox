@@ -57,6 +57,11 @@
   color: var(--tw-danger-text);
 }
 
+.up {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
 /* Touch: a full 44px target, and roomier items. */
 @media (pointer: coarse) {
   .trigger {

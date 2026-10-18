@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { cx } from '../cx';
 import { Icon } from '../icons';
 import styles from './Menu.module.css';
@@ -21,6 +21,20 @@ export type MenuProps = {
 export function Menu({ items, label, className }: MenuProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Open upwards when the list would run past the bottom of the screen (or
+  // under the phone tab bar). Measured before paint, set on the element.
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!open || !list) {
+      return;
+    }
+    const tabBar = document.querySelector('[data-tab-bar]');
+    const bottomLimit =
+      window.innerHeight - (tabBar instanceof HTMLElement ? tabBar.offsetHeight : 0) - 8;
+    list.classList.toggle(styles.up, list.getBoundingClientRect().bottom > bottomLimit);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -57,7 +71,7 @@ export function Menu({ items, label, className }: MenuProps) {
         <Icon name="moreVertical" size={18} />
       </button>
       {open && (
-        <div className={styles.list} role="menu">
+        <div className={styles.list} role="menu" ref={listRef}>
           {items.map((item) => (
             <button
               key={item.label}
