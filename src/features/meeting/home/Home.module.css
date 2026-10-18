@@ -89,29 +89,67 @@
   gap: var(--tw-space-3);
 }
 .templates {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--tw-space-3);
-}
-.template {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--tw-space-1);
-  padding: var(--tw-space-3) var(--tw-space-4);
-  border: 1px dashed var(--tw-border-color);
-  border-radius: var(--tw-radius);
+  flex-wrap: wrap;
+  gap: var(--tw-space-2);
+}
+/* Templates are actions, so they read as buttons (pill, accent edge, arrow)
+ * and stay clearly apart from the metric boxes below. */
+.template {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+  max-width: 100%;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid color-mix(in srgb, var(--tw-primary-text) 35%, transparent);
+  border-radius: var(--tw-radius-pill);
   background: var(--tw-surface);
   font-family: inherit;
+  font-size: var(--tw-font-size-sm);
   text-align: left;
   color: var(--tw-text);
   cursor: pointer;
-  transition: all var(--tw-transition);
+  transition:
+    background var(--tw-transition),
+    border-color var(--tw-transition);
 }
 .template:hover {
   border-color: var(--tw-primary-text);
-  border-style: solid;
-  box-shadow: var(--tw-shadow-sm);
+  background: color-mix(in srgb, var(--tw-primary) 6%, var(--tw-surface));
+}
+.template:focus-visible {
+  outline: 2px solid var(--tw-primary-text);
+  outline-offset: 2px;
+}
+.templateIcon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--tw-primary) 12%, transparent);
+  color: var(--tw-primary-text);
+}
+.templateName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--tw-font-weight-semibold);
+}
+.templateMeta {
+  flex: none;
+  color: var(--tw-text-muted);
+  white-space: nowrap;
+}
+.templateArrow {
+  flex: none;
+  color: var(--tw-primary-text);
+  transition: transform var(--tw-transition);
+}
+.template:hover .templateArrow {
+  transform: translateX(2px);
 }
 .list {
   display: flex;

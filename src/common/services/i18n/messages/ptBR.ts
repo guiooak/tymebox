@@ -118,6 +118,7 @@ export const ptBR: Messages = {
     startSomething: 'Comece algo',
     repeat: (name) => `Repetir “${name}”`,
     repeatHint: (n) => `${n} marcos · seu último evento`,
+    milestoneCount: (n) => `${n} ${n === 1 ? 'marco' : 'marcos'}`,
     templates: {
       weeklyPlanning: {
         label: 'Planejamento semanal',

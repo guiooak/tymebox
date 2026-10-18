@@ -5,12 +5,14 @@ import {
   Button,
   Container,
   Heading,
+  Icon,
   Loader,
   ItemLink,
   itemLinkAbove,
   itemLinkContainer,
   Menu,
   Page,
+  type IconName,
 } from '../../../common/components';
 import {
   formatDuration,
@@ -29,11 +31,17 @@ import { useDeleteEvent } from '../components';
 import { useT, type Messages } from '../../../common/services/i18n';
 import { useMeetingStore } from '../store';
 import { OnboardingCard } from './OnboardingCard';
-import { MEETING_TEMPLATES } from './templates';
+import { MEETING_TEMPLATES, type MeetingTemplateId } from './templates';
 import { useMeetingMetrics } from './useMeetingMetrics';
 import { AccessRequestsNotice } from './AccessRequestsNotice';
 import { SharedWithMe } from './SharedWithMe';
 import styles from './Home.module.css';
+
+const TEMPLATE_ICONS: Record<MeetingTemplateId, IconName> = {
+  weeklyPlanning: 'calendar',
+  retro: 'cycle',
+  oneOnOne: 'users',
+};
 
 function budgetLabel(
   ratio: number | null,
@@ -179,12 +187,19 @@ export function Home() {
                   <button
                     type="button"
                     className={styles.template}
+                    title={t.repeatHint(lastFinished.goals.length)}
                     onClick={() => void onClone(lastFinished.id)}
                   >
-                    <strong>{t.repeat(lastFinished.name)}</strong>
-                    <span className={styles.meta}>
-                      {t.repeatHint(lastFinished.goals.length)}
+                    <span className={styles.templateIcon}>
+                      <Icon name="repeat" size={16} />
                     </span>
+                    <strong className={styles.templateName}>
+                      {t.repeat(lastFinished.name)}
+                    </strong>
+                    <span className={styles.templateMeta}>
+                      {t.milestoneCount(lastFinished.goals.length)}
+                    </span>
+                    <Icon name="arrowRight" size={16} className={styles.templateArrow} />
                   </button>
                 )}
                 {MEETING_TEMPLATES.map((id) => {
@@ -196,8 +211,16 @@ export function Home() {
                       className={styles.template}
                       onClick={() => void onTemplate(template.label, template.goals)}
                     >
-                      <strong>{template.label}</strong>
-                      <span className={styles.meta}>{template.hint}</span>
+                      <span className={styles.templateIcon}>
+                        <Icon name={TEMPLATE_ICONS[id]} size={16} />
+                      </span>
+                      <strong className={styles.templateName}>{template.label}</strong>
+                      <span className={styles.templateMeta}>{template.hint}</span>
+                      <Icon
+                        name="arrowRight"
+                        size={16}
+                        className={styles.templateArrow}
+                      />
                     </button>
                   );
                 })}

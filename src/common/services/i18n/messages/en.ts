@@ -119,6 +119,7 @@ export const en = {
     startSomething: 'Start something',
     repeat: (name: string) => `Repeat “${name}”`,
     repeatHint: (n: number) => `${n} milestones · your last event`,
+    milestoneCount: (n: number) => `${n} ${n === 1 ? 'milestone' : 'milestones'}`,
     templates: {
       weeklyPlanning: {
         label: 'Weekly planning',
