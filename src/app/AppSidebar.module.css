@@ -74,9 +74,11 @@
 .language {
   width: 100%;
 }
-/* Too narrow for the selector; expand the menu to change the language. */
+/* On the rail the selector is just the globe; the list opens beside it. */
 .collapsed .language {
-  display: none;
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
 }
 .themeToggle {
   composes: signOut;
@@ -175,58 +177,4 @@
   justify-content: center;
   padding-left: var(--tw-space-2);
   padding-right: var(--tw-space-2);
-}
-
-/* Collapse to a horizontal top bar on narrow screens. */
-@media (max-width: 640px) {
-  .sidebar,
-  .sidebar.collapsed {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--tw-space-3);
-    border-right: none;
-    border-bottom: var(--tw-border);
-  }
-  .toggle {
-    display: none;
-  }
-  /* Brand and user share the first row; the links get a full row of their own
-   * so none of them is clipped. */
-  .nav {
-    order: 1;
-    flex-direction: row;
-    width: 100%;
-  }
-  .nav .link {
-    flex: 1;
-    justify-content: center;
-    white-space: nowrap;
-  }
-  .user {
-    margin-top: 0;
-    margin-left: auto;
-    flex-direction: row;
-    align-items: center;
-    padding-top: 0;
-    border-top: none;
-  }
-  .identity {
-    padding: 0 var(--tw-space-1);
-  }
-  .user .signOut,
-  .user .themeToggle,
-  .user .language {
-    width: auto;
-    white-space: nowrap;
-  }
-  /* The toggle keeps its aria-label; the text would wrap in the top bar. */
-  .themeToggle .label {
-    display: none;
-  }
-  .name {
-    display: none;
-  }
 }

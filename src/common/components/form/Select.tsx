@@ -33,6 +33,8 @@ export type SelectProps<T extends string> = {
   id?: string;
   /** What the closed control shows; defaults to the selected option's label. */
   renderValue?: (option: SelectOption<T>) => ReactNode;
+  /** Leave out the chevron, e.g. for an icon-only trigger on a narrow rail. */
+  hideChevron?: boolean;
 };
 
 const GAP = 4;
@@ -58,6 +60,7 @@ export function Select<T extends string>({
   className,
   id,
   renderValue,
+  hideChevron = false,
 }: SelectProps<T>) {
   const autoId = useId();
   const baseId = id ?? autoId;
@@ -236,7 +239,7 @@ export function Select<T extends string>({
         <span className={styles.value}>
           {selected ? (renderValue ? renderValue(selected) : selected.label) : ''}
         </span>
-        <Icon name="chevronDown" size={16} className={styles.chevron} />
+        {!hideChevron && <Icon name="chevronDown" size={16} className={styles.chevron} />}
       </button>
       {open &&
         createPortal(

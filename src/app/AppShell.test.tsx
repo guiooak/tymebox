@@ -66,4 +66,31 @@ describe('landing URLs', () => {
     renderAt('/pt');
     expect(path()).toBe('/');
   });
+
+  it('gives phones a bottom tab bar and an account menu instead of the sidebar', () => {
+    const matchMedia = window.matchMedia;
+    window.matchMedia = ((query: string) => ({
+      matches: query === '(max-width: 640px)',
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    })) as unknown as typeof window.matchMedia;
+    try {
+      useAuthStore.setState({
+        status: 'authenticated',
+        user: { uid: 'u1', email: 'a@b.co', displayName: 'Ana', photoURL: null },
+      });
+      renderAt('/');
+      const nav = screen.getByRole('navigation', { name: 'Main' });
+      expect(nav).toHaveTextContent('Home');
+      expect(nav).toHaveTextContent('New');
+      expect(nav).toHaveTextContent('History');
+      expect(
+        screen.getByRole('button', { name: 'Open account menu' }),
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Collapse menu/ })).toBeNull();
+    } finally {
+      window.matchMedia = matchMedia;
+    }
+  });
 });

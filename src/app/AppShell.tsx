@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { Loader } from '../common/components';
 import { useLocale, useT } from '../common/services/i18n';
+import { useIsPhone } from '../common/services/viewport';
 import {
   eventPath,
   eventReportPath,
@@ -24,6 +25,7 @@ import { MeetingReport } from '../features/meeting/report/MeetingReport';
 import { MeetingsHistory } from '../features/meeting/history/MeetingsHistory';
 import { AppFooter } from './AppFooter';
 import { AppSidebar } from './AppSidebar';
+import { BottomTabBar, MobileTopBar } from './MobileNav';
 import { SaveErrorToast } from './SaveErrorToast';
 import styles from './App.module.css';
 
@@ -33,6 +35,7 @@ export function AppShell() {
   const bind = useMeetingStore((state) => state.bind);
   const t = useT();
   const locale = useLocale();
+  const isPhone = useIsPhone();
 
   // Primitive deps: the auth store hands out a new user object on every
   // auth callback, and rebinding tears down every live subscription.
@@ -70,10 +73,14 @@ export function AppShell() {
 
   return (
     <div className={styles.layout}>
-      {authed && <AppSidebar />}
+      {authed && (isPhone ? <MobileTopBar /> : <AppSidebar />)}
       {authed && <ThresholdAlertsWatcher />}
       {authed && <SaveErrorToast />}
-      <div className={styles.content}>
+      <div
+        className={
+          authed && isPhone ? `${styles.content} ${styles.withTabBar}` : styles.content
+        }
+      >
         <main className={styles.main}>
           <Routes>
             <Route
@@ -120,6 +127,7 @@ export function AppShell() {
           </Routes>
         </main>
         {authed && <AppFooter />}
+        {authed && isPhone && <BottomTabBar />}
       </div>
     </div>
   );

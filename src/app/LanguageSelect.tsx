@@ -20,10 +20,13 @@ const SHORT: Record<Locale, string> = Object.fromEntries(
 export function LanguageSelect({
   className,
   onChange,
+  compact = false,
 }: {
   className?: string;
   /** Replaces the default switch, e.g. to also move to /pt or /en. */
   onChange?: (locale: Locale) => void;
+  /** Globe only, for the collapsed sidebar rail. */
+  compact?: boolean;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -36,10 +39,11 @@ export function LanguageSelect({
       onChange={(value) => (onChange ? onChange(value) : void chooseLocale(value))}
       label={t.language.label}
       className={className}
+      hideChevron={compact}
       renderValue={(option) => (
         <span className={styles.value} lang={option.value}>
-          <Icon name="globe" size={16} />
-          {SHORT[option.value]}
+          <Icon name="globe" size={compact ? 20 : 16} />
+          {!compact && SHORT[option.value]}
         </span>
       )}
     />

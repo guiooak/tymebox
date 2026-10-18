@@ -1,15 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Icon } from '../common/components';
 import { useT } from '../common/services/i18n';
-import { NavLink, paths, eventPath } from '../common/services/router';
+import { NavLink, paths } from '../common/services/router';
+import { TABLET_QUERY } from '../common/services/viewport';
 import { useAuthStore } from '../features/auth';
-import { useMeetingStore } from '../features/meeting/store';
 import { Logo, TymeboxSymbol } from '../features/brand';
 import { LanguageSelect } from './LanguageSelect';
 import { ThemeToggle } from './ThemeToggle';
+import { useNavItems } from './useNavItems';
 import styles from './AppSidebar.module.css';
 
 const STORAGE_KEY = 'tw-sidebar-collapsed';
+
+/** The user's last choice, else collapsed on tablets (room for the board) and open on desktop. */
+function initialCollapsed(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored !== null) {
+      return stored === '1';
+    }
+  } catch {
+    // Storage blocked: fall through to the size-based default.
+  }
+  return (
+    typeof window.matchMedia === 'function' && window.matchMedia(TABLET_QUERY).matches
+  );
+}
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? `${styles.link} ${styles.active}` : styles.link;
@@ -17,18 +36,22 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 export function AppSidebar() {
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
-  const current = useMeetingStore((state) => state.currentMeeting);
   const t = useT();
+  const items = useNavItems();
 
-  const [collapsed, setCollapsed] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === '1',
-  );
+  const [collapsed, setCollapsed] = useState(initialCollapsed);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0');
-  }, [collapsed]);
-
-  const live = !!current?.realStartTime && !current?.realEndTime;
+  // Remembered only once the user picks, so a tablet's default doesn't stick
+  // to the desktop.
+  const toggle = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, next ? '1' : '0');
+    } catch {
+      // Not remembered; it still toggles.
+    }
+  };
   const displayName = user?.displayName ?? user?.email ?? '';
   const initial = displayName.trim().charAt(0).toUpperCase() || '?';
 
@@ -40,33 +63,23 @@ export function AppSidebar() {
         {collapsed ? <TymeboxSymbol size={28} /> : <Logo size={28} />}
       </NavLink>
 
-      <nav className={styles.nav}>
-        <NavLink to={paths.home} end className={linkClass} title={t.shell.home}>
-          <Icon name="home" className={styles.icon} />
-          <span className={styles.label}>{t.shell.home}</span>
-        </NavLink>
-        <NavLink to={paths.newMeeting} className={linkClass} title={t.shell.newEvent}>
-          <Icon name="plus" className={styles.icon} />
-          <span className={styles.label}>{t.shell.newEvent}</span>
-        </NavLink>
-        <NavLink to={paths.meetings} end className={linkClass} title={t.shell.history}>
-          <Icon name="history" className={styles.icon} />
-          <span className={styles.label}>{t.shell.history}</span>
-        </NavLink>
-        {live && current && (
+      <nav className={styles.nav} aria-label={t.shell.mainNav}>
+        {items.map((item) => (
           <NavLink
-            to={eventPath(current.id)}
+            key={item.to}
+            to={item.to}
+            end={item.end}
             className={linkClass}
-            title={t.shell.liveEvent}
+            title={item.label}
           >
-            <Icon name="timer" className={styles.icon} />
-            <span className={styles.label}>{t.shell.liveEvent}</span>
+            <Icon name={item.icon} className={styles.icon} />
+            <span className={styles.label}>{item.label}</span>
           </NavLink>
-        )}
+        ))}
       </nav>
 
       <div className={styles.user}>
-        <LanguageSelect className={styles.language} />
+        <LanguageSelect className={styles.language} compact={collapsed} />
         <ThemeToggle
           className={styles.themeToggle}
           iconClassName={styles.icon}
@@ -100,7 +113,7 @@ export function AppSidebar() {
 
       <button
         className={styles.toggle}
-        onClick={() => setCollapsed((value) => !value)}
+        onClick={toggle}
         aria-label={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
         title={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
       >

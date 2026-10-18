@@ -1,0 +1,159 @@
+/* Phones only (AppShell renders these below 640px). */
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+  min-height: 56px;
+  padding: env(safe-area-inset-top, 0px)
+    max(var(--tw-gutter), env(safe-area-inset-right, 0px)) 0
+    max(var(--tw-gutter), env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--tw-surface) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: var(--tw-border);
+}
+.brand {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+}
+.brand:hover {
+  text-decoration: none;
+}
+.accountButton {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+.accountButton:focus-visible {
+  outline: 2px solid var(--tw-primary-text);
+  outline-offset: 2px;
+}
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px var(--tw-border-color);
+}
+.avatarFallback {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--tw-surface-sunken);
+  color: var(--tw-primary-text);
+  font-size: var(--tw-font-size-sm);
+  font-weight: var(--tw-font-weight-bold);
+}
+
+.account {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-2);
+}
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+  padding-bottom: var(--tw-space-3);
+  margin-bottom: var(--tw-space-1);
+  border-bottom: var(--tw-border);
+}
+.identityText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.identityText > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.identityText span {
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-3);
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--tw-space-3);
+  border: var(--tw-border);
+  border-radius: var(--tw-radius);
+  background: var(--tw-surface);
+  color: var(--tw-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.rowIcon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+.rowLabel {
+  flex: 1;
+}
+.signOut {
+  color: var(--tw-danger-text);
+}
+
+.tabBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  padding: 4px max(4px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px)
+    max(4px, env(safe-area-inset-left, 0px));
+  background: color-mix(in srgb, var(--tw-surface) 94%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: var(--tw-border);
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 56px;
+  border-radius: var(--tw-radius);
+  color: var(--tw-text-muted);
+  font-size: var(--tw-font-size-xs);
+  font-weight: var(--tw-font-weight-medium);
+  text-decoration: none;
+}
+.tab:hover {
+  text-decoration: none;
+}
+.tabLabel {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.active {
+  color: var(--tw-primary-text);
+}
+.active svg {
+  stroke-width: 2.4;
+}
+
+@media print {
+  .topBar,
+  .tabBar {
+    display: none;
+  }
+}

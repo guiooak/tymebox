@@ -19,8 +19,14 @@
   justify-content: center;
 }
 
+/* Phones: top bar above the content, tab bar fixed at the bottom. The
+ * --tw-bottom-bar height lets sticky bars (the board's actions) sit on it. */
 @media (max-width: 640px) {
   .layout {
     flex-direction: column;
+  }
+  .withTabBar {
+    --tw-bottom-bar: calc(65px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--tw-bottom-bar);
   }
 }
