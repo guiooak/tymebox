@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Button, Modal } from '../../../common/components';
-import { formatLong, formatTime } from '../../../common/services/datetime';
-import { getT, useT } from '../../../common/services/i18n';
+import { copyRich } from '../../../common/services/clipboard';
+import { useT } from '../../../common/services/i18n';
+import { eventReportPath } from '../../../common/services/router';
 import type { Meeting } from '../domain/types';
+import { reportEmailFragment, reportEmailHtml, reportText } from './reportEmail';
 import styles from './MeetingReport.module.css';
 
 export type TemplatePreviewModalProps = {
@@ -10,51 +12,48 @@ export type TemplatePreviewModalProps = {
   onClose: () => void;
   meeting: Meeting;
   chartImageSrc: string | null;
+  /** On-budget streak shown on the report (0 when it isn't). */
+  streak: number;
 };
 
-function buildReportText(meeting: Meeting): string {
-  const t = getT().report.text;
-  const lines: string[] = [meeting.name, ''];
-  if (meeting.description) {
-    lines.push(meeting.description, '');
-  }
-  lines.push(t.goals);
-  for (const goal of meeting.goals) {
-    const done = goal.finishedAt ? t.doneAt(formatTime(goal.finishedAt)) : t.notDone;
-    lines.push(t.goal(goal.name, goal.weight, done));
-    if (goal.decisions) {
-      lines.push(`    ${goal.decisions}`);
-    }
-  }
-  const topics = meeting.sideTopics.filter((topic) => topic.value.trim());
-  if (topics.length) {
-    lines.push('', t.sideTopics);
-    topics.forEach((topic) =>
-      lines.push(
-        topic.goalName ? t.topicDuring(topic.value, topic.goalName) : `• ${topic.value}`,
-      ),
-    );
-  }
-  lines.push('', t.happened(formatLong(meeting.realStartTime)));
-  return lines.join('\n');
-}
-
+/**
+ * "Copy report": previews the report as it will look in an e-mail and copies
+ * it as rich HTML (inline styles, chart image, tinted timing cards) plus a
+ * plain-text version for places that only take text.
+ */
 export function TemplatePreviewModal({
   open,
   onClose,
   meeting,
   chartImageSrc,
+  streak,
 }: TemplatePreviewModalProps) {
   const tt = useT();
   const [copied, setCopied] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  if (!open) {
+    return null;
+  }
+
+  const options = {
+    chartImage: chartImageSrc,
+    streak,
+    reportUrl: `${window.location.origin}${eventReportPath(meeting.id)}`,
+  };
 
   const onCopy = async () => {
+    setFailed(false);
     try {
-      await navigator.clipboard.writeText(buildReportText(meeting));
+      await copyRich({
+        html: reportEmailHtml(meeting, options),
+        text: reportText(meeting, options.reportUrl),
+      });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+      setFailed(true);
     }
   };
 
@@ -63,10 +62,11 @@ export function TemplatePreviewModal({
       open={open}
       onClose={onClose}
       title={tt.report.preview}
-      width={640}
+      width={720}
       closeOnOverlayClick
       footer={
         <>
+          {failed && <span className={styles.copyError}>{tt.report.copyFailed}</span>}
           <Button theme="secondary" outline onClick={onClose}>
             {tt.common.close}
           </Button>
@@ -76,17 +76,11 @@ export function TemplatePreviewModal({
         </>
       }
     >
-      <div className={styles.preview}>
-        <h4>{meeting.name}</h4>
-        {chartImageSrc && (
-          <img
-            className={styles.previewChart}
-            src={chartImageSrc}
-            alt={tt.report.chartAlt}
-          />
-        )}
-        <pre className={styles.previewText}>{buildReportText(meeting)}</pre>
-      </div>
+      <div
+        className={styles.preview}
+        // Our own markup: every value from the event is escaped in reportEmail.ts.
+        dangerouslySetInnerHTML={{ __html: reportEmailFragment(meeting, options) }}
+      />
     </Modal>
   );
 }

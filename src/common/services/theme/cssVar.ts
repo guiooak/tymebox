@@ -77,3 +77,28 @@ export function useCssVars<K extends string>(
 
   return values;
 }
+
+/**
+ * Read tokens as they resolve in the given theme, without repainting: the
+ * theme attribute is swapped and restored in the same task, so the page never
+ * shows it. Used to export the chart in light colours from dark mode.
+ */
+export function readCssVarsInTheme<K extends string>(
+  names: Record<K, string>,
+  theme: 'light' | 'dark',
+): Record<K, string> {
+  const root = document.documentElement;
+  const previous = root.dataset.theme;
+  root.dataset.theme = theme;
+  try {
+    return Object.fromEntries(
+      Object.entries(names).map(([key, prop]) => [key, readCssVar(prop as string)]),
+    ) as Record<K, string>;
+  } finally {
+    if (previous === undefined) {
+      delete root.dataset.theme;
+    } else {
+      root.dataset.theme = previous;
+    }
+  }
+}

@@ -35,7 +35,6 @@ const SAME_IN_BOTH = new Set([
   'home.templates.retro.label',
   'home.templates.oneOnOne.label',
   'share.link',
-  'report.chartFile',
 ]);
 
 describe('catalogs', () => {

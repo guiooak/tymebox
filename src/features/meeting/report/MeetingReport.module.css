@@ -83,23 +83,17 @@
   opacity: 0.85;
 }
 .preview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--tw-space-3);
+  /* The e-mail as it will be pasted: its own light colours, whatever the
+   * app's theme, inside a scrolling frame. */
+  max-height: 65vh;
+  overflow: auto;
+  border-radius: var(--tw-radius);
+  color-scheme: light;
 }
-.previewChart {
-  width: 100%;
-  border: var(--tw-border);
-  border-radius: var(--tw-radius-sm);
-}
-.previewText {
-  white-space: pre-wrap;
-  background: var(--tw-surface-sunken);
-  border-radius: var(--tw-radius-sm);
-  padding: var(--tw-space-3);
-  font-family: var(--tw-font-mono);
+.copyError {
+  margin-right: auto;
+  color: var(--tw-danger-text);
   font-size: var(--tw-font-size-sm);
-  overflow-x: auto;
 }
 
 .titleRow {

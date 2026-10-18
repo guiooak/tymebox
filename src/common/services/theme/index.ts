@@ -1,4 +1,4 @@
-export { readCssVar, useCssVars } from './cssVar';
+export { readCssVar, readCssVarsInTheme, useCssVars } from './cssVar';
 export {
   resolveTheme,
   systemTheme,

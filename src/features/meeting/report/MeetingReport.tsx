@@ -11,9 +11,9 @@ import {
   useDialog,
 } from '../../../common/components';
 import { findChartSvg, svgElementToPngDataUrl } from '../../../common/services/chart';
-import { readCssVar } from '../../../common/services/theme';
+import { readCssVar, readCssVarsInTheme } from '../../../common/services/theme';
 import { formatLong, formatTime, isSameDay } from '../../../common/services/datetime';
-import { downloadUrl, printPage, toFileStem } from '../../../common/services/download';
+import { printPage } from '../../../common/services/download';
 import {
   eventPath,
   Navigate,
@@ -69,31 +69,37 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
     finishedAt: goal.finishedAt || null,
   }));
 
-  const renderChartImage = async (): Promise<string | null> => {
+  // Mail is read on white: the copied report always carries the light chart,
+  // even from dark mode (its strokes are swapped for their light tokens).
+  const renderLightChartImage = async (): Promise<string | null> => {
     const svg = findChartSvg(chartRef.current);
     if (!svg) {
       return null;
     }
-    // The chart draws itself in theme colours, so the flattened PNG has to be
-    // filled with the same surface — a white plate would swallow dark-mode
-    // strokes and labels.
+    const tokens = {
+      tendency: '--tw-chart-tendency',
+      progress: '--tw-chart-progress',
+      projection: '--tw-chart-projection',
+      grid: '--tw-chart-grid',
+      axis: '--tw-chart-axis',
+      bg: '--tw-chart-bg',
+    };
+    const current = Object.fromEntries(
+      Object.entries(tokens).map(([key, prop]) => [key, readCssVar(prop)]),
+    ) as Record<keyof typeof tokens, string>;
+    const light = readCssVarsInTheme(tokens, 'light');
     return await svgElementToPngDataUrl(svg, {
-      background: readCssVar('--tw-chart-bg', '#ffffff'),
+      background: light.bg || '#ffffff',
+      recolor: (Object.keys(tokens) as Array<keyof typeof tokens>).map((key) => [
+        current[key],
+        light[key],
+      ]),
     });
   };
 
   const onCopyReport = async () => {
-    setChartImage(await renderChartImage());
+    setChartImage(await renderLightChartImage());
     setPreviewOpen(true);
-  };
-
-  const onDownloadChart = async () => {
-    const dataUrl = await renderChartImage();
-    if (!dataUrl) {
-      await dialog.alert(t.chartNotReady);
-      return;
-    }
-    downloadUrl(dataUrl, t.chartFile(toFileStem(meeting.name)));
   };
 
   const onBackToDashboard = async () => {
@@ -221,9 +227,6 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
             </Button>
           )}
           <div className={styles.actions}>
-            <Button theme="info" outline onClick={() => void onDownloadChart()}>
-              {t.downloadChart}
-            </Button>
             <Button theme="info" outline onClick={printPage}>
               {t.print}
             </Button>
@@ -240,6 +243,7 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
         onClose={() => setPreviewOpen(false)}
         meeting={meeting}
         chartImageSrc={chartImage}
+        streak={trend}
       />
     </Container>
   );

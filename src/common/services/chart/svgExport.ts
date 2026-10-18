@@ -13,9 +13,14 @@ export function findChartSvg(container: Element | null): SVGSVGElement | null {
  */
 export function svgElementToPngDataUrl(
   svg: SVGSVGElement,
-  options: { background?: string; scale?: number } = {},
+  options: {
+    background?: string;
+    scale?: number;
+    /** Colour swaps applied to the SVG, e.g. dark-theme strokes → light. */
+    recolor?: Array<[from: string, to: string]>;
+  } = {},
 ): Promise<string> {
-  const { background = '#ffffff', scale = 2 } = options;
+  const { background = '#ffffff', scale = 2, recolor = [] } = options;
   const rect = svg.getBoundingClientRect();
   const width = rect.width || svg.clientWidth || 600;
   const height = rect.height || svg.clientHeight || 300;
@@ -29,7 +34,15 @@ export function svgElementToPngDataUrl(
     'font-family',
     `${getComputedStyle(svg).fontFamily}, system-ui, -apple-system, 'Segoe UI', sans-serif`,
   );
-  const serialized = new XMLSerializer().serializeToString(clone);
+  let serialized = new XMLSerializer().serializeToString(clone);
+  // Two passes through placeholders, so a colour swapped in is never swapped again.
+  const swaps = recolor.filter(([from, to]) => from && to && from !== to);
+  swaps.forEach(([from], index) => {
+    serialized = serialized.split(from).join(`\u0000${index}\u0000`);
+  });
+  swaps.forEach(([, to], index) => {
+    serialized = serialized.split(`\u0000${index}\u0000`).join(to);
+  });
   const svgBlob = new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(svgBlob);
 
