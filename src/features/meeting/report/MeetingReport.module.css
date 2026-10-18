@@ -126,6 +126,10 @@
   .goal {
     padding: var(--tw-space-3) var(--tw-space-4);
   }
+  /* Two cards per row: the total duration, alone on its row, takes it all. */
+  .timeGrid > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
   .section {
     margin-top: var(--tw-space-6);
   }
