@@ -155,3 +155,14 @@
     background: transparent;
   }
 }
+
+/* Notes read as part of the milestone, not as a boxed form field: no border
+ * and no focus ring, just the cursor. */
+.notes textarea {
+  border-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+.notes textarea:focus {
+  outline: none;
+}

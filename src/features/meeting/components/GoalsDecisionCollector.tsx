@@ -68,6 +68,25 @@ export function GoalsDecisionCollector({
 
   const isOpen = (goalId: string) => allOpen || openId === goalId;
   const canEdit = !!editable;
+  const notesEditable = !(disabled && !canEdit);
+
+  // Opening a milestone puts the cursor in its notes, ready to type. The
+  // focus waits for the opened row to render; preventScroll keeps the list
+  // still. Only user-driven opens ask for it, never the first render.
+  const focusOnOpen = useRef<string | null>(null);
+  const openGoal = (goalId: string | null) => {
+    focusOnOpen.current = goalId && notesEditable ? goalId : null;
+    setOpenId(goalId);
+  };
+  useEffect(() => {
+    if (!openId || focusOnOpen.current !== openId) {
+      return;
+    }
+    focusOnOpen.current = null;
+    document
+      .querySelector<HTMLTextAreaElement>(`textarea[name="decisions-${openId}"]`)
+      ?.focus({ preventScroll: true });
+  }, [openId]);
 
   useEffect(() => {
     if (adding) {
@@ -88,9 +107,9 @@ export function GoalsDecisionCollector({
       item.id === goal.id ? { ...item, finishedAt: checked ? nowISO() : '' } : item,
     );
     if (checked && automatic) {
-      setOpenId(updated.find((item) => !item.finishedAt)?.id ?? null);
+      openGoal(updated.find((item) => !item.finishedAt)?.id ?? null);
     } else if (!checked) {
-      setOpenId(goal.id);
+      openGoal(goal.id);
     }
     if (updated.every((item) => item.finishedAt)) {
       onAllCompleted();
@@ -210,7 +229,7 @@ export function GoalsDecisionCollector({
             <Collapse
               title={goal.name}
               open={isOpen(goal.id)}
-              onToggleOpen={(next) => setOpenId(next ? goal.id : null)}
+              onToggleOpen={(next) => openGoal(next ? goal.id : null)}
               leading={
                 canEdit ? (
                   <span
@@ -262,14 +281,16 @@ export function GoalsDecisionCollector({
               }}
             >
               <FormField label={t.notes}>
-                <FormTextarea
-                  name={`decisions-${goal.id}`}
-                  value={goal.decisions}
-                  onChange={(value) => onChangeGoal(goal.id, { decisions: value })}
-                  readOnly={disabled && !canEdit}
-                  minHeight={70}
-                  maxLength={FIELD_LIMITS.goalDecisions}
-                />
+                <div className={styles.notes}>
+                  <FormTextarea
+                    name={`decisions-${goal.id}`}
+                    value={goal.decisions}
+                    onChange={(value) => onChangeGoal(goal.id, { decisions: value })}
+                    readOnly={disabled && !canEdit}
+                    minHeight={70}
+                    maxLength={FIELD_LIMITS.goalDecisions}
+                  />
+                </div>
               </FormField>
             </Collapse>
           </div>
