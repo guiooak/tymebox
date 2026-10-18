@@ -18,6 +18,8 @@
   display: flex;
   flex-direction: column;
   max-height: 90vh;
+  /* Mobile browser toolbars come and go; dvh follows the visible area. */
+  max-height: 90dvh;
 }
 
 /* The X sits in a slot as tall as the first line beside it — the title row,

@@ -48,6 +48,11 @@ button {
   font-family: inherit;
 }
 
+/* Taps get their own pressed states; the grey iOS/Android flash would double them. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 :root {
   /* The dark variant flips this; see common/tokens/dark.css. */
   color-scheme: light;
@@ -70,6 +75,14 @@ button {
   button:empty,
   button > svg:only-child {
     min-width: 44px;
+  }
+
+  /* iOS zooms the page into any field with text under 16px when it's
+   * focused; at 16px it stays put. */
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  textarea,
+  select {
+    font-size: max(16px, 1em);
   }
 }
 

@@ -22,6 +22,9 @@
    * Tymebox is desktop-first (facilitating is a lean-in, two-window task) but
    * stays fully usable on a phone, since running a standup from one is a real
    * case. */
+  /* Layout breakpoints: phone up to 640px, tablet up to 1024px, desktop above.
+   * Media queries can't read custom properties, so CSS repeats the literal
+   * values and JS uses common/services/viewport; keep the three in step. */
   --tw-bp-phone: 640px;
-  --tw-bp-tablet: 960px;
+  --tw-bp-tablet: 1024px;
 }
