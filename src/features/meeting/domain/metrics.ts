@@ -16,9 +16,9 @@ export type MeetingMetrics = {
   thisWeek: number;
   /** Weighted share of goals completed across finished meetings (0..1), or null when there are no goals. */
   goalCompletion: number | null;
-  /** Real duration / expected duration across finished meetings (1 = on budget), or null without data. */
+  /** Average of each finished event's real / planned duration (1 = on budget), events left open excluded; null without data. */
   budgetRatio: number | null;
-  /** Total real time spent across finished meetings, in ms. */
+  /** Total real time spent across finished meetings (events left open excluded), in ms. */
   totalSpentMs: number;
   /** How many of the most recent finished events ran at or under their budget. */
   onBudgetStreak: number;
@@ -31,11 +31,32 @@ export type MeetingMetrics = {
 export const isFinishedMeeting = (meeting: Meeting): boolean =>
   meeting.status === 'finished' && !!meeting.realEndTime;
 
-/** True when the event took no longer than the window it was given. */
-export function wasOnBudget(meeting: Meeting): boolean | null {
+/**
+ * An event that ran more than this many times its planned length was, in
+ * practice, left open and finished hours or days later: its real duration says
+ * nothing about the meeting, so the Home metrics ignore it.
+ */
+export const LEFT_OPEN_FACTOR = 3;
+
+function durations(meeting: Meeting): { expected: number; real: number } {
   const expected = Math.abs(diffMs(meeting.expectedStartTime, meeting.expectedEndTime));
   const real = Math.abs(diffMs(meeting.realStartTime, meeting.realEndTime));
-  if (!expected || !real || Number.isNaN(expected) || Number.isNaN(real)) {
+  return {
+    expected: Number.isNaN(expected) ? 0 : expected,
+    real: Number.isNaN(real) ? 0 : real,
+  };
+}
+
+/** True when the event ran so far past its window that it was surely left open. */
+export function wasLeftOpen(meeting: Meeting): boolean {
+  const { expected, real } = durations(meeting);
+  return expected > 0 && real > expected * LEFT_OPEN_FACTOR;
+}
+
+/** True when the event took no longer than the window it was given (null: not comparable, or left open). */
+export function wasOnBudget(meeting: Meeting): boolean | null {
+  const { expected, real } = durations(meeting);
+  if (!expected || !real || wasLeftOpen(meeting)) {
     return null;
   }
   return real <= expected;
@@ -119,8 +140,7 @@ export function computeMeetingMetrics(meetings: Meeting[], now: Date): MeetingMe
 
   let weightTotal = 0;
   let weightDone = 0;
-  let sumExpected = 0;
-  let sumReal = 0;
+  const ratios: number[] = [];
   let totalSpent = 0;
 
   for (const meeting of finishedList) {
@@ -132,11 +152,12 @@ export function computeMeetingMetrics(meetings: Meeting[], now: Date): MeetingMe
       }
     }
 
-    const expected = Math.abs(diffMs(meeting.expectedStartTime, meeting.expectedEndTime));
-    const real = Math.abs(diffMs(meeting.realStartTime, meeting.realEndTime));
+    if (wasLeftOpen(meeting)) {
+      continue;
+    }
+    const { expected, real } = durations(meeting);
     if (expected > 0 && real > 0) {
-      sumExpected += expected;
-      sumReal += real;
+      ratios.push(real / expected);
     }
     if (real > 0) {
       totalSpent += real;
@@ -166,7 +187,9 @@ export function computeMeetingMetrics(meetings: Meeting[], now: Date): MeetingMe
     thisWeek: finishedList.filter((meeting) => isSameWeek(meeting.realEndTime, now))
       .length,
     goalCompletion: weightTotal > 0 ? weightDone / weightTotal : null,
-    budgetRatio: sumExpected > 0 ? sumReal / sumExpected : null,
+    budgetRatio: ratios.length
+      ? ratios.reduce((sum, ratio) => sum + ratio, 0) / ratios.length
+      : null,
     totalSpentMs: totalSpent,
     onBudgetStreak: onBudgetStreak(newestFirst),
     recent: newestFirst.slice(0, 5),

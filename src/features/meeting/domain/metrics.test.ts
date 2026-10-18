@@ -3,6 +3,7 @@ import {
   computeMeetingMetrics,
   onBudgetStreak,
   summarizeMeeting,
+  wasLeftOpen,
   wasOnBudget,
 } from './metrics';
 import type { Meeting } from './types';
@@ -152,5 +153,51 @@ describe('computeMeetingMetrics', () => {
     expect(metrics.goalCompletion).toBe(0.75);
     expect(metrics.onBudgetStreak).toBe(1);
     expect(metrics.finished).toBe(1);
+  });
+});
+
+describe('events left open', () => {
+  const now = new Date('2026-08-20T12:00:00.000Z');
+
+  it('spots an event that ran past three times its plan', () => {
+    expect(wasLeftOpen(finished('a', 1, 180))).toBe(false);
+    expect(wasLeftOpen(finished('a', 1, 181))).toBe(true);
+    expect(wasOnBudget(finished('a', 1, 6000))).toBeNull();
+  });
+
+  it('averages time vs budget per event, leaving out events left open', () => {
+    // 60m and 90m against 60m plans: +0% and +50%, so +25% on average. The
+    // 100-hour one was forgotten open and doesn't count.
+    const metrics = computeMeetingMetrics(
+      [finished('a', 1, 60), finished('b', 2, 90), finished('c', 3, 6000)],
+      now,
+    );
+    expect(metrics.budgetRatio).toBeCloseTo(1.25);
+    expect(metrics.totalSpentMs).toBe(150 * 60_000);
+  });
+
+  it('weighs a short event as much as a long one', () => {
+    const short = meeting({
+      id: 's',
+      status: 'finished',
+      expectedStartTime: '2026-08-05T09:00:00.000Z',
+      expectedEndTime: '2026-08-05T09:10:00.000Z',
+      realStartTime: '2026-08-05T09:00:00.000Z',
+      realEndTime: '2026-08-05T09:20:00.000Z',
+    });
+    // 10m planned, 20m real (2×) next to a 60m event on time (1×): 1.5 on average,
+    // where summing durations would have said 80/70.
+    const metrics = computeMeetingMetrics([short, finished('a', 1, 60)], now);
+    expect(metrics.budgetRatio).toBeCloseTo(1.5);
+  });
+
+  it('skips events left open in the on-budget streak instead of breaking it', () => {
+    expect(
+      onBudgetStreak([
+        finished('c', 3, 6000),
+        finished('b', 2, 50),
+        finished('a', 1, 55),
+      ]),
+    ).toBe(2);
   });
 });
