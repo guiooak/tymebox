@@ -192,3 +192,41 @@
   flex-wrap: wrap;
   gap: var(--tw-space-2);
 }
+
+/* List rows keep their ⋮ (and badges) on the right; the text wraps instead. */
+.item {
+  flex-wrap: nowrap;
+}
+.item > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.item > .actions {
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* One swipeable row instead of a tall stack of chips. */
+  .templates {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-bottom: var(--tw-space-1);
+  }
+  .templates::-webkit-scrollbar {
+    display: none;
+  }
+  .template {
+    flex: none;
+    scroll-snap-align: start;
+  }
+  /* Shared events carry two badges; let them sit under the menu if needed. */
+  .item > .actions {
+    max-width: 50%;
+  }
+}

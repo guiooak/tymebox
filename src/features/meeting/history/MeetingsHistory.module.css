@@ -104,3 +104,42 @@
 .loading {
   min-height: 240px;
 }
+
+/* Rows keep their ⋮ on the right; the text wraps instead. */
+.item {
+  flex-wrap: nowrap;
+}
+.info {
+  flex: 1;
+}
+.item > .actions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* A swipeable strip of status filters. */
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .filter,
+  .filterActive {
+    flex: none;
+  }
+  .controls {
+    width: 100%;
+  }
+  .search {
+    flex: 1;
+    min-width: 0;
+  }
+}
