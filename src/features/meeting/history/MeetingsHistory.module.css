@@ -117,13 +117,18 @@
 }
 
 @media (max-width: 640px) {
+  /* No wrap: in a wrapping column each line is as wide as its content, so the
+   * filter strip would push the page sideways instead of scrolling. */
   .toolbar {
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
   }
   /* A swipeable strip of status filters. */
   .filters {
     flex-wrap: nowrap;
+    min-width: 0;
+    max-width: 100%;
     overflow-x: auto;
     scrollbar-width: none;
     padding-bottom: 2px;
