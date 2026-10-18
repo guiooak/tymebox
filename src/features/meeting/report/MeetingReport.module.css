@@ -90,6 +90,9 @@
   border-radius: var(--tw-radius);
   color-scheme: light;
 }
+.footerStart {
+  margin-right: auto;
+}
 .copyError {
   margin-right: auto;
   color: var(--tw-danger-text);

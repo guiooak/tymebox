@@ -14,6 +14,8 @@ export type TemplatePreviewModalProps = {
   chartImageSrc: string | null;
   /** On-budget streak shown on the report (0 when it isn't). */
   streak: number;
+  /** For the CC field: everyone else with access. Null when you can't see them (not the owner). */
+  participantEmails?: string[] | null;
 };
 
 /**
@@ -27,10 +29,12 @@ export function TemplatePreviewModal({
   meeting,
   chartImageSrc,
   streak,
+  participantEmails = null,
 }: TemplatePreviewModalProps) {
   const tt = useT();
   const [copied, setCopied] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [copiedEmails, setCopiedEmails] = useState(0);
 
   if (!open) {
     return null;
@@ -57,6 +61,20 @@ export function TemplatePreviewModal({
     }
   };
 
+  const onCopyEmails = async () => {
+    if (!participantEmails?.length) {
+      return;
+    }
+    setFailed(false);
+    try {
+      await navigator.clipboard.writeText(participantEmails.join(', '));
+      setCopiedEmails(participantEmails.length);
+      setTimeout(() => setCopiedEmails(0), 2000);
+    } catch {
+      setFailed(true);
+    }
+  };
+
   return (
     <Modal
       open={open}
@@ -67,6 +85,24 @@ export function TemplatePreviewModal({
       footer={
         <>
           {failed && <span className={styles.copyError}>{tt.report.copyFailed}</span>}
+          {participantEmails && (
+            <Button
+              theme="secondary"
+              outline
+              className={failed ? undefined : styles.footerStart}
+              disabled={participantEmails.length === 0}
+              title={
+                participantEmails.length === 0
+                  ? tt.report.noParticipants
+                  : tt.report.participantsHint
+              }
+              onClick={() => void onCopyEmails()}
+            >
+              {copiedEmails > 0
+                ? tt.report.copiedParticipants(copiedEmails)
+                : tt.report.copyParticipants}
+            </Button>
+          )}
           <Button theme="secondary" outline onClick={onClose}>
             {tt.common.close}
           </Button>

@@ -33,6 +33,22 @@ import { weightsVary } from './weights';
 import styles from './MeetingReport.module.css';
 
 /** The report of the finished event in the URL, for anyone allowed to open it. */
+/** Everyone the event is shared with, minus you (you're the one sending). */
+function participantEmails(members: { email: string }[], myEmail: string): string[] {
+  const mine = myEmail.trim().toLowerCase();
+  const seen = new Set<string>();
+  return members
+    .map((member) => member.email.trim())
+    .filter((email) => {
+      const key = email.toLowerCase();
+      if (!email || key === mine || seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+}
+
 export function MeetingReport() {
   return <EventGate>{(event, role) => <Report meeting={event} role={role} />}</EventGate>;
 }
@@ -43,6 +59,8 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
   const tt = useT();
   const t = tt.report;
   const backToDashboard = useMeetingStore((state) => state.backToDashboard);
+  const members = useMeetingStore((state) => state.members);
+  const myEmail = useMeetingStore((state) => state.user?.email ?? '');
 
   const chartRef = useRef<HTMLDivElement>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -246,6 +264,8 @@ function Report({ meeting, role }: { meeting: Meeting; role: Role }) {
         meeting={meeting}
         chartImageSrc={chartImage}
         streak={trend}
+        // Only the owner can read who the event is shared with.
+        participantEmails={role === 'owner' ? participantEmails(members, myEmail) : null}
       />
     </Container>
   );

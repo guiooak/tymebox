@@ -403,6 +403,11 @@ export const ptBR: Messages = {
     preview: 'Prévia do relatório',
     copied: 'Copiado!',
     copy: 'Copiar para e-mail',
+    copyParticipants: 'Copiar e-mails dos participantes',
+    copiedParticipants: (n) => `${n} ${n === 1 ? 'e-mail copiado' : 'e-mails copiados'}!`,
+    noParticipants:
+      'Ninguém mais tem acesso a este evento ainda. Compartilhe para adicionar pessoas.',
+    participantsHint: 'Cole no campo CC',
     chartAlt: 'Gráfico de burndown',
     emailKicker: 'Relatório do evento',
     emailOpen: 'Abrir o relatório no Tymebox',
