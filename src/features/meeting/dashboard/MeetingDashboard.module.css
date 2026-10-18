@@ -224,31 +224,9 @@
   }
 }
 
-/* The run controls: in the footer from tablets up; pinned on phones. */
-.phoneActions {
-  display: none;
-}
 @media (max-width: 640px) {
   .headTop > :first-child {
     flex-basis: 100%;
-  }
-  .notOnPhone {
-    display: none;
-  }
-  .phoneActions {
-    position: sticky;
-    bottom: var(--tw-bottom-bar, 0px);
-    z-index: 10;
-    display: flex;
-    gap: var(--tw-space-2);
-    margin: var(--tw-space-4) calc(-1 * var(--tw-gutter)) 0;
-    padding: var(--tw-space-3) var(--tw-gutter);
-    background: color-mix(in srgb, var(--tw-bg) 92%, transparent);
-    backdrop-filter: blur(10px);
-    border-top: var(--tw-border);
-  }
-  .phoneActions > * {
-    flex: 1;
   }
 }
 

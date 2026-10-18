@@ -358,7 +358,7 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
           (active ? (
             <Button
               theme="success"
-              className={styles.notOnPhone}
+
               onClick={() => void onFinish()}
             >
               {t.finishEvent}
@@ -366,35 +366,13 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
           ) : (
             <Button
               theme="success"
-              className={styles.notOnPhone}
+
               onClick={() => void onStart()}
             >
               {t.startEvent}
             </Button>
           ))}
       </Footer>
-
-      {/* Phones: the run controls stay pinned above the tab bar, within reach. */}
-      {canRun && (
-        <div className={styles.phoneActions}>
-          {active ? (
-            <>
-              {currentGoal && (
-                <Button theme="secondary" outline onClick={completeCurrentGoal}>
-                  {tt.milestones.markDone}
-                </Button>
-              )}
-              <Button theme="success" onClick={() => void onFinish()}>
-                {t.finishEvent}
-              </Button>
-            </>
-          ) : (
-            <Button theme="success" onClick={() => void onStart()}>
-              {t.startEvent}
-            </Button>
-          )}
-        </div>
-      )}
     </Container>
   );
 }
