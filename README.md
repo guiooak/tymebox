@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/icon-192.png" alt="Tymebox" width="96" height="96" />
+  <img src="public/icon-192.png" alt="Tymebox" width="88" height="88" />
 </p>
 
 <h1 align="center">Tymebox</h1>
@@ -8,38 +8,88 @@
 Plan milestones, run the clock and finish on time. Then see exactly how it went.</p>
 
 <p align="center">
-  <a href="https://tymebox.web.app"><strong>Open Tymebox →</strong></a>
-  &nbsp;·&nbsp;
-  <a href="https://guiooak.github.io/tymebox/">Style guide</a>
+  <a href="https://tymebox.web.app"><img alt="Open Tymebox" src="https://img.shields.io/badge/Open%20Tymebox-%E2%86%92-2563EB?style=for-the-badge" /></a>
+</p>
+
+<p align="center">Free · Sign in with Google · No setup · English and Português</p>
+
+<p align="center">
+  <a href="https://tymebox.web.app"><img src="docs/screenshots/landing.png" alt="The Tymebox landing page, with a live sample board" width="860" /></a>
 </p>
 
 ---
 
-Tymebox is a timeboxing tool for meetings and events. You give an event a
-name and a time box, list the milestones it needs to land, and run it live:
-the countdown tells you when you're falling behind, before you're late. When
-it's over, you get a report you can send to everyone who was there.
+## Your next meeting, on time
 
-**Try it at [tymebox.web.app](https://tymebox.web.app)**, free, with your
-Google account. It's in English and Brazilian Portuguese.
+Meetings run over because nobody sees it coming. The agenda says thirty
+minutes, the first topic takes twenty, and by the time anyone looks at the
+clock it's too late to save the rest.
 
-### What it does
+Tymebox puts the time box in front of everyone. You list the milestones the
+meeting needs to land, start the clock, and check them off as you go. The
+countdown compares your pace with the plan and turns amber when you fall a
+milestone behind — while there's still time to speed up or trim scope. When
+it's over, the report shows exactly how it went.
 
-- **Plan in seconds.** A title is all it takes. Add milestones, times and
-  notes on the board whenever you like, or start from a Weekly planning,
-  Retro or 1:1 template.
-- **Run it live.** A countdown that turns amber when you fall a milestone
-  behind and red once you're over the box, a burndown chart, and optional
-  browser notifications.
-- **Park tangents.** Side topics go to a parking lot, tagged with the
-  milestone they came up in, so the meeting keeps moving.
+## Start in a minute
+
+1. **Sign in** at [tymebox.web.app](https://tymebox.web.app) with your Google
+   account.
+2. **Name your event**, or start from a template: Weekly planning, Retro or
+   1:1. Add milestones and times whenever you like.
+3. **Hit Start.** Run it live, park side topics as they come up, and finish
+   with a report you can send to everyone who was there.
+
+<table>
+  <tr>
+    <td width="70%"><img src="docs/screenshots/board.png" alt="A live event board: the countdown, the milestone in progress, the burndown chart" /></td>
+    <td width="30%"><img src="docs/screenshots/board-phone.png" alt="The same board on a phone" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>The live board: countdown, current milestone, burndown</sub></td>
+    <td align="center"><sub>Runs just as well on your phone</sub></td>
+  </tr>
+</table>
+
+## What you get
+
+- **A countdown that warns you early.** It stays calm while you're on track,
+  turns amber when you fall a milestone behind and red once you're over the
+  box. Optional browser notifications tell you even when the tab is in the
+  background.
+- **Milestones with notes.** Check them off as you land them, write down the
+  decisions, reorder on the fly. A burndown chart shows your progress against
+  the ideal pace.
+- **A parking lot.** Good tangents get a card on the side, tagged with the
+  milestone they came up in, so the meeting keeps moving and nothing is lost.
 - **Run it together.** Share an event by email as viewer or contributor, or
-  open it to anyone with the link. People without access can ask for it.
-- **Report and send.** Each finished event gets a report with the burndown,
-  timing against plan and an on-budget streak. Copy it into an email (styled,
-  with the chart), print it or save a PDF.
+  open it to anyone with the link. People without access can ask for it, and
+  you approve from the event.
+- **A report worth sending.** Start, end and duration against plan, the
+  burndown, the parking lot and your on-budget streak. Copy it straight into
+  an email — styled, with the chart — print it or save a PDF.
+- **Anywhere.** Desktop, tablet or phone, light or dark, in English or
+  Brazilian Portuguese.
 
-### Style guide
+## Questions
+
+**Is it free?** Yes. Sign in with Google and start.
+
+**Who can see my events?** Only you, until you share one. Sharing is per
+event, by email or with a link, and you can change or remove access at any
+time.
+
+**Do the others need an account?** People you share with sign in with
+Google to open the event. They don't need to set anything up.
+
+**Does it work on my phone?** Yes — the board, the countdown and the report
+all adapt to small screens, with the main actions within thumb's reach.
+
+<p align="center">
+  <a href="https://tymebox.web.app"><img alt="Open Tymebox" src="https://img.shields.io/badge/Open%20Tymebox-%E2%86%92-2563EB?style=for-the-badge" /></a>
+</p>
+
+## Style guide
 
 The logo manual and style guide (symbol, lockups, colours, type, components)
 is published at
@@ -140,17 +190,17 @@ their owner signs in.
 
 ## Scripts
 
-| Script | Purpose |
-| --- | --- |
-| `yarn dev` | Start the dev server |
-| `yarn build` | Type‑check (`tsc -b`) and build for production |
-| `yarn preview` | Preview the production build |
-| `yarn lint` | ESLint (incl. the import‑boundary rules) |
-| `yarn typecheck` | `tsc -b` only |
-| `yarn test` / `yarn test:coverage` | Vitest |
-| `yarn test:rules` | Security-rules tests against the Database emulator (Java 11+) |
-| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them |
-| `yarn format` / `yarn format:check` | Prettier |
+| Script                                  | Purpose                                                       |
+| --------------------------------------- | ------------------------------------------------------------- |
+| `yarn dev`                              | Start the dev server                                          |
+| `yarn build`                            | Type‑check (`tsc -b`) and build for production                |
+| `yarn preview`                          | Preview the production build                                  |
+| `yarn lint`                             | ESLint (incl. the import‑boundary rules)                      |
+| `yarn typecheck`                        | `tsc -b` only                                                 |
+| `yarn test` / `yarn test:coverage`      | Vitest                                                        |
+| `yarn test:rules`                       | Security-rules tests against the Database emulator (Java 11+) |
+| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
+| `yarn format` / `yarn format:check`     | Prettier                                                      |
 
 ## Brand
 
