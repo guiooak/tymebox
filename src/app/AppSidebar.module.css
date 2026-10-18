@@ -74,11 +74,9 @@
 .language {
   width: 100%;
 }
-/* On the rail the selector is just the globe; the list opens beside it. */
+/* Too narrow for the selector; expand the menu to change the language. */
 .collapsed .language {
-  justify-content: center;
-  padding-left: 0;
-  padding-right: 0;
+  display: none;
 }
 .themeToggle {
   composes: signOut;

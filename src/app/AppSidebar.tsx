@@ -79,7 +79,7 @@ export function AppSidebar() {
       </nav>
 
       <div className={styles.user}>
-        <LanguageSelect className={styles.language} compact={collapsed} />
+        <LanguageSelect className={styles.language} />
         <ThemeToggle
           className={styles.themeToggle}
           iconClassName={styles.icon}
