@@ -10,7 +10,7 @@ Plan milestones, run the clock and finish on time. Then see exactly how it went.
 <p align="center">
   <a href="https://tymebox.web.app"><strong>Open Tymebox →</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://guiooak.github.io/tymebox-style-guide/">Style guide</a>
+  <a href="https://guiooak.github.io/tymebox/">Style guide</a>
 </p>
 
 ---
@@ -43,7 +43,7 @@ Google account. It's in English and Brazilian Portuguese.
 
 The logo manual and style guide (symbol, lockups, colours, type, components)
 is published at
-**[guiooak.github.io/tymebox-style-guide](https://guiooak.github.io/tymebox-style-guide/)**.
+**[guiooak.github.io/tymebox](https://guiooak.github.io/tymebox/)**.
 Its source is [`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html)
 in this repository; see [Brand](#brand) below.
 
@@ -157,10 +157,8 @@ their owner signs in.
 The logo manual and style guide (v3.0) live in
 [`docs/brand/tymebox-brand-manual.html`](docs/brand/tymebox-brand-manual.html)
 and are published at
-[guiooak.github.io/tymebox-style-guide](https://guiooak.github.io/tymebox-style-guide/)
-by the [tymebox-style-guide](https://github.com/guiooak/tymebox-style-guide)
-repository, which picks up changes here daily (or on demand from its Actions
-tab). The old address, `guiooak.github.io/tymebox/`, redirects there. The manual covers
+[guiooak.github.io/tymebox](https://guiooak.github.io/tymebox/) by
+`.github/workflows/brand-pages.yml` whenever `docs/brand/` changes. The manual covers
 symbol versions and construction, lockups, clear space and minimum sizes, logo
 colour per background, misuse examples, colour scales with WCAG contrast,
 typography, spacing/radius/elevation tokens and the app's components. Open it in
