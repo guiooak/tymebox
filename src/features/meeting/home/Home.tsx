@@ -369,8 +369,7 @@ export function Home() {
                     </Heading>
                     <Button
                       size="sm"
-                      theme="secondary"
-                      outline
+                      theme="tertiary"
                       onClick={() => navigation.go(paths.meetings)}
                     >
                       {t.viewAll}
