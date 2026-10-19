@@ -74,8 +74,10 @@
 .language {
   width: 100%;
 }
-/* Too narrow for the selector; expand the menu to change the language. */
-.collapsed .language {
+/* Too narrow for the selector and the theme switch; expand the menu to change
+ * either. */
+.collapsed .language,
+.collapsed .themeToggle {
   display: none;
 }
 .themeToggle {
