@@ -168,11 +168,7 @@ export function Home() {
                   <strong>{current?.name || tt.common.untitledEvent}</strong>
                   <div className={styles.meta}>{resume.hint}</div>
                 </div>
-                <Button
-                  theme="secondary"
-                  outline
-                  onClick={() => navigation.go(resume.to)}
-                >
+                <Button theme="tertiary" onClick={() => navigation.go(resume.to)}>
                   {resume.label}
                 </Button>
               </Box>
