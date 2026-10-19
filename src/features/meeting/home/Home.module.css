@@ -32,7 +32,28 @@
 .metricValue {
   font-size: var(--tw-font-size-xl);
   font-weight: var(--tw-font-weight-bold);
-  color: var(--tw-text);
+  color: var(--tone, var(--tw-text));
+}
+/* A faint wash of the metric's tone: the number takes the colour, the box only
+ * a hint of it, so the four still read as one row. */
+.toned {
+  background: color-mix(in srgb, var(--tone) 6%, var(--tw-surface));
+  border-color: color-mix(in srgb, var(--tone) 28%, transparent);
+}
+.tone-good {
+  --tone: var(--tw-success-text);
+}
+.tone-warn {
+  --tone: var(--tw-warning-text);
+}
+.tone-bad {
+  --tone: var(--tw-danger-text);
+}
+.tone-info {
+  --tone: var(--tw-primary-text);
+}
+.tone-streak {
+  --tone: var(--tw-warning-text);
 }
 .metricLabel {
   font-size: var(--tw-font-size-sm);
