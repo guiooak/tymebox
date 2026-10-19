@@ -33,6 +33,7 @@ const SAME_IN_BOTH = new Set([
   'home.budget.none',
   'home.greeting',
   'landing.footerBefore',
+  'shell.footerBefore',
   'home.templates.retro.label',
   'home.templates.oneOnOne.label',
   'share.link',

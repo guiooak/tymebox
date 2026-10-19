@@ -58,7 +58,9 @@ export const en = {
   shell: {
     documentTitle: 'Tymebox — Timebox your events',
     starting: 'Starting Tymebox…',
-    footer: 'Tymebox · focus only on what matters',
+    // The footer reads "Tymebox [logo] focus only on what matters."
+    footerBefore: 'Tymebox',
+    footerAfter: 'focus only on what matters.',
     home: 'Home',
     homeAria: 'Tymebox home',
     newEvent: 'New event',

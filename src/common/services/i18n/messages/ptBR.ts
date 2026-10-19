@@ -60,7 +60,8 @@ export const ptBR: Messages = {
   shell: {
     documentTitle: 'Tymebox — Seus eventos em caixas de tempo',
     starting: 'Iniciando o Tymebox…',
-    footer: 'Tymebox · foque só no que importa',
+    footerBefore: 'Tymebox',
+    footerAfter: 'foque só no que importa.',
     home: 'Início',
     homeAria: 'Início do Tymebox',
     newEvent: 'Novo evento',
