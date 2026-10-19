@@ -8,6 +8,7 @@ export type FormTextareaProps = {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
+  ariaLabel?: string;
   required?: boolean;
   minHeight?: number;
   readOnly?: boolean;
@@ -18,6 +19,7 @@ export type FormTextareaProps = {
 
 export function FormTextarea({
   placeholder,
+  ariaLabel,
   minHeight,
   readOnly,
   id,
@@ -33,6 +35,7 @@ export function FormTextarea({
         onChange={setValue}
         onBlur={onBlur}
         placeholder={placeholder}
+        ariaLabel={ariaLabel}
         readOnly={readOnly}
         maxLength={fieldOptions.maxLength}
         minHeight={minHeight}

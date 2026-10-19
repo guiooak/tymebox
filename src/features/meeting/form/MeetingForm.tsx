@@ -86,7 +86,6 @@ export function MeetingForm() {
               name="name"
               value={name}
               onChange={setName}
-              placeholder={t.namePlaceholder}
               maxLength={FIELD_LIMITS.meetingName}
             />
             {nameError && <span className={styles.error}>{nameError}</span>}
@@ -97,7 +96,6 @@ export function MeetingForm() {
               name="description"
               value={description}
               onChange={setDescription}
-              placeholder={t.descriptionPlaceholder}
               maxLength={FIELD_LIMITS.meetingDescription}
             />
           </FormField>

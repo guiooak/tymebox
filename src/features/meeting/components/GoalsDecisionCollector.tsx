@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Collapse,
-  FormField,
   FormTextarea,
   InlineEdit,
   Label,
@@ -309,18 +308,18 @@ export function GoalsDecisionCollector({
                 onChange: (checked) => onCheck(goal, checked),
               }}
             >
-              <FormField label={t.notes}>
-                <div className={styles.notes}>
-                  <FormTextarea
-                    name={`decisions-${goal.id}`}
-                    value={goal.decisions}
-                    onChange={(value) => onChangeGoal(goal.id, { decisions: value })}
-                    readOnly={disabled && !canEdit}
-                    minHeight={70}
-                    maxLength={FIELD_LIMITS.goalDecisions}
-                  />
-                </div>
-              </FormField>
+              <div className={styles.notes}>
+                <FormTextarea
+                  name={`decisions-${goal.id}`}
+                  value={goal.decisions}
+                  onChange={(value) => onChangeGoal(goal.id, { decisions: value })}
+                  placeholder={t.notes}
+                  ariaLabel={t.notes}
+                  readOnly={disabled && !canEdit}
+                  minHeight={70}
+                  maxLength={FIELD_LIMITS.goalDecisions}
+                />
+              </div>
             </Collapse>
           </div>
         ))}

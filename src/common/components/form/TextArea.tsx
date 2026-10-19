@@ -9,6 +9,8 @@ export type TextAreaProps = {
   name?: string;
   id?: string;
   placeholder?: string;
+  /** Accessible name, for a textarea shown without a visible label. */
+  ariaLabel?: string;
   readOnly?: boolean;
   minHeight?: number;
   invalid?: boolean;
@@ -24,6 +26,7 @@ export function TextArea({
   name,
   id,
   placeholder,
+  ariaLabel,
   readOnly,
   minHeight = 80,
   invalid,
@@ -41,6 +44,7 @@ export function TextArea({
       className={cx(styles.control, styles.textarea, invalid && styles.invalid)}
       style={{ minHeight }}
       placeholder={placeholder}
+      aria-label={ariaLabel}
       readOnly={readOnly}
       maxLength={maxLength}
       value={value}
