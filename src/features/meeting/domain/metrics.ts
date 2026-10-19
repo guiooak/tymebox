@@ -4,7 +4,6 @@ import {
   diffMs,
   formatDuration,
   isSameMonth,
-  isSameWeek,
   toTimestamp,
 } from '../../../common/services/datetime';
 import type { Meeting } from './types';
@@ -13,7 +12,6 @@ export type MeetingMetrics = {
   total: number;
   finished: number;
   thisMonth: number;
-  thisWeek: number;
   /** Weighted share of goals completed across finished meetings (0..1), or null when there are no goals. */
   goalCompletion: number | null;
   /** Average of each finished event's real / planned duration (1 = on budget), events left open excluded; null without data. */
@@ -183,8 +181,6 @@ export function computeMeetingMetrics(meetings: Meeting[], now: Date): MeetingMe
     total: meetings.length,
     finished: finishedList.length,
     thisMonth: finishedList.filter((meeting) => isSameMonth(meeting.realEndTime, now))
-      .length,
-    thisWeek: finishedList.filter((meeting) => isSameWeek(meeting.realEndTime, now))
       .length,
     goalCompletion: weightTotal > 0 ? weightDone / weightTotal : null,
     budgetRatio: ratios.length

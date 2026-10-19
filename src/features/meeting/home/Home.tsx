@@ -161,12 +161,6 @@ export function Home() {
             <Heading size="md" level={1}>
               {t.greeting(greeting(t), firstName)}
             </Heading>
-            {metrics.thisWeek > 0 && (
-              <p className={styles.meta}>
-                {t.thisWeek(metrics.thisWeek)}
-                {metrics.onBudgetStreak > 1 ? t.streakInline(metrics.onBudgetStreak) : ''}
-              </p>
-            )}
           </div>
           <div className={styles.actions}>
             <Button onClick={() => navigation.go(paths.newMeeting)}>{t.newEvent}</Button>

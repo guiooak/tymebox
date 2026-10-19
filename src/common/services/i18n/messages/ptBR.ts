@@ -104,11 +104,6 @@ export const ptBR: Messages = {
     afternoon: 'Boa tarde',
     evening: 'Boa noite',
     greeting: (greeting, name) => (name ? `${greeting}, ${name}` : greeting),
-    thisWeek: (n) =>
-      n === 1
-        ? '1 evento finalizado esta semana'
-        : `${n} eventos finalizados esta semana`,
-    streakInline: (n) => ` · ${n} seguidos dentro do orçamento 🔥`,
     newEvent: '+ Novo evento',
     loadingEvents: 'Carregando seus eventos…',
     sample: {

@@ -105,8 +105,6 @@ export const en = {
     evening: 'Good evening',
     greeting: (greeting: string, name?: string) =>
       name ? `${greeting}, ${name}` : greeting,
-    thisWeek: (n: number) => `${n} event${n === 1 ? '' : 's'} finished this week`,
-    streakInline: (n: number) => ` · ${n} in a row on budget 🔥`,
     newEvent: '+ New event',
     loadingEvents: 'Loading your events…',
     sample: {

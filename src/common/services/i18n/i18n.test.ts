@@ -88,8 +88,8 @@ describe('the language store', () => {
   });
 
   it('pluralises in each language', () => {
-    expect(en.home.thisWeek(1)).toBe('1 event finished this week');
-    expect(ptBR.home.thisWeek(3)).toBe('3 eventos finalizados esta semana');
+    expect(en.home.milestoneCount(1)).toBe('1 milestone');
+    expect(ptBR.home.milestoneCount(3)).toBe('3 marcos');
     expect(ptBR.report.streak(3)).toContain('3º');
   });
 });
