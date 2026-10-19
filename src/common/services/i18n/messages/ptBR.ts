@@ -419,7 +419,7 @@ export const ptBR: Messages = {
     emailKicker: 'Relatório do evento',
     emailOpen: 'Abrir o relatório no Tymebox',
     emailFooterBefore: 'Enviado pelo Tymebox',
-    emailFooterAfter: 'foque só no que importa',
+    emailFooterAfter: 'foque só no que importa.',
     copyFailed: 'Não foi possível copiar. O navegador bloqueou a área de transferência.',
     text: {
       goals: 'Metas:',
@@ -580,7 +580,7 @@ export const ptBR: Messages = {
     closingText:
       'Entre com o Google e planeje seu primeiro evento em menos de um minuto.',
     footerBefore: (year) => `© ${year} Tymebox`,
-    footerAfter: 'Foque só no que importa',
+    footerAfter: 'Foque só no que importa.',
     google: 'Continuar com o Google',
     signingIn: 'Entrando…',
     signInFailed: 'Não foi possível entrar. Tente de novo.',
