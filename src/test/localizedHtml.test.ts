@@ -14,6 +14,8 @@ describe('localizeHtml', () => {
     );
     expect(page).toMatch(/<meta name="description" content="Organize reuniões/);
     expect(page).toContain('<meta property="og:locale" content="pt_BR" />');
+    expect(page).toContain(`<meta property="og:image" content="${SITE}/og-pt.png" />`);
+    expect(page).toMatch(/<meta property="og:image:alt" content="Tymebox: Cada evento/);
     expect(page).toContain(`<link rel="canonical" href="${SITE}/pt" />`);
     expect(page).toContain(`hreflang="en-US" href="${SITE}/en"`);
     expect(page).toContain(`hreflang="x-default" href="${SITE}/"`);
@@ -25,6 +27,7 @@ describe('localizeHtml', () => {
     expect(page).toContain('<title>Tymebox — Timebox your events</title>');
     expect(page).toContain(`<link rel="canonical" href="${SITE}/en" />`);
     expect(page).toContain('<meta property="og:locale:alternate" content="pt_BR" />');
+    expect(page).toContain(`<meta property="og:image" content="${SITE}/og-en.png" />`);
   });
 
   it('leaves the root as the x-default, only adding the alternates', () => {

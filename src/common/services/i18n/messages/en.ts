@@ -18,6 +18,8 @@ export const en = {
     ogTitle: 'Tymebox — Every event, inside its box',
     ogDescription:
       'Plan milestones, run the clock and finish on time. Then see exactly how it went.',
+    ogImageAlt:
+      "Tymebox: Every event, inside its box. A countdown at 12:48 with the meeting's milestones.",
   },
   common: {
     loading: 'Loading…',

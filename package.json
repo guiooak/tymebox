@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "share-card": "node scripts/share-card.mjs",
     "rules": "python3 scripts/database-rules.py database.rules.json",
     "test:rules": "firebase emulators:exec --only database --project demo-tymebox \"vitest run --config vitest.rules.config.ts\"",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",

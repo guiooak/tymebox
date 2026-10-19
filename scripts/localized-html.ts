@@ -5,7 +5,8 @@ import { ptBR } from '../src/common/services/i18n/messages/ptBR';
 /*
  * The landing's HTML per language. Link previews (WhatsApp, Slack…) and most
  * crawlers read the served HTML without running the app, so /pt and /en each
- * get an index.html with their own title, description and Open Graph tags,
+ * get an index.html with their own title, description and Open Graph tags
+ * (the share card is public/og-pt.png or og-en.png, drawn by share-card.mjs),
  * plus hreflang links tying the three URLs together.
  */
 
@@ -64,6 +65,8 @@ export function localizeHtml(
   out = setMeta(out, 'name', 'description', meta.description);
   out = setMeta(out, 'property', 'og:title', meta.ogTitle);
   out = setMeta(out, 'property', 'og:description', meta.ogDescription);
+  out = setMeta(out, 'property', 'og:image', `${siteUrl}/og-${dir}.png`);
+  out = setMeta(out, 'property', 'og:image:alt', meta.ogImageAlt);
   const extra = [
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:locale" content="${og}" />`,

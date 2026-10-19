@@ -20,6 +20,8 @@ export const ptBR: Messages = {
     ogTitle: 'Tymebox — Cada evento, na sua caixa',
     ogDescription:
       'Planeje marcos, rode o relógio e termine no horário. Depois veja exatamente como foi.',
+    ogImageAlt:
+      'Tymebox: Cada evento, na sua caixa. Uma contagem regressiva em 12:48 com os marcos da reunião.',
   },
   common: {
     loading: 'Carregando…',
