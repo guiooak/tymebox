@@ -5,7 +5,7 @@ tratamento de pequeno porte (Resolução CD/ANPD nº 2/2022, art. 9º).
 
 |                       |                                                                                                                |
 | --------------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Controlador**       | {{CONTROLADOR}} (pessoa física), responsável pelo Tymebox                                                      |
+| **Controlador**       | Tymebox (tymebox.web.app)                                                                                      |
 | **Canal de contato**  | tymebox@gmail.com, que responde a titulares e à ANPD                                                           |
 | **Encarregado (DPO)** | Dispensado (Resolução CD/ANPD nº 2/2022, art. 11). O canal acima cumpre a função de comunicação.               |
 | **Operador**          | Google LLC (Firebase Authentication, Realtime Database e Hosting)                                              |

@@ -27,7 +27,7 @@ export const pt: LegalContent = {
         id: 'controlador',
         title: '1. Quem cuida dos seus dados',
         blocks: [
-          `O controlador dos dados é ${controller}, responsável pelo Tymebox (tymebox.web.app).`,
+          `O controlador dos seus dados é o ${controller} (tymebox.web.app).`,
           `Para qualquer pedido ou dúvida sobre privacidade, escreva para ${email}. Esse é o nosso canal de comunicação com titulares de dados e com a Autoridade Nacional de Proteção de Dados (ANPD).`,
         ],
       },
@@ -169,7 +169,7 @@ export const pt: LegalContent = {
         title: '1. O serviço',
         blocks: [
           'O Tymebox é uma ferramenta gratuita para planejar e conduzir eventos dentro de uma caixa de tempo. Ele é oferecido como está, sem garantia de disponibilidade contínua ou de adequação a um fim específico.',
-          `O serviço é mantido por ${controller}. Contato: ${email}.`,
+          `O serviço é mantido pelo ${controller}. Contato: ${email}.`,
         ],
       },
       {

@@ -4,7 +4,7 @@
  */
 export const LEGAL = {
   /** The controller (controlador): the person responsible for the data. */
-  controller: '{{CONTROLADOR}}',
+  controller: 'Tymebox',
   /** The channel for privacy requests and questions. */
   email: 'tymebox@gmail.com',
   /** Shown as "Last updated"; change it with every edit to the texts. */

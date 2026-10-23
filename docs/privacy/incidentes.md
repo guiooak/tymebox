@@ -101,7 +101,7 @@ Modelo:
 > Se tiver dúvidas, ou quiser exportar ou excluir seus dados, responda este
 > e-mail ou use Privacidade e dados no app.
 >
-> {{CONTROLADOR}}, Tymebox, tymebox@gmail.com
+> Equipe Tymebox, tymebox@gmail.com
 
 Se não for possível identificar quem foi afetado, publicar um aviso no app e
 na landing.

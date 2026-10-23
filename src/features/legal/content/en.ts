@@ -41,7 +41,7 @@ export const en: LegalContent = {
         id: 'controlador',
         title: '1. Who looks after your data',
         blocks: [
-          `The data controller is ${controller}, who runs Tymebox (tymebox.web.app).`,
+          `The controller of your data is ${controller} (tymebox.web.app).`,
           `For any privacy request or question, write to ${email}. That is our channel for data subjects and for Brazil’s data protection authority (ANPD).`,
         ],
       },
