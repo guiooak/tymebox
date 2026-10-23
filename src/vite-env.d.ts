@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_APP_ID: string;
   /** '1' to use the local Firebase emulators (see .env.emulators). */
   readonly VITE_USE_EMULATORS?: string;
+  readonly VITE_RECAPTCHA_ENTERPRISE_SITE_KEY?: string;
 }
 
 interface ImportMeta {

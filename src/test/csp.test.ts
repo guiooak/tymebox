@@ -28,6 +28,15 @@ describe('Content-Security-Policy', () => {
     }
   });
 
+  it('lets App Check reach reCAPTCHA Enterprise and its token service', () => {
+    expect(csp).toMatch(/script-src [^;]*https:\/\/www\.google\.com\/recaptcha\//);
+    expect(csp).toMatch(/script-src [^;]*https:\/\/www\.gstatic\.com\/recaptcha\//);
+    expect(csp).toMatch(/frame-src [^;]*https:\/\/www\.google\.com\/recaptcha\//);
+    expect(csp).toMatch(
+      /connect-src [^;]*https:\/\/content-firebaseappcheck\.googleapis\.com/,
+    );
+  });
+
   it('can’t be framed and runs no plugins', () => {
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("object-src 'none'");
