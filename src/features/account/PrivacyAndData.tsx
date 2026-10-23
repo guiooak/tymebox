@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, FormInput, Modal, useDialog } from '../../common/components';
-import { useT } from '../../common/services/i18n';
+import { useLocale, useT } from '../../common/services/i18n';
+import { Link, privacyPath } from '../../common/services/router';
 import { useAuthStore } from '../auth';
 import { useMeetingStore } from '../meeting/store';
 import {
@@ -41,6 +42,7 @@ const isPopupClosed = (error: unknown) =>
  */
 export function PrivacyAndData({ open, onClose }: PrivacyAndDataProps) {
   const t = useT().account;
+  const locale = useLocale();
   const dialog = useDialog();
   const authUser = useAuthStore((state) => state.user);
   const [summary, setSummary] = useState<AccountSummary | null>(null);
@@ -152,6 +154,11 @@ export function PrivacyAndData({ open, onClose }: PrivacyAndDataProps) {
             <dd>{summary ? t.eventsCount(events, shared) : t.counting}</dd>
           </dl>
           <p className={styles.hint}>{t.fromGoogle}</p>
+          <p className={styles.hint}>
+            <Link to={privacyPath(locale)} onClick={close}>
+              {t.policyLink}
+            </Link>
+          </p>
 
           <div className={styles.action}>
             <div>

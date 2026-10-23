@@ -545,6 +545,19 @@ export const en = {
     deletedTitle: 'Account deleted',
     deletedText: 'Your account and your data were deleted. Thanks for using Tymebox.',
     back: 'Back',
+    policyLink: 'Read the Privacy Policy',
+  },
+  /** Links to the Privacy Policy and Terms of Use (texts in features/legal). */
+  legal: {
+    privacy: 'Privacy',
+    terms: 'Terms',
+    // Under the Google button: "By continuing, you agree to the Terms of Use
+    // and the Privacy Policy."
+    noticeBefore: 'By continuing, you agree to the ',
+    noticeTerms: 'Terms of Use',
+    noticeMiddle: ' and the ',
+    noticePrivacy: 'Privacy Policy',
+    noticeAfter: '.',
   },
   landing: {
     kicker: 'Timeboxing for meetings and events',

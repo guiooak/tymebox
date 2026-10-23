@@ -12,3 +12,11 @@
   justify-content: center;
   gap: var(--tw-space-2);
 }
+
+.links {
+  margin-top: var(--tw-space-1);
+  font-size: var(--tw-font-size-xs);
+}
+.links a {
+  color: inherit;
+}

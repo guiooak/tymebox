@@ -7,6 +7,11 @@ export const paths = {
   /** The public landing, one URL per language (see landingPath). */
   landingPt: '/pt',
   landingEn: '/en',
+  /** Privacy Policy and Terms of Use, one URL per language (see legal/). */
+  privacyPt: '/privacidade',
+  privacyEn: '/privacy',
+  termsPt: '/termos',
+  termsEn: '/terms',
   meetings: '/events',
   newMeeting: '/events/new',
   /** An event's live board: the link people share. */
@@ -20,6 +25,14 @@ export const paths = {
 /** The landing page in a given language: /pt or /en. */
 export const landingPath = (locale: Locale) =>
   locale === 'pt-BR' ? paths.landingPt : paths.landingEn;
+
+/** The Privacy Policy in a given language. */
+export const privacyPath = (locale: Locale) =>
+  locale === 'pt-BR' ? paths.privacyPt : paths.privacyEn;
+
+/** The Terms of Use in a given language. */
+export const termsPath = (locale: Locale) =>
+  locale === 'pt-BR' ? paths.termsPt : paths.termsEn;
 
 /** The live board of one event. */
 export const eventPath = (id: string) => `/events/${id}`;

@@ -12,10 +12,12 @@ import {
   landingPath,
   legacyRedirects,
   paths,
+  useCurrentPath,
   useReturnPath,
 } from '../common/services/router';
 import { useAuthStore } from '../features/auth';
 import { Landing, LocalizedLanding } from '../features/landing';
+import { LegalPage } from '../features/legal';
 import { ThresholdAlertsWatcher } from '../features/meeting/alerts';
 import { useMeetingStore } from '../features/meeting/store';
 import { Home } from '../features/meeting/home/Home';
@@ -28,6 +30,14 @@ import { AppSidebar } from './AppSidebar';
 import { BottomTabBar, MobileTopBar } from './MobileNav';
 import { SaveErrorToast } from './SaveErrorToast';
 import styles from './App.module.css';
+
+/** Open signed in or out, and title themselves. */
+const LEGAL_PATHS = new Set<string>([
+  paths.privacyPt,
+  paths.privacyEn,
+  paths.termsPt,
+  paths.termsEn,
+]);
 
 export function AppShell() {
   const status = useAuthStore((state) => state.status);
@@ -44,10 +54,15 @@ export function AppShell() {
   const name = user?.displayName ?? user?.email ?? '';
   const photoURL = user?.photoURL ?? '';
   // The tab title follows the interface language (index.html keeps the
-  // English one for link previews, which don't run the app).
+  // English one for link previews, which don't run the app). The legal pages
+  // name themselves.
+  const currentPath = useCurrentPath();
+  const legalPage = LEGAL_PATHS.has(currentPath);
   useEffect(() => {
-    document.title = t.shell.documentTitle;
-  }, [t]);
+    if (!legalPage) {
+      document.title = t.shell.documentTitle;
+    }
+  }, [t, legalPage]);
 
   useEffect(() => {
     if (!uid) {
@@ -110,6 +125,22 @@ export function AppShell() {
                   <LocalizedLanding locale="en-US" />
                 )
               }
+            />
+            <Route
+              path={paths.privacyPt}
+              element={<LegalPage doc="privacy" locale="pt-BR" />}
+            />
+            <Route
+              path={paths.privacyEn}
+              element={<LegalPage doc="privacy" locale="en-US" />}
+            />
+            <Route
+              path={paths.termsPt}
+              element={<LegalPage doc="terms" locale="pt-BR" />}
+            />
+            <Route
+              path={paths.termsEn}
+              element={<LegalPage doc="terms" locale="en-US" />}
             />
             <Route path={paths.newMeeting} element={protect(<MeetingForm />)} />
             <Route path={paths.liveMeeting} element={protect(<CurrentEventRedirect />)} />

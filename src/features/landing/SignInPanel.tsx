@@ -5,6 +5,7 @@ import { signInAsTestUser } from '../../common/services/auth';
 import { useT } from '../../common/services/i18n';
 import { usingEmulators } from '../../common/services/database';
 import { useAuthStore } from '../auth';
+import { SignInNotice } from '../legal';
 import styles from './Landing.module.css';
 
 /** Google's "G", exactly as their sign-in button guidelines ship it. */
@@ -65,6 +66,7 @@ export function SignInButton() {
         <GoogleMark />
         <span>{busy ? t.signingIn : t.google}</span>
       </button>
+      <SignInNotice className={styles.signInNotice} />
       {error && (
         <p className={styles.error} role="alert">
           {error}

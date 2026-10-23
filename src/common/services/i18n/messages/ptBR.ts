@@ -545,6 +545,16 @@ export const ptBR: Messages = {
     deletedTitle: 'Conta excluída',
     deletedText: 'Sua conta e seus dados foram apagados. Obrigado por usar o Tymebox.',
     back: 'Voltar',
+    policyLink: 'Ler a Política de Privacidade',
+  },
+  legal: {
+    privacy: 'Privacidade',
+    terms: 'Termos',
+    noticeBefore: 'Ao continuar, você concorda com os ',
+    noticeTerms: 'Termos de Uso',
+    noticeMiddle: ' e a ',
+    noticePrivacy: 'Política de Privacidade',
+    noticeAfter: '.',
   },
   landing: {
     kicker: 'Timeboxing para reuniões e eventos',

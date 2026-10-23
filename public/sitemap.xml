@@ -12,4 +12,24 @@
     <xhtml:link rel="alternate" hreflang="en-US" href="https://tymebox.web.app/en" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://tymebox.web.app/" />
   </url>
+  <url>
+    <loc>https://tymebox.web.app/privacidade</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://tymebox.web.app/privacidade" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://tymebox.web.app/privacy" />
+  </url>
+  <url>
+    <loc>https://tymebox.web.app/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://tymebox.web.app/privacidade" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://tymebox.web.app/privacy" />
+  </url>
+  <url>
+    <loc>https://tymebox.web.app/termos</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://tymebox.web.app/termos" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://tymebox.web.app/terms" />
+  </url>
+  <url>
+    <loc>https://tymebox.web.app/terms</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://tymebox.web.app/termos" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://tymebox.web.app/terms" />
+  </url>
 </urlset>

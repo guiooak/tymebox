@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('./accountRepository', () => ({
   summarizeAccount: vi.fn(async () => ({ events: 3, sharedEvents: 1 })),
@@ -21,7 +22,9 @@ const onClose = vi.fn();
 function renderOpen() {
   return render(
     <DialogProvider>
-      <PrivacyAndData open onClose={onClose} />
+      <MemoryRouter>
+        <PrivacyAndData open onClose={onClose} />
+      </MemoryRouter>
     </DialogProvider>,
   );
 }

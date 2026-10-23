@@ -12,6 +12,7 @@ import { LanguageSelect } from '../../app/LanguageSelect';
 import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
 import { LandingDemo } from './LandingDemo';
+import { LegalLinks } from '../legal';
 import { SignInButton, TestSignIn } from './SignInPanel';
 import styles from './Landing.module.css';
 
@@ -263,6 +264,7 @@ export function Landing({ localized = false }: { localized?: boolean }) {
           <TymeboxSymbol size={20} />
           <span>{t.footerAfter}</span>
         </div>
+        <LegalLinks className={styles.footerLinks} />
       </footer>
     </div>
   );

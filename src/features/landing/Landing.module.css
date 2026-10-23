@@ -582,3 +582,23 @@
     margin-left: 0;
   }
 }
+
+.footerLinks {
+  margin-top: var(--tw-space-2);
+  text-align: center;
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
+.footerLinks a {
+  color: inherit;
+}
+.signInNotice {
+  margin: 0;
+  max-width: 34ch;
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
+.signInNotice a {
+  color: inherit;
+  text-decoration: underline;
+}

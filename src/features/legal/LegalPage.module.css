@@ -1,0 +1,123 @@
+.wrap {
+  padding-block: var(--tw-space-4) var(--tw-space-6);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+  margin-bottom: var(--tw-space-3);
+}
+.brand {
+  display: inline-flex;
+}
+.brand:hover {
+  text-decoration: none;
+}
+.other {
+  margin-left: auto;
+  font-size: var(--tw-font-size-sm);
+}
+
+/* Long-form reading: a comfortable measure and steady rhythm. */
+.doc {
+  max-width: 72ch;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+.doc h1 {
+  font-size: var(--tw-font-size-xxl);
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+.doc h2 {
+  font-size: var(--tw-font-size-lg);
+  margin: var(--tw-space-6) 0 var(--tw-space-2);
+  text-wrap: balance;
+}
+.doc p,
+.doc ul {
+  margin: 0 0 var(--tw-space-3);
+}
+.doc ul {
+  padding-left: var(--tw-space-5);
+}
+.doc li + li {
+  margin-top: var(--tw-space-1);
+}
+.updated {
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+  margin-top: var(--tw-space-1);
+}
+.intro {
+  font-size: var(--tw-font-size-lg);
+}
+.toc {
+  border: var(--tw-border);
+  border-radius: var(--tw-radius);
+  padding: var(--tw-space-3) var(--tw-space-4);
+  margin-block: var(--tw-space-4);
+  font-size: var(--tw-font-size-sm);
+}
+.toc ol {
+  margin: var(--tw-space-2) 0 0;
+  padding-left: var(--tw-space-5);
+  columns: 2 16rem;
+}
+.section {
+  scroll-margin-top: var(--tw-space-5);
+}
+.tableWrap {
+  overflow-x: auto;
+  margin-bottom: var(--tw-space-3);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--tw-font-size-sm);
+  line-height: 1.5;
+}
+.table th,
+.table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--tw-space-2) var(--tw-space-3);
+  border-bottom: var(--tw-border);
+}
+.table th {
+  color: var(--tw-text-muted);
+  font-weight: var(--tw-font-weight-semibold);
+}
+.table td:first-child {
+  font-weight: var(--tw-font-weight-medium);
+}
+.home {
+  text-align: center;
+  margin-top: var(--tw-space-4);
+}
+
+/* Phones: the table becomes one card per row, label above value. */
+@media (max-width: 640px) {
+  .table thead {
+    display: none;
+  }
+  .table tr {
+    display: block;
+    border-bottom: var(--tw-border);
+    padding-block: var(--tw-space-2);
+  }
+  .table td {
+    display: block;
+    border: 0;
+    padding: var(--tw-space-1) 0;
+  }
+  .table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: var(--tw-font-size-xs);
+    font-weight: var(--tw-font-weight-semibold);
+    color: var(--tw-text-muted);
+  }
+}
