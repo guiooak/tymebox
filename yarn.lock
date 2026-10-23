@@ -982,12 +982,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@firebase/rules-unit-testing@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@firebase/rules-unit-testing@npm:4.0.1"
+"@firebase/rules-unit-testing@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@firebase/rules-unit-testing@npm:6.0.0"
   peerDependencies:
-    firebase: ^11.0.0
-  checksum: 10c0/d206f1f1e949a5da721ad99e47536e9b8ff32e4159f2e7dfad8de8cd89fa6966fff52e3783eb5009530bc2a11d6e36fa2136a238a5915bb6a97cc614ad523782
+    firebase: ^13.0.0
+  checksum: 10c0/806af057693ff1932bd4157190511e4ed18cf600b37a96fde0bd17016599908e71fed2498872e259ac44c5fe1d1338430916985008450db6f346979fcabada00
   languageName: node
   linkType: hard
 
@@ -8426,7 +8426,7 @@ __metadata:
   resolution: "tymebox@workspace:."
   dependencies:
     "@eslint/js": "npm:^10.0.1"
-    "@firebase/rules-unit-testing": "npm:^4.0.1"
+    "@firebase/rules-unit-testing": "npm:^6.0.0"
     "@fontsource-variable/jetbrains-mono": "npm:^5.3.0"
     "@fontsource-variable/plus-jakarta-sans": "npm:^5.3.0"
     "@fontsource/roboto": "npm:^5.3.0"
