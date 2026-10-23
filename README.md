@@ -85,6 +85,12 @@ Google to open the event. They don't need to set anything up.
 **Does it work on my phone?** Yes — the board, the countdown and the report
 all adapt to small screens, with the main actions within thumb's reach.
 
+**What happens to my data?** Only what the app needs is kept: your Google
+name, email and photo, and your events. No analytics, no ads. You can export
+everything or delete your account from _Privacy and data_. Details are in the
+[Privacy Policy](https://tymebox.web.app/privacy) and the
+[Terms of Use](https://tymebox.web.app/terms).
+
 <p align="center">
   <a href="https://tymebox.web.app"><img alt="Open Tymebox" src="https://img.shields.io/badge/Open%20Tymebox-%E2%86%92-2563EB?style=for-the-badge" /></a>
 </p>
@@ -236,11 +242,33 @@ so a compromised dependency can't run code at install time, and refuses npm
 versions published less than three days ago (`npmMinimalAgeGate: "3d"`). The exact
 Yarn release is pinned in‑repo (`yarnPath`).
 
+Dependabot (`.github/dependabot.yml`) opens weekly update PRs for npm and
+GitHub Actions, and CI fails on a high-severity advisory in production
+dependencies.
+
+## Privacy and LGPD
+
+Tymebox follows Brazil's LGPD.
+
+- **Public texts:** the Privacy Policy (`/privacidade`, `/privacy`) and the
+  Terms of Use (`/termos`, `/terms`) live in `src/features/legal/content/`.
+  The controller and contact are in `src/features/legal/contact.ts`.
+- **Data subjects' rights:** _Privacy and data_ in the account menu exports
+  everything as JSON or deletes the account
+  (`src/features/account/accountRepository.ts`).
+- **Retention:** unanswered access requests expire after 30 days.
+- **Internal records (in Portuguese):**
+  - [record of processing operations](docs/privacy/registro-de-operacoes.md)
+    (art. 37);
+  - [incident response](docs/privacy/incidentes.md) (ANPD Resolution 15/2024).
+- **Changes that touch personal data:** update those docs and the policy text.
+
 ## CI / Deploy
 
 **`.github/workflows/ci.yml`** runs on Node 24 for every push/PR to `main`:
 
-- lint, typecheck, test (+ coverage to Codecov), format check, and build;
+- lint, typecheck, test (+ coverage to Codecov), rules tests, production
+  audit, format check, and build;
 - then, only if all of those pass, **deploy** to **Firebase Hosting** (live
   channel on `main`, preview channel on PRs from this repo; fork PRs are
   skipped). Requires repo secrets: `FIREBASE_SERVICE_ACCOUNT`,
