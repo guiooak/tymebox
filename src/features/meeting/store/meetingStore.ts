@@ -357,9 +357,15 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
           })
         : (set({ sharedLoading: false }), () => {});
 
-      const offRequests = repo.subscribeRequestsByOwner(user.uid, (counts) =>
-        set({ requestCounts: counts }),
-      );
+      // Once per session, clear requests past their 30 days (Privacy Policy).
+      let swept = false;
+      const offRequests = repo.subscribeRequestsByOwner(user.uid, (counts) => {
+        set({ requestCounts: counts });
+        if (!swept) {
+          swept = true;
+          void repo.expireRequests(user.uid, Object.keys(counts)).catch(() => {});
+        }
+      });
 
       let bound = true;
       const cleanup = () => {

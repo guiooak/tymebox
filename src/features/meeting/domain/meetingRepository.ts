@@ -446,6 +446,14 @@ export async function unshare(id: string, memberKey: string): Promise<void> {
 
 type RawRequest = Partial<Omit<AccessRequest, 'key'>>;
 
+/** Unanswered access requests are kept 30 days (see the Privacy Policy). */
+export const REQUEST_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+export const isExpiredRequest = (
+  request: Pick<AccessRequest, 'requestedAt'>,
+  now = Date.now(),
+) => now - request.requestedAt > REQUEST_TTL_MS;
+
 function toRequest(key: string, raw: RawRequest): AccessRequest {
   return {
     key,
@@ -508,7 +516,10 @@ export function subscribeMyRequest(
   const key = emailKey(email);
   return subscribe<RawRequest>(
     `accessRequests/${id}/${key}`,
-    (raw) => callback(raw ? toRequest(key, raw) : null),
+    (raw) => {
+      const request = raw ? toRequest(key, raw) : null;
+      callback(request && !isExpiredRequest(request) ? request : null);
+    },
     () => callback(null),
   );
 }
@@ -524,6 +535,7 @@ export function subscribeRequests(
       callback(
         Object.entries(value ?? {})
           .map(([key, raw]) => toRequest(key, raw))
+          .filter((request) => !isExpiredRequest(request))
           .sort((a, b) => b.requestedAt - a.requestedAt),
       ),
     () => callback([]),
@@ -544,6 +556,43 @@ export function subscribeRequestsByOwner(
         ),
       ),
   );
+}
+
+/**
+ * Owner only: delete requests left unanswered for over 30 days, and index
+ * entries whose request is already gone. Returns how many entries went.
+ */
+export async function expireRequests(owner: string, eventIds: string[]): Promise<number> {
+  const now = Date.now();
+  const changes: Record<string, null> = {};
+  for (const id of eventIds) {
+    const indexPath = `requestsByOwner/${owner}/${id}`;
+    let requests: Record<string, RawRequest>;
+    try {
+      requests = (await read<Record<string, RawRequest>>(`accessRequests/${id}`)) ?? {};
+    } catch {
+      // The event is gone (or no longer yours): only its index entry is left.
+      changes[indexPath] = null;
+      continue;
+    }
+    for (const [key, raw] of Object.entries(requests)) {
+      if (isExpiredRequest(toRequest(key, raw), now)) {
+        changes[`accessRequests/${id}/${key}`] = null;
+        changes[`${indexPath}/${key}`] = null;
+      }
+    }
+    const indexed = (await read<Record<string, true>>(indexPath)) ?? {};
+    for (const key of Object.keys(indexed)) {
+      if (!requests[key]) {
+        changes[`${indexPath}/${key}`] = null;
+      }
+    }
+  }
+  const count = Object.keys(changes).length;
+  if (count > 0) {
+    await writeMany(changes);
+  }
+  return count;
 }
 
 export async function approveRequest(
