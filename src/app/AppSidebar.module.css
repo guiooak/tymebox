@@ -77,10 +77,15 @@
 /* Too narrow for the selector and the theme switch; expand the menu to change
  * either. */
 .collapsed .language,
-.collapsed .themeToggle {
+.collapsed .themeToggle,
+.collapsed .privacy {
   display: none;
 }
 .themeToggle {
+  composes: signOut;
+  color: var(--tw-text-muted);
+}
+.privacy {
   composes: signOut;
   color: var(--tw-text-muted);
 }

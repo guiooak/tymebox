@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Icon, Modal } from '../common/components';
 import { useT } from '../common/services/i18n';
 import { NavLink, paths } from '../common/services/router';
+import { PrivacyAndData } from '../features/account';
 import { useAuthStore } from '../features/auth';
 import { Logo } from '../features/brand';
 import { LanguageSelect } from './LanguageSelect';
@@ -37,6 +38,7 @@ export function MobileTopBar() {
   const user = useAuthStore((state) => state.user);
   const signOut = useAuthStore((state) => state.signOut);
   const [open, setOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   return (
     <header className={styles.topBar}>
@@ -74,6 +76,17 @@ export function MobileTopBar() {
           />
           <button
             type="button"
+            className={styles.row}
+            onClick={() => {
+              setOpen(false);
+              setPrivacyOpen(true);
+            }}
+          >
+            <Icon name="shield" className={styles.rowIcon} />
+            <span className={styles.rowLabel}>{t.account.open}</span>
+          </button>
+          <button
+            type="button"
             className={`${styles.row} ${styles.signOut}`}
             onClick={() => {
               setOpen(false);
@@ -85,6 +98,7 @@ export function MobileTopBar() {
           </button>
         </div>
       </Modal>
+      <PrivacyAndData open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </header>
   );
 }

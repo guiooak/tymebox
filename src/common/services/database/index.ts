@@ -1,5 +1,6 @@
 export {
   read,
+  readWhere,
   write,
   writeMany,
   updateAt,

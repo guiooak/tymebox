@@ -90,6 +90,9 @@ export type MeetingState = {
   myRequest: AccessRequest | null;
 
   bind: (user: Viewer) => Unsubscribe;
+  /** End the live subscriptions now, before the account goes away, so none
+   * writes back into a profile being deleted. */
+  release: () => void;
   /** Load an event by id; returns the function that closes it. */
   openEvent: (id: string) => Unsubscribe;
 
@@ -176,6 +179,9 @@ function sortShared(events: SharedEventSummary[]): SharedEventSummary[] {
     (a, b) => live(a) - live(b) || (a.updatedAt < b.updatedAt ? 1 : -1),
   );
 }
+
+/** The running bind's cleanup, for release(). */
+let unbind: Unsubscribe | null = null;
 
 export const useMeetingStore = createStore<MeetingState>()((set, get) => {
   const requireUser = (): Viewer => {
@@ -355,7 +361,13 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
         set({ requestCounts: counts }),
       );
 
-      return () => {
+      let bound = true;
+      const cleanup = () => {
+        if (!bound) {
+          return;
+        }
+        bound = false;
+        unbind = null;
         offOwn();
         offUser();
         offShared();
@@ -363,7 +375,11 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
         sharedSubs.forEach((off) => off());
         set({ ...SIGNED_OUT, ...CLOSED_EVENT });
       };
+      unbind = cleanup;
+      return cleanup;
     },
+
+    release: () => unbind?.(),
 
     openEvent: (id) => {
       const user = get().user;

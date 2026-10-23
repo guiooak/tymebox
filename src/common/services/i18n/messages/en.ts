@@ -507,6 +507,45 @@ export const en = {
     deleteConfirm: 'Delete event',
     keepIt: 'Keep it',
   },
+  /** Privacy and data: what we keep about you, export it, delete it (LGPD). */
+  account: {
+    open: 'Privacy and data',
+    title: 'Privacy and data',
+    intro: 'What Tymebox keeps about you, and what you can do with it.',
+    name: 'Name',
+    email: 'Email',
+    photo: 'Photo',
+    fromGoogle: 'From your Google account; change it there.',
+    events: 'Your events',
+    eventsCount: (events: number, shared: number) =>
+      `${events} ${events === 1 ? 'event' : 'events'}` +
+      (shared > 0 ? `, ${shared} shared with other people` : ''),
+    counting: 'Counting…',
+    export: 'Export my data',
+    exporting: 'Preparing…',
+    exportHint: 'A JSON file with your events, shares, requests and settings.',
+    exportError: 'Couldn’t export your data. Try again.',
+    delete: 'Delete account',
+    deleteHint: 'Erases your account and everything in it, for good.',
+    deleteTitle: 'Delete your account?',
+    deleteText: (events: number, shared: number) =>
+      `This erases your account and your ${events} ${events === 1 ? 'event' : 'events'}` +
+      (shared > 0
+        ? `, including ${shared} that other people can open; they’ll lose access too`
+        : '') +
+      '. You’ll also leave the events shared with you and withdraw your access requests. This can’t be undone.',
+    deleteWord: 'DELETE',
+    deleteTypeLabel: (word: string) => `Type ${word} to confirm`,
+    deleteReauth: 'Google will ask you to sign in once more before we delete anything.',
+    deleteConfirm: 'Delete my account',
+    deleting: 'Deleting…',
+    deleteCancelled: 'Nothing was deleted: the Google sign-in was closed.',
+    deleteError:
+      'Something went wrong part-way. Your account still exists; try again to finish.',
+    deletedTitle: 'Account deleted',
+    deletedText: 'Your account and your data were deleted. Thanks for using Tymebox.',
+    back: 'Back',
+  },
   landing: {
     kicker: 'Timeboxing for meetings and events',
     fromEvent: 'Sign in to open the event you were sent.',

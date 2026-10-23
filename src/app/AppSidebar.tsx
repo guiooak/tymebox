@@ -3,6 +3,7 @@ import { Icon } from '../common/components';
 import { useT } from '../common/services/i18n';
 import { NavLink, paths } from '../common/services/router';
 import { TABLET_QUERY } from '../common/services/viewport';
+import { PrivacyAndData } from '../features/account';
 import { useAuthStore } from '../features/auth';
 import { Logo, TymeboxSymbol } from '../features/brand';
 import { LanguageSelect } from './LanguageSelect';
@@ -40,6 +41,7 @@ export function AppSidebar() {
   const items = useNavItems();
 
   const [collapsed, setCollapsed] = useState(initialCollapsed);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   // Remembered only once the user picks, so a tablet's default doesn't stick
   // to the desktop.
@@ -85,6 +87,15 @@ export function AppSidebar() {
           iconClassName={styles.icon}
           labelClassName={styles.label}
         />
+        <button
+          type="button"
+          className={styles.privacy}
+          onClick={() => setPrivacyOpen(true)}
+        >
+          <Icon name="shield" className={styles.icon} />
+          <span className={styles.label}>{t.account.open}</span>
+        </button>
+        <PrivacyAndData open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
         <div className={styles.identity} title={displayName}>
           <span className={styles.avatarSlot} aria-hidden="true">
             {user?.photoURL ? (

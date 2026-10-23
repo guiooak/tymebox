@@ -1,0 +1,77 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-3);
+}
+.intro {
+  color: var(--tw-text-muted);
+}
+.facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--tw-space-2) var(--tw-space-4);
+  margin: 0;
+  align-items: center;
+}
+.facts dt {
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+}
+.facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
+}
+.hint {
+  font-size: var(--tw-font-size-sm);
+  color: var(--tw-text-muted);
+}
+/* One row per right: what it does on the left, the button on the right. */
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+  padding-top: var(--tw-space-3);
+  border-top: var(--tw-border);
+}
+.action > div {
+  min-width: 0;
+}
+.action > button {
+  flex: none;
+}
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tw-space-1);
+  font-size: var(--tw-font-size-sm);
+  font-weight: var(--tw-font-weight-medium);
+}
+.error {
+  color: var(--tw-danger-text);
+  font-size: var(--tw-font-size-sm);
+}
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--tw-space-2);
+}
+
+@media (max-width: 640px) {
+  .action {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .buttons {
+    flex-direction: column-reverse;
+  }
+  .buttons > button {
+    width: 100%;
+  }
+}

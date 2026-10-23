@@ -64,6 +64,18 @@ export function subscribe<T>(
   );
 }
 
+/** Read once the children of `path` whose `field` equals `value`. */
+export async function readWhere<T>(
+  path: string,
+  field: string,
+  value: string,
+): Promise<Record<string, T> | null> {
+  const snapshot = await get(
+    query(ref(getDb(), path), orderByChild(field), equalTo(value)),
+  );
+  return snapshot.exists() ? (snapshot.val() as Record<string, T>) : null;
+}
+
 /** Subscribe to the children of `path` whose `field` equals `value`. */
 export function subscribeWhere<T>(
   path: string,

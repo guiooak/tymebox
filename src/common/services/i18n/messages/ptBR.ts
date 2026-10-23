@@ -504,6 +504,48 @@ export const ptBR: Messages = {
     deleteConfirm: 'Excluir evento',
     keepIt: 'Manter',
   },
+  account: {
+    open: 'Privacidade e dados',
+    title: 'Privacidade e dados',
+    intro: 'O que o Tymebox guarda sobre você e o que você pode fazer com isso.',
+    name: 'Nome',
+    email: 'E-mail',
+    photo: 'Foto',
+    fromGoogle: 'Vêm da sua conta Google; altere por lá.',
+    events: 'Seus eventos',
+    eventsCount: (events, shared) =>
+      `${events} ${events === 1 ? 'evento' : 'eventos'}` +
+      (shared > 0
+        ? `, ${shared} ${shared === 1 ? 'compartilhado' : 'compartilhados'} com outras pessoas`
+        : ''),
+    counting: 'Contando…',
+    export: 'Exportar meus dados',
+    exporting: 'Preparando…',
+    exportHint:
+      'Um arquivo JSON com seus eventos, compartilhamentos, pedidos e preferências.',
+    exportError: 'Não foi possível exportar seus dados. Tente de novo.',
+    delete: 'Excluir conta',
+    deleteHint: 'Apaga sua conta e tudo o que há nela, de vez.',
+    deleteTitle: 'Excluir sua conta?',
+    deleteText: (events, shared) =>
+      `Isso apaga sua conta e ${events === 1 ? 'seu evento' : `seus ${events} eventos`}` +
+      (shared > 0
+        ? `, inclusive ${shared} que outras pessoas abrem; elas também perdem o acesso`
+        : '') +
+      '. Você também sai dos eventos compartilhados com você e seus pedidos de acesso são retirados. Não dá para desfazer.',
+    deleteWord: 'EXCLUIR',
+    deleteTypeLabel: (word) => `Digite ${word} para confirmar`,
+    deleteReauth:
+      'O Google vai pedir que você entre mais uma vez antes de apagarmos qualquer coisa.',
+    deleteConfirm: 'Excluir minha conta',
+    deleting: 'Excluindo…',
+    deleteCancelled: 'Nada foi apagado: o login do Google foi fechado.',
+    deleteError:
+      'Algo deu errado no meio do caminho. Sua conta ainda existe; tente de novo para concluir.',
+    deletedTitle: 'Conta excluída',
+    deletedText: 'Sua conta e seus dados foram apagados. Obrigado por usar o Tymebox.',
+    back: 'Voltar',
+  },
   landing: {
     kicker: 'Timeboxing para reuniões e eventos',
     fromEvent: 'Entre para abrir o evento que enviaram para você.',
