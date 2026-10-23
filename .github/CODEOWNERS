@@ -1,0 +1,5 @@
+# Who must review changes to what guards the data: the database rules (the
+# script and its output) and the hosting config with the CSP.
+/scripts/database-rules.py @guiooak
+/database.rules.json @guiooak
+/firebase.json @guiooak

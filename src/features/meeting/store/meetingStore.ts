@@ -795,6 +795,7 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       await repo.requestAccess(
         openId,
         access.owner,
+        user.uid,
         { email: user.email, name: user.name, photoURL: user.photoURL },
         message,
       );
@@ -804,7 +805,7 @@ export const useMeetingStore = createStore<MeetingState>()((set, get) => {
       const user = requireUser();
       const { openId, access } = get();
       if (openId && access) {
-        await repo.cancelAccessRequest(openId, access.owner, user.email);
+        await repo.cancelAccessRequest(openId, access.owner, user.uid, user.email);
       }
     },
   };

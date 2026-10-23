@@ -459,14 +459,21 @@ function toRequest(key: string, raw: RawRequest): AccessRequest {
 
 export type Requester = { email: string; name: string; photoURL: string };
 
+/** Your index of the events you asked to join: deleting your account
+ * withdraws those requests. Approving or denying can't clear it (the owner
+ * can't write to your node), so entries may outlive their request. */
+const requestedPath = (uid: string, id: string) => `${userPath(uid)}/requested/${id}`;
+
 export async function requestAccess(
   id: string,
   owner: string,
+  uid: string,
   requester: Requester,
   message: string,
 ): Promise<void> {
   const key = emailKey(requester.email);
   await writeMany({
+    [requestedPath(uid, id)]: true,
     [`accessRequests/${id}/${key}`]: {
       email: requester.email,
       name: requester.name,
@@ -481,10 +488,12 @@ export async function requestAccess(
 export async function cancelAccessRequest(
   id: string,
   owner: string,
+  uid: string,
   email: string,
 ): Promise<void> {
   const key = emailKey(email);
   await writeMany({
+    [requestedPath(uid, id)]: null,
     [`accessRequests/${id}/${key}`]: null,
     [`requestsByOwner/${owner}/${id}/${key}`]: null,
   });

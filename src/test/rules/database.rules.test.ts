@@ -444,4 +444,133 @@ describe('your own user node', () => {
     await assertFails(me.child('settings/locale').set('fr-FR'));
     await assertFails(db(STRANGER).ref(`users/${OWNER.uid}/currentMeetingId`).set(ID));
   });
+
+  it('keeps an index of the events you asked to join', async () => {
+    const requested = db(STRANGER).ref(`users/${STRANGER.uid}/requested/${ID}`);
+    await assertSucceeds(requested.set(true));
+    await assertFails(requested.set('yes'));
+    await assertSucceeds(requested.remove());
+    await assertFails(db(OWNER).ref(`users/${STRANGER.uid}/requested/${ID}`).set(true));
+  });
+});
+
+describe('leaving an event', () => {
+  it('lets a member remove their own entry, and only that', async () => {
+    await seed();
+    const members = `meetingAccess/${ID}/members`;
+    await assertFails(
+      db(VIEWER)
+        .ref(`${members}/${key(CONTRIB.email)}`)
+        .remove(),
+    );
+    // Removing yourself, yes; promoting yourself, no.
+    await assertFails(
+      db(VIEWER)
+        .ref(`${members}/${key(VIEWER.email)}/role`)
+        .set('contributor'),
+    );
+    await assertSucceeds(
+      db(VIEWER)
+        .ref(`${members}/${key(VIEWER.email)}`)
+        .remove(),
+    );
+    await assertFails(db(VIEWER).ref(`meetings/${ID}`).once('value'));
+    await assertFails(
+      db(STRANGER)
+        .ref(`${members}/${key(CONTRIB.email)}`)
+        .remove(),
+    );
+  });
+});
+
+/*
+ * Leaks: whatever a rule change opens by mistake should fail here, before the
+ * rules ship. Each node is read and written as signed out, as a stranger and
+ * as a viewer of the event.
+ */
+describe('nothing leaks to people without access', () => {
+  async function seedEverything() {
+    await seed();
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      const root = ctx.database().ref();
+      await root.update({
+        [`sharedWith/${key(VIEWER.email)}/${ID}`]: { addedAt: 1, role: 'viewer' },
+        [`accessRequests/${ID}/${key('asker@example.com')}`]: {
+          email: 'asker@example.com',
+          name: 'Asker',
+          photoURL: '',
+          message: '',
+          requestedAt: 1,
+        },
+        [`requestsByOwner/${OWNER.uid}/${ID}/${key('asker@example.com')}`]: true,
+        [`users/${OWNER.uid}/currentMeetingId`]: ID,
+      });
+    });
+  }
+
+  it('never lets anyone read the root or a whole collection', async () => {
+    await seedEverything();
+    for (const user of [null, STRANGER, VIEWER, OWNER]) {
+      for (const path of [
+        '',
+        'meetings',
+        'meetingAccess',
+        'sharedWith',
+        'accessRequests',
+        'requestsByOwner',
+        'users',
+      ]) {
+        await assertFails(
+          db(user)
+            .ref(path || undefined)
+            .once('value'),
+        );
+      }
+    }
+  });
+
+  it('keeps each node to the people it belongs to', async () => {
+    await seedEverything();
+    const others = [null, STRANGER, VIEWER];
+    for (const user of others) {
+      await assertFails(db(user).ref(`meetingAccess/${ID}/members`).once('value'));
+      await assertFails(db(user).ref(`accessRequests/${ID}`).once('value'));
+      await assertFails(db(user).ref(`requestsByOwner/${OWNER.uid}`).once('value'));
+      await assertFails(db(user).ref(`users/${OWNER.uid}`).once('value'));
+    }
+    for (const user of [null, STRANGER]) {
+      await assertFails(db(user).ref(`meetings/${ID}`).once('value'));
+      await assertFails(
+        db(user)
+          .ref(`sharedWith/${key(VIEWER.email)}`)
+          .once('value'),
+      );
+    }
+  });
+
+  it('refuses writes from people without access, everywhere', async () => {
+    await seedEverything();
+    for (const user of [null, STRANGER, VIEWER]) {
+      const ref = (path: string) => db(user).ref(path);
+      await assertFails(ref(`meetings/${ID}`).remove());
+      await assertFails(ref(`meetings/${ID}/name`).set('Hijacked'));
+      await assertFails(ref(`meetingAccess/${ID}`).remove());
+      await assertFails(ref(`meetingAccess/${ID}/visibility`).set('public'));
+      await assertFails(
+        ref(`meetingAccess/${ID}/members/${key('evil@example.com')}`).set({
+          email: 'evil@example.com',
+          role: 'contributor',
+          addedAt: 1,
+        }),
+      );
+      await assertFails(
+        ref(`sharedWith/${key(VIEWER.email)}/other`).set({ addedAt: 1, role: 'viewer' }),
+      );
+      await assertFails(ref(`accessRequests/${ID}/${key('asker@example.com')}`).remove());
+      await assertFails(
+        ref(`requestsByOwner/${OWNER.uid}/${ID}/${key('asker@example.com')}`).remove(),
+      );
+      await assertFails(ref(`users/${OWNER.uid}/currentMeetingId`).set('other'));
+    }
+  });
 });

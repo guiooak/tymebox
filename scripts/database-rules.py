@@ -96,8 +96,10 @@ access = {
         ".read": f"auth != null && {OWNER_OLD}",
         ".write": f"auth != null && {owner_new(3)}",
         "$key": {
-            # Each person can see their own entry, to know their role.
+            # Each person can see their own entry, to know their role, and
+            # remove it: leaving the event, or deleting their account.
             ".read": f"auth != null && {mine('$key')}",
+            ".write": f"auth != null && {mine('$key')} && !newData.exists()",
             ".validate": "newData.hasChildren(['email', 'role', 'addedAt'])",
             "email": {".validate": s(254)},
             "role": {".validate": "newData.val() === 'viewer' || newData.val() === 'contributor'"},
@@ -181,6 +183,9 @@ rules = {
                     "$other": {".validate": False},
                 },
                 "visited": {"$id": {".validate": "newData.isNumber()"}},
+                # Events you've asked to join, so deleting your account can
+                # find and withdraw your pending requests.
+                "requested": {"$id": {".validate": "newData.val() === true"}},
                 # Events from before sharing. Only read and removed now, by the
                 # one-time move to meetings/$id; drop this once everyone has moved.
                 "meetings": {"$meetingId": {".validate": False}},

@@ -125,6 +125,7 @@
           ".write": "auth != null && newData.parent().parent().parent().child('meetings/' + $id + '/owner').val() === auth.uid",
           "$key": {
             ".read": "auth != null && (auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ','))",
+            ".write": "auth != null && (auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',')) && !newData.exists()",
             ".validate": "newData.hasChildren(['email', 'role', 'addedAt'])",
             "email": {
               ".validate": "newData.isString() && newData.val().length <= 254"
@@ -223,6 +224,11 @@
         "visited": {
           "$id": {
             ".validate": "newData.isNumber()"
+          }
+        },
+        "requested": {
+          "$id": {
+            ".validate": "newData.val() === true"
           }
         },
         "meetings": {
