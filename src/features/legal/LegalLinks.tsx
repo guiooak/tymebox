@@ -1,7 +1,7 @@
 import { useLocale, useT } from '../../common/services/i18n';
 import { Link, privacyPath, termsPath } from '../../common/services/router';
 
-/** "Privacy · Terms", in the interface language; for the footers. */
+/** "Privacy · Terms", in the interface language; for the landing footer. */
 export function LegalLinks({ className }: { className?: string }) {
   const t = useT().legal;
   const locale = useLocale();

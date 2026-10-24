@@ -556,12 +556,6 @@
   font-size: var(--tw-font-size-sm);
   color: var(--tw-text-muted);
 }
-.footerTagline {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--tw-space-2);
-}
 
 /* ---------- Narrow screens ---------- */
 @media (max-width: 960px) {
@@ -598,9 +592,6 @@
   .footerInner {
     flex-direction: column;
     text-align: center;
-  }
-  .footerTagline {
-    justify-content: center;
   }
 }
 .footerLinks a {

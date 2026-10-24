@@ -628,7 +628,7 @@ export const en = {
     },
     closingTitle: 'Your next meeting has a box. Use it.',
     closingText: 'Sign in with Google and plan your first event in under a minute.',
-    // The footer reads "© 2026 Tymebox [logo] Focus only on what matters."
+    // The footer reads "© 2026 Tymebox · Focus only on what matters."
     footerBefore: (year: number) => `© ${year} Tymebox`,
     footerAfter: 'Focus only on what matters.',
     google: 'Continue with Google',

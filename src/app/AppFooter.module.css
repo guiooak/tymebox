@@ -1,38 +1,14 @@
 .footer {
   padding: var(--tw-space-5) 0;
+  text-align: center;
   color: var(--tw-text-muted);
   font-size: var(--tw-font-size-sm);
-}
-
-/* The tagline on the left, the legal links on the right; stacked on phones. */
-.row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--tw-space-3);
 }
 
 .line {
   display: inline-flex;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--tw-space-2);
-}
-
-.links {
-  white-space: nowrap;
-}
-.links a {
-  color: inherit;
-}
-
-@media (max-width: 640px) {
-  .row {
-    flex-direction: column;
-    text-align: center;
-  }
-  .line {
-    justify-content: center;
-  }
 }
