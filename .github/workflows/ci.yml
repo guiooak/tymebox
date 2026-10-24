@@ -197,5 +197,5 @@ jobs:
           creds="$RUNNER_TEMP/firebase-sa.json"
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$creds"
           export GOOGLE_APPLICATION_CREDENTIALS="$creds"
-          npx --yes firebase-tools@13 deploy --only database --project "$FIREBASE_PROJECT_ID" --non-interactive
+          npx --yes firebase-tools@15 deploy --only database --project "$FIREBASE_PROJECT_ID" --non-interactive
           rm -f "$creds"

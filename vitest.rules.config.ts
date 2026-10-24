@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
 // Security-rules tests. They talk to the Realtime Database emulator, so run them
-// through `yarn test:rules`, which starts it (needs Java 11+).
+// through `yarn test:rules`, which starts it (needs Java 21+).
 export default defineConfig({
   test: {
     globals: true,

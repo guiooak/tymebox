@@ -140,6 +140,9 @@ library directly fails `yarn lint`.
 
 ## Getting started
 
+Needs Node 24.12 or newer (Vitest and the Firebase testing library don't run
+on odd-numbered releases like Node 23).
+
 ```bash
 corepack enable          # use the repo-pinned Yarn 4
 yarn install
@@ -159,7 +162,7 @@ yarn dev
 ### Local development without a Firebase project
 
 The Firebase emulators run Auth and the Realtime Database locally with the real
-security rules. They need Java 11 or newer.
+security rules. They need Java 21 or newer (firebase-tools 15).
 
 ```bash
 yarn dev:emulators   # terminal 1: Auth + Database emulators (UI on :4000)
@@ -204,7 +207,7 @@ their owner signs in.
 | `yarn lint`                             | ESLint (incl. the import‑boundary rules)                      |
 | `yarn typecheck`                        | `tsc -b` only                                                 |
 | `yarn test` / `yarn test:coverage`      | Vitest                                                        |
-| `yarn test:rules`                       | Security-rules tests against the Database emulator (Java 11+) |
+| `yarn test:rules`                       | Security-rules tests against the Database emulator (Java 21+) |
 | `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
 | `yarn format` / `yarn format:check`     | Prettier                                                      |
 
