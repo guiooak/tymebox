@@ -623,7 +623,7 @@ export const ptBR: Messages = {
       onBudget: 'No orçamento',
       streak: '3º evento seguido dentro do orçamento 🔥',
     },
-    closingTitle: 'Sua próxima reunião tem uma caixa. Use.',
+    closingTitle: 'Sua próxima reunião tem uma caixa. Use-a.',
     closingText:
       'Entre com o Google e planeje seu primeiro evento em menos de um minuto.',
     footerBefore: (year) => `© ${year} Tymebox`,

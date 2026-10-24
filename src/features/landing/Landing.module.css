@@ -544,15 +544,21 @@
   padding-block: var(--tw-space-5)
     max(var(--tw-space-5), env(safe-area-inset-bottom, 0px));
 }
+/* The tagline on the left, the legal links on the right; stacked on phones. */
 .footerInner {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--tw-space-2);
-  text-align: center;
+  gap: var(--tw-space-3);
   font-size: var(--tw-font-size-sm);
   color: var(--tw-text-muted);
+}
+.footerTagline {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--tw-space-2);
 }
 
 /* ---------- Narrow screens ---------- */
@@ -584,10 +590,16 @@
 }
 
 .footerLinks {
-  margin-top: var(--tw-space-2);
-  text-align: center;
-  font-size: var(--tw-font-size-xs);
-  color: var(--tw-text-muted);
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .footerInner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .footerTagline {
+    justify-content: center;
+  }
 }
 .footerLinks a {
   color: inherit;
