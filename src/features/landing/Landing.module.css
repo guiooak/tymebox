@@ -192,6 +192,8 @@
 .signIn {
   display: flex;
   flex-direction: column;
+  /* The button keeps its own width instead of stretching to the notice. */
+  align-items: flex-start;
   gap: var(--tw-space-2);
 }
 /* Google's sign-in button, to their branding guidelines: these colours are
