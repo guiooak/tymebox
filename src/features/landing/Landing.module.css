@@ -174,8 +174,10 @@
   border-bottom: 1.5px solid transparent;
   transition: border-color var(--tw-transition);
 }
+/* The border is the underline; the global a:hover one would double it. */
 .secondaryLink:hover {
   border-color: currentColor;
+  text-decoration: none;
 }
 .reassure {
   margin: 0;
@@ -606,7 +608,7 @@
 }
 .signInNotice {
   margin: 0;
-  max-width: 34ch;
+  max-width: 44ch;
   font-size: var(--tw-font-size-xs);
   color: var(--tw-text-muted);
 }

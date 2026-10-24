@@ -35,9 +35,10 @@ function GoogleMark() {
 /**
  * The official "Continue with Google" button (Google Identity branding
  * guidelines: Roboto Medium, the standard "G", the light or dark theme
- * colours), with its error and the emulator-only test sign-in.
+ * colours), with its error and, unless `withNotice` is off, the Terms and
+ * Privacy notice under it.
  */
-export function SignInButton() {
+export function SignInButton({ withNotice = true }: { withNotice?: boolean }) {
   const signIn = useAuthStore((state) => state.signIn);
   const t = useT().landing;
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +67,7 @@ export function SignInButton() {
         <GoogleMark />
         <span>{busy ? t.signingIn : t.google}</span>
       </button>
-      <SignInNotice className={styles.signInNotice} />
+      {withNotice && <SignInNotice className={styles.signInNotice} />}
       {error && (
         <p className={styles.error} role="alert">
           {error}

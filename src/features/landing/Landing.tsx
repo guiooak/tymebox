@@ -12,7 +12,7 @@ import { LanguageSelect } from '../../app/LanguageSelect';
 import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
 import { LandingDemo } from './LandingDemo';
-import { LegalLinks } from '../legal';
+import { LegalLinks, SignInNotice } from '../legal';
 import { SignInButton, TestSignIn } from './SignInPanel';
 import styles from './Landing.module.css';
 
@@ -181,13 +181,15 @@ export function Landing({ localized = false }: { localized?: boolean }) {
               </h1>
               <p className={styles.heroLead}>{t.lead}</p>
               <div className={styles.ctaRow}>
-                <SignInButton />
+                <SignInButton withNotice={false} />
                 <a className={styles.secondaryLink} href="#how-it-works">
                   {t.howItWorksLink}
                   <Icon name="chevronDown" size={16} />
                 </a>
               </div>
               <p className={styles.reassure}>{t.reassure}</p>
+              {/* Below the row, so the link beside the button stays level with it. */}
+              <SignInNotice className={styles.signInNotice} />
               <TestSignIn />
             </div>
             <div className={styles.heroDemo}>
