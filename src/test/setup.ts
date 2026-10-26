@@ -42,6 +42,8 @@ afterEach(() => {
     return;
   }
   cleanup();
+  // Anything a test left in the page (portals, a drag ghost) goes too.
+  document.body.innerHTML = '';
   window.matchMedia = nativeMatchMedia as typeof window.matchMedia;
   localStorage.clear();
 });

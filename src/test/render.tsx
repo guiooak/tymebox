@@ -68,11 +68,17 @@ export type RenderOptions = {
 
 export function renderWithApp(
   ui: ReactElement,
-  { route = '/', path, locale = 'en-US', store, auth, viewport }: RenderOptions = {},
+  {
+    route = '/',
+    path,
+    locale = 'en-US',
+    store,
+    auth,
+    viewport = 'desktop',
+  }: RenderOptions = {},
 ): RenderResult & { user: UserEvent; path: () => string | null } {
-  if (viewport) {
-    setViewport(viewport);
-  }
+  // jsdom has no matchMedia; screens that read it get a desktop by default.
+  setViewport(viewport);
   useI18nStore.getState().setLocale(locale);
   if (auth) {
     useAuthStore.setState(auth);
