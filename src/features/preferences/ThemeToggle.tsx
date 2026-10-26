@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Icon, type IconName } from '../common/components';
-import { useT } from '../common/services/i18n';
-import { useThemeStore, type ThemeMode } from '../common/services/theme';
+import { Icon, type IconName } from '../../common/components';
+import { useT } from '../../common/services/i18n';
+import { useThemeStore, type ThemeMode } from '../../common/services/theme';
 
 const ORDER: ThemeMode[] = ['system', 'light', 'dark'];
 

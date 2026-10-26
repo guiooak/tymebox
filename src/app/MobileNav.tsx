@@ -5,8 +5,7 @@ import { NavLink, paths } from '../common/services/router';
 import { PrivacyAndData } from '../features/account';
 import { useAuthStore } from '../features/auth';
 import { Logo } from '../features/brand';
-import { LanguageSelect } from './LanguageSelect';
-import { ThemeToggle } from './ThemeToggle';
+import { LanguageSelect, ThemeToggle } from '../features/preferences';
 import { useNavItems } from './useNavItems';
 import styles from './MobileNav.module.css';
 

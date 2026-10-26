@@ -1,6 +1,6 @@
-import { Icon, Select, type SelectOption } from '../common/components';
-import { LOCALES, useLocale, useT, type Locale } from '../common/services/i18n';
-import { useMeetingStore } from '../features/meeting/store';
+import { Icon, Select, type SelectOption } from '../../common/components';
+import { LOCALES, useLocale, useT, type Locale } from '../../common/services/i18n';
+import { useMeetingStore } from '../meeting/store';
 import styles from './LanguageSelect.module.css';
 
 const OPTIONS: ReadonlyArray<SelectOption<Locale>> = LOCALES.map((locale) => ({

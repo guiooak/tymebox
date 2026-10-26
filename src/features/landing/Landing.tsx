@@ -8,11 +8,10 @@ import {
   useNavigation,
   useReturnPath,
 } from '../../common/services/router';
-import { LanguageSelect } from '../../app/LanguageSelect';
-import { ThemeToggle } from '../../app/ThemeToggle';
 import { Logo, TymeboxSymbol } from '../brand';
 import { LandingDemo } from './LandingDemo';
 import { LegalLinks, SignInNotice } from '../legal';
+import { LanguageSelect, ThemeToggle } from '../preferences';
 import { SignInButton, TestSignIn } from './SignInPanel';
 import styles from './Landing.module.css';
 
