@@ -21,14 +21,12 @@ export const sessionSlice: Slice<
   | 'createFromTemplate'
   | 'chooseLocale'
   | 'setAutomatic'
-> = (store, { requireUser, newMeeting }) => {
+> = (store, { requireUser, newMeeting, isMine }) => {
   const { set, get } = store;
   return {
     bind: (user) => {
       set({ ...SIGNED_OUT, user });
-      const stop = watchSession(store, user, (id) =>
-        get().meetings.some((meeting) => meeting.id === id),
-      );
+      const stop = watchSession(store, user, isMine);
       let bound = true;
       const cleanup = () => {
         if (!bound) {
