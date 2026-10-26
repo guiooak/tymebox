@@ -58,17 +58,18 @@ export function Form({
 
   const handleReset = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const confirmed =
-      !confirmReset ||
-      (await dialog.confirm({
+    if (
+      confirmReset &&
+      !(await dialog.confirm({
         text: getT().common.resetConfirm,
         confirmButtonTheme: 'danger',
         confirmButtonText: getT().common.yesDoIt,
         cancelButtonText: getT().common.notAnymore,
-      }));
-    if (confirmed) {
-      onReset?.();
+      }))
+    ) {
+      return;
     }
+    onReset?.();
   };
 
   return (
