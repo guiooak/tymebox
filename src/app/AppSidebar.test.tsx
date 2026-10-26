@@ -1,0 +1,97 @@
+import { act, fireEvent, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { makeAuthUser, makeLiveMeeting } from '../test/fixtures';
+import { renderWithApp, type RenderOptions } from '../test/render';
+import { useThemeStore } from '../common/services/theme';
+import { AppSidebar } from './AppSidebar';
+
+const signOut = vi.fn(async () => {});
+
+function sidebar(user = makeAuthUser(), options: RenderOptions = {}) {
+  return renderWithApp(<AppSidebar />, {
+    auth: { status: 'authenticated', user, signOut },
+    ...options,
+  });
+}
+
+const collapseButton = () =>
+  screen.getByRole('button', { name: /(Collapse|Expand) menu/ });
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  useThemeStore.getState().setMode('system');
+});
+
+describe('AppSidebar', () => {
+  it('opens on desktop and collapses on tablets, until the user picks', () => {
+    const desktop = sidebar();
+    expect(collapseButton()).toHaveAccessibleName('Collapse menu');
+    desktop.unmount();
+
+    const tablet = sidebar(undefined, { viewport: 'tablet' });
+    expect(collapseButton()).toHaveAccessibleName('Expand menu');
+    fireEvent.click(collapseButton());
+    expect(collapseButton()).toHaveAccessibleName('Collapse menu');
+    expect(localStorage.getItem('tw-sidebar-collapsed')).toBe('0');
+    tablet.unmount();
+
+    localStorage.setItem('tw-sidebar-collapsed', '1');
+    sidebar();
+    expect(collapseButton()).toHaveAccessibleName('Expand menu');
+  });
+
+  it('still toggles when storage is blocked', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    sidebar();
+    fireEvent.click(collapseButton());
+    expect(collapseButton()).toHaveAccessibleName('Expand menu');
+  });
+
+  it('lists the destinations, with the live event while one runs', () => {
+    sidebar(undefined, { store: { currentMeeting: makeLiveMeeting({ id: 'live' }) } });
+    const nav = screen.getByRole('navigation', { name: 'Main' });
+    expect(nav).toHaveTextContent('Live event');
+    expect(screen.getByRole('link', { name: /Live event/ })).toHaveAttribute(
+      'href',
+      '/events/live',
+    );
+  });
+
+  it('shows who is signed in: photo, or the first letter of the name or email', () => {
+    const { container, unmount } = sidebar(
+      makeAuthUser({ photoURL: 'https://img/a.png' }),
+    );
+    expect(container.querySelector('img')).toHaveAttribute('src', 'https://img/a.png');
+    unmount();
+    sidebar(makeAuthUser({ displayName: null, email: 'bruno@example.com' }));
+    expect(screen.getByText('B')).toBeInTheDocument();
+  });
+
+  it('falls back to a question mark with no name at all', () => {
+    sidebar(makeAuthUser({ displayName: null, email: null }));
+    expect(screen.getByText('?')).toBeInTheDocument();
+  });
+
+  it('opens privacy and data, cycles the theme and signs out', () => {
+    sidebar();
+    fireEvent.click(screen.getByRole('button', { name: 'Privacy and data' }));
+    expect(screen.getByRole('dialog', { name: 'Privacy and data' })).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Close' })[0]);
+    expect(screen.queryByRole('dialog')).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'System theme. Switch to light theme' }),
+    );
+    expect(useThemeStore.getState().mode).toBe('light');
+
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
+    });
+    expect(signOut).toHaveBeenCalled();
+  });
+});

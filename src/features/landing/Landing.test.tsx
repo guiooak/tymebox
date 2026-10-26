@@ -67,6 +67,25 @@ describe('Landing', () => {
     }
   });
 
+  it('switches language through the profile, or through the URL on /pt and /en', async () => {
+    const { renderWithApp } = await import('../../test/render');
+    const { LocalizedLanding } = await import('./LocalizedLanding');
+    const chooseLocale = vi.fn(async () => {});
+    const plain = renderWithApp(<Landing />, { store: { chooseLocale } });
+    fireEvent.click(screen.getByRole('combobox', { name: 'Language' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Português' }));
+    expect(chooseLocale).toHaveBeenCalledWith('pt-BR');
+    plain.unmount();
+
+    const localized = renderWithApp(<LocalizedLanding locale="en-US" />, {
+      route: '/en',
+      path: '/en',
+    });
+    fireEvent.click(screen.getByRole('combobox', { name: 'Language' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Português' }));
+    expect(localized.path()).toBe('/pt');
+  });
+
   it('speaks Portuguese when that is the chosen language', async () => {
     const { useI18nStore } = await import('../../common/services/i18n');
     useI18nStore.getState().setLocale('pt-BR');
