@@ -64,6 +64,8 @@ export type RenderOptions = {
   store?: Partial<MeetingState>;
   auth?: Partial<AuthState>;
   viewport?: Viewport;
+  /** Other media queries that match, e.g. '(prefers-reduced-motion: reduce)'. */
+  media?: string[];
 };
 
 export function renderWithApp(
@@ -75,10 +77,11 @@ export function renderWithApp(
     store,
     auth,
     viewport = 'desktop',
+    media = [],
   }: RenderOptions = {},
-): RenderResult & { user: UserEvent; path: () => string | null } {
+): RenderResult & { user: () => UserEvent; path: () => string | null } {
   // jsdom has no matchMedia; screens that read it get a desktop by default.
-  setViewport(viewport);
+  setViewport(viewport, media);
   useI18nStore.getState().setLocale(locale);
   if (auth) {
     useAuthStore.setState(auth);
@@ -86,7 +89,7 @@ export function renderWithApp(
   if (store) {
     useMeetingStore.setState(store);
   }
-  const user = userEvent.setup();
+  let user: UserEvent | undefined;
   const result = render(
     <DialogProvider>
       <MemoryRouter initialEntries={[route]}>
@@ -104,7 +107,10 @@ export function renderWithApp(
   );
   return {
     ...result,
-    user,
+    // Created on first call: userEvent.setup() swaps navigator.clipboard for
+    // its own stub, which would hide the clipboard spies of tests that don't
+    // type through it.
+    user: () => (user ??= userEvent.setup()),
     path: () => result.getByTestId('path').textContent,
   };
 }

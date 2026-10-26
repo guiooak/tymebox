@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { DialogProvider } from '../../../common/components';
 import type { Meeting } from '../domain/types';
 import { TemplatePreviewModal } from './TemplatePreviewModal';
@@ -57,5 +58,99 @@ describe('TemplatePreviewModal participants', () => {
   it('is hidden for anyone who can’t see the participants', () => {
     renderModal(null);
     expect(screen.queryByRole('button', { name: /participants/ })).toBeNull();
+  });
+});
+
+describe('TemplatePreviewModal copying', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it('copies the report as rich HTML and plain text, then says so for a moment', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('ClipboardItem', vi.fn());
+    const write = vi.fn(async () => {});
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      writable: true,
+      value: { write, writeText: vi.fn() },
+    });
+    renderModal(null);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy to Email' }));
+    });
+    expect(write).toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Copied!' })).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(2000));
+    expect(screen.getByRole('button', { name: 'Copy to Email' })).toBeInTheDocument();
+  });
+
+  it('says so when the browser blocks the clipboard', async () => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      writable: true,
+      value: {
+        writeText: vi.fn(async () => {
+          throw new Error('blocked');
+        }),
+      },
+    });
+    renderModal(['bruno@team.com']);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy to Email' }));
+    });
+    expect(
+      screen.getByText('Couldn’t copy. Your browser blocked the clipboard.'),
+    ).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy participants’ emails' }));
+    });
+    expect(screen.getByText(/Couldn’t copy/)).toBeInTheDocument();
+  });
+
+  it('counts down the copied emails, and closes', async () => {
+    vi.useFakeTimers();
+    const onClose = vi.fn();
+    render(
+      <DialogProvider>
+        <TemplatePreviewModal
+          open
+          onClose={onClose}
+          meeting={meeting}
+          chartImageSrc={null}
+          streak={0}
+          participantEmails={['bruno@team.com']}
+        />
+      </DialogProvider>,
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy participants’ emails' }));
+    });
+    expect(screen.getByRole('button', { name: 'Copied 1 email!' })).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(2000));
+    expect(
+      screen.getByRole('button', { name: 'Copy participants’ emails' }),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getAllByRole('button', { name: 'Close' }).at(-1) as HTMLElement,
+    );
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it('renders nothing while closed', () => {
+    render(
+      <DialogProvider>
+        <TemplatePreviewModal
+          open={false}
+          onClose={() => {}}
+          meeting={meeting}
+          chartImageSrc={null}
+          streak={0}
+        />
+      </DialogProvider>,
+    );
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
