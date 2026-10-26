@@ -37,26 +37,6 @@
   transition: height var(--tw-transition);
 }
 
-.inputsList {
-  display: flex;
-  flex-direction: column;
-  gap: var(--tw-space-2);
-}
-.listRow {
-  display: flex;
-  gap: var(--tw-space-2);
-  align-items: flex-start;
-}
-.listRow .grow {
-  flex: 1;
-}
-.weight {
-  width: 90px;
-}
-.addRow {
-  align-self: flex-start;
-}
-
 .check {
   display: inline-flex;
   align-items: center;

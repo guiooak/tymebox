@@ -11,7 +11,6 @@ const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1
 export const ptBR: Messages = {
   formats: {
     longDate: "EEEE, d 'de' MMMM 'de' yyyy, HH:mm'h'",
-    dayLabel: "EEE, d 'de' MMM",
   },
   meta: {
     title: 'Tymebox — Seus eventos em caixas de tempo',

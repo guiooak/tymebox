@@ -35,8 +35,3 @@ export function useMediaQuery(query: string): boolean {
 export function useIsPhone(): boolean {
   return useMediaQuery(PHONE_QUERY);
 }
-
-/** Tablet-sized window: the sidebar starts as an icon rail. */
-export function useIsTablet(): boolean {
-  return useMediaQuery(TABLET_QUERY);
-}

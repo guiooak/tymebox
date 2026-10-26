@@ -8,7 +8,6 @@ import {
   query,
   ref,
   remove,
-  set,
   update,
 } from 'firebase/database';
 import { getDb } from './firebaseApp';
@@ -17,11 +16,6 @@ import { getDb } from './firebaseApp';
 export async function read<T>(path: string): Promise<T | null> {
   const snapshot = await get(ref(getDb(), path));
   return snapshot.exists() ? (snapshot.val() as T) : null;
-}
-
-/** Overwrite the value at a path. */
-export async function write<T>(path: string, value: T): Promise<void> {
-  await set(ref(getDb(), path), value);
 }
 
 /** Merge a partial object into the value at a path. */

@@ -7,7 +7,7 @@ import {
   useParams,
 } from 'react-router-dom';
 
-export { Routes, Route, Outlet, Link, NavLink, Navigate } from 'react-router-dom';
+export { Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
 
 /** App-wide router provider (served at root on Firebase Hosting). */
 export function RouterRoot({ children }: { children: ReactNode }) {

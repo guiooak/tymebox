@@ -76,14 +76,6 @@ export function createSideTopic(goalName = ''): SideTopic {
   return { id: uid(), value: '', goalName };
 }
 
-export function isMeetingActive(meeting: Meeting): boolean {
-  return !!meeting.realStartTime;
-}
-
-export function isMeetingFinished(meeting: Meeting): boolean {
-  return !!meeting.realEndTime;
-}
-
 /** A schedule only exists once both ends of the window are set. */
 export function hasSchedule(
   meeting: Pick<Meeting, 'expectedStartTime' | 'expectedEndTime'>,

@@ -8,7 +8,6 @@ export const en = {
   formats: {
     /** date-fns patterns. */
     longDate: "EEEE, MMMM do yyyy, HH:mm'h'",
-    dayLabel: 'EEE, d MMM',
   },
   /** The landing's <head>, baked into /en/index.html at build time. */
   meta: {

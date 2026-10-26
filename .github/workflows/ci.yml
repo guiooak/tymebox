@@ -22,6 +22,8 @@ jobs:
           cache: yarn
       - run: yarn install --immutable
       - run: yarn lint
+      # Unused files, exports and dependencies (see knip.json).
+      - run: yarn knip
 
   typecheck:
     runs-on: ubuntu-latest

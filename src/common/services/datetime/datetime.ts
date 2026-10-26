@@ -28,10 +28,6 @@ export function toDate(input: DateInput): Date {
   return parseISO(input);
 }
 
-export function isValid(input: DateInput): boolean {
-  return !Number.isNaN(toDate(input).getTime());
-}
-
 /** ISO string with local offset (mirrors the legacy moment.toISOString(true)). */
 export function toISO(input: DateInput): string {
   return formatISO(toDate(input));
@@ -70,11 +66,6 @@ export function formatTime(input: DateInput): string {
 /** Long form in the active language, e.g. "Monday, March 3rd 2026, 14:05h". */
 export function formatLong(input: DateInput): string {
   return format(toDate(input), getT().formats.longDate, { locale: getDateLocale() });
-}
-
-/** Day label used on the burndown axis, e.g. "Mon, 3 Mar". */
-export function formatDayLabel(input: DateInput): string {
-  return format(toDate(input), getT().formats.dayLabel, { locale: getDateLocale() });
 }
 
 /** Break a millisecond span into clock parts, tracking sign. */

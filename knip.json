@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["scripts/*.{ts,mjs}", "vitest.rules.config.ts", "src/test/**/*.{ts,tsx}"],
+  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.{ts,mjs}"],
+  "ignoreExportsUsedInFile": true,
+  "rules": {
+    "types": "off",
+    "enumMembers": "off"
+  }
+}
