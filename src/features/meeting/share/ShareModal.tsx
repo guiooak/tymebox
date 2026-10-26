@@ -93,6 +93,8 @@ function RequestRow({ request }: { request: AccessRequest }) {
   const t = useT().share;
   const [role, setRole] = useState<GrantedRole>('viewer');
   const [busy, setBusy] = useState(false);
+  // Google can hand over a blank display name; fall back to the email.
+  const name = request.name.trim();
 
   const act = async (action: () => Promise<void>) => {
     setBusy(true);
@@ -105,11 +107,11 @@ function RequestRow({ request }: { request: AccessRequest }) {
 
   return (
     <li className={styles.person}>
-      <Initial name={request.name || request.email} photoURL={request.photoURL} />
+      <Initial name={name || request.email} photoURL={request.photoURL} />
       <div className={styles.personText}>
-        <strong>{request.name || request.email}</strong>
+        <strong>{name || request.email}</strong>
         <span className={styles.muted}>
-          {request.name ? `${request.email} · ` : ''}
+          {name ? `${request.email} · ` : ''}
           {timeAgo(request.requestedAt, t)}
         </span>
         {request.message && <q className={styles.message}>{request.message}</q>}
