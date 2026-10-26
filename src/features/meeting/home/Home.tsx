@@ -5,22 +5,10 @@ import {
   Button,
   Container,
   Heading,
-  Icon,
   Loader,
-  ItemLink,
-  itemLinkAbove,
-  itemLinkContainer,
-  Menu,
   Page,
-  type IconName,
 } from '../../../common/components';
-import { cx } from '../../../common/components/cx';
-import {
-  formatDuration,
-  formatLong,
-  hoursOf,
-  now,
-} from '../../../common/services/datetime';
+import { formatLong, hoursOf, now } from '../../../common/services/datetime';
 import {
   paths,
   useNavigation,
@@ -28,59 +16,17 @@ import {
   eventReportPath,
 } from '../../../common/services/router';
 import { useAuthStore } from '../../auth';
-import { useDeleteEvent } from '../components';
+import { EventRow, useEventActions } from '../components';
 import { useT, type Messages } from '../../../common/services/i18n';
+import type { Meeting } from '../domain/types';
 import { useMeetingStore } from '../store';
 import { OnboardingCard } from './OnboardingCard';
-import { MEETING_TEMPLATES, type MeetingTemplateId } from './templates';
+import { MetricsGrid } from './MetricsGrid';
+import { TemplateShortcuts, useCreateFromTemplate } from './TemplateShortcuts';
 import { useMeetingMetrics } from './useMeetingMetrics';
 import { AccessRequestsNotice } from './AccessRequestsNotice';
 import { SharedWithMe } from './SharedWithMe';
 import styles from './Home.module.css';
-
-const TEMPLATE_ICONS: Record<MeetingTemplateId, IconName> = {
-  weeklyPlanning: 'calendar',
-  retro: 'cycle',
-  oneOnOne: 'users',
-};
-
-function budgetLabel(
-  ratio: number | null,
-  t: Messages['home']['budget'],
-): { value: string; note: string } {
-  if (ratio == null) {
-    return { value: t.none, note: t.noneNote };
-  }
-  const pct = Math.round((ratio - 1) * 100);
-  if (pct === 0) {
-    return { value: t.onBudget, note: t.onBudgetNote };
-  }
-  return pct > 0
-    ? { value: t.over(pct), note: t.overNote }
-    : { value: t.under(Math.abs(pct)), note: t.underNote };
-}
-
-/** A metric box's colour, from how the number reads: good, borderline or bad
- * news, a neutral count, or the amber of an on-budget streak. */
-type MetricTone = 'good' | 'warn' | 'bad' | 'info' | 'streak' | null;
-
-/** Within 15% over the plan is borderline; beyond it, over budget. */
-function budgetTone(ratio: number | null): MetricTone {
-  if (ratio == null) {
-    return null;
-  }
-  return ratio <= 1 ? 'good' : ratio <= 1.15 ? 'warn' : 'bad';
-}
-
-function goalsTone(completion: number | null): MetricTone {
-  if (completion == null) {
-    return null;
-  }
-  return completion >= 0.8 ? 'good' : completion >= 0.5 ? 'warn' : 'bad';
-}
-
-const metricTone = (tone: MetricTone) =>
-  tone ? cx(styles.toned, styles[`tone-${tone}`]) : undefined;
 
 function greeting(t: Messages['home']): string {
   const hour = hoursOf(now());
@@ -90,44 +36,57 @@ function greeting(t: Messages['home']): string {
   return hour < 18 ? t.afternoon : t.evening;
 }
 
+/** A scheduled event under "Starting soon". */
+function UpcomingEvent({ meeting }: { meeting: Meeting }) {
+  const tt = useT();
+  const actions = useEventActions(meeting);
+  return (
+    <EventRow
+      name={meeting.name}
+      meta={formatLong(meeting.expectedStartTime)}
+      onOpen={() => void actions.openBoard()}
+      aside={<Badge theme="info">{tt.status.scheduled}</Badge>}
+      menu={[
+        { label: tt.home.openBoard, onSelect: () => void actions.openBoard() },
+        {
+          label: tt.home.deleteEvent,
+          danger: true,
+          onSelect: () => void actions.remove(),
+        },
+      ]}
+    />
+  );
+}
+
+/** A finished event under "Recent events". */
+function RecentEvent({ meeting }: { meeting: Meeting }) {
+  const t = useT().home;
+  const actions = useEventActions(meeting);
+  return (
+    <EventRow
+      name={meeting.name}
+      meta={t.recentMeta(formatLong(meeting.realEndTime), meeting.goals.length)}
+      onOpen={() => void actions.openReport()}
+      menu={[
+        { label: t.viewReport, onSelect: () => void actions.openReport() },
+        { label: t.clone, onSelect: () => void actions.clone() },
+        { label: t.deleteEvent, danger: true, onSelect: () => void actions.remove() },
+      ]}
+    />
+  );
+}
+
 export function Home() {
   const navigation = useNavigation();
   const user = useAuthStore((state) => state.user);
   const current = useMeetingStore((state) => state.currentMeeting);
   const loading = useMeetingStore((state) => state.loading);
-  const reopen = useMeetingStore((state) => state.reopen);
-  const clone = useMeetingStore((state) => state.clone);
-  const createFromTemplate = useMeetingStore((state) => state.createFromTemplate);
-  const onDelete = useDeleteEvent();
+  const onTemplate = useCreateFromTemplate();
   const metrics = useMeetingMetrics();
   const tt = useT();
   const t = tt.home;
 
   const firstName = user?.displayName?.split(' ')[0];
-
-  const onReopen = async (id: string) => {
-    await reopen(id);
-    navigation.go(eventReportPath(id));
-  };
-
-  const onOpenBoard = async (id: string) => {
-    await reopen(id);
-    navigation.go(eventPath(id));
-  };
-
-  const onClone = async (id: string) => {
-    const newId = await clone(id);
-    if (newId) {
-      navigation.go(eventPath(newId));
-    }
-  };
-
-  const onTemplate = async (name: string, goals: string[]) => {
-    const newId = await createFromTemplate(name, goals);
-    if (newId) {
-      navigation.go(eventPath(newId));
-    }
-  };
 
   // Surface whatever the user can pick up where they left off.
   const resume = !current
@@ -149,9 +108,6 @@ export function Home() {
             to: eventPath(current.id),
             hint: t.resume.draftHint,
           };
-
-  const budget = budgetLabel(metrics.budgetRatio, t.budget);
-  const lastFinished = metrics.recent[0];
 
   return (
     <Container className={styles.home}>
@@ -191,54 +147,7 @@ export function Home() {
               </Box>
             )}
 
-            <section className={styles.templatesSection}>
-              <Heading size="sm" level={2}>
-                {t.startSomething}
-              </Heading>
-              <div className={styles.templates}>
-                {lastFinished && (
-                  <button
-                    type="button"
-                    className={styles.template}
-                    title={t.repeatHint(lastFinished.goals.length)}
-                    onClick={() => void onClone(lastFinished.id)}
-                  >
-                    <span className={styles.templateIcon}>
-                      <Icon name="repeat" size={16} />
-                    </span>
-                    <strong className={styles.templateName}>
-                      {t.repeat(lastFinished.name)}
-                    </strong>
-                    <span className={styles.templateMeta}>
-                      {t.milestoneCount(lastFinished.goals.length)}
-                    </span>
-                    <Icon name="arrowRight" size={16} className={styles.templateArrow} />
-                  </button>
-                )}
-                {MEETING_TEMPLATES.map((id) => {
-                  const template = t.templates[id];
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      className={styles.template}
-                      onClick={() => void onTemplate(template.label, template.goals)}
-                    >
-                      <span className={styles.templateIcon}>
-                        <Icon name={TEMPLATE_ICONS[id]} size={16} />
-                      </span>
-                      <strong className={styles.templateName}>{template.label}</strong>
-                      <span className={styles.templateMeta}>{template.hint}</span>
-                      <Icon
-                        name="arrowRight"
-                        size={16}
-                        className={styles.templateArrow}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
+            <TemplateShortcuts lastFinished={metrics.recent[0]} />
 
             {metrics.upcoming.length > 0 && (
               <section className={styles.recentSection}>
@@ -247,36 +156,7 @@ export function Home() {
                 </Heading>
                 <div className={styles.list}>
                   {metrics.upcoming.map((meeting) => (
-                    <Box
-                      key={meeting.id}
-                      className={`${styles.item} ${itemLinkContainer}`}
-                    >
-                      <div>
-                        <ItemLink onClick={() => void onOpenBoard(meeting.id)}>
-                          <strong>{meeting.name}</strong>
-                        </ItemLink>
-                        <div className={styles.meta}>
-                          {formatLong(meeting.expectedStartTime)}
-                        </div>
-                      </div>
-                      <div className={`${styles.actions} ${itemLinkAbove}`}>
-                        <Badge theme="info">{tt.status.scheduled}</Badge>
-                        <Menu
-                          label={tt.common.actionsFor(meeting.name)}
-                          items={[
-                            {
-                              label: t.openBoard,
-                              onSelect: () => void onOpenBoard(meeting.id),
-                            },
-                            {
-                              label: t.deleteEvent,
-                              danger: true,
-                              onSelect: () => void onDelete(meeting),
-                            },
-                          ]}
-                        />
-                      </div>
-                    </Box>
+                    <UpcomingEvent key={meeting.id} meeting={meeting} />
                   ))}
                 </div>
               </section>
@@ -301,60 +181,7 @@ export function Home() {
               </Box>
             ) : (
               <>
-                <div className={styles.metrics}>
-                  <Box
-                    className={cx(
-                      styles.metric,
-                      metricTone(budgetTone(metrics.budgetRatio)),
-                    )}
-                  >
-                    <span className={styles.metricValue}>{budget.value}</span>
-                    <span className={styles.metricLabel}>{t.timeVsBudget}</span>
-                    <span className={styles.metricNote}>{budget.note}</span>
-                  </Box>
-                  <Box
-                    className={cx(
-                      styles.metric,
-                      metricTone(goalsTone(metrics.goalCompletion)),
-                    )}
-                  >
-                    <span className={styles.metricValue}>
-                      {metrics.goalCompletion == null
-                        ? '—'
-                        : `${Math.round(metrics.goalCompletion * 100)}%`}
-                    </span>
-                    <span className={styles.metricLabel}>{t.goalsCompleted}</span>
-                    <span className={styles.metricNote}>{t.goalsCompletedNote}</span>
-                  </Box>
-                  <Box
-                    className={cx(
-                      styles.metric,
-                      metricTone(metrics.thisMonth > 0 ? 'info' : null),
-                    )}
-                  >
-                    <span className={styles.metricValue}>{metrics.thisMonth}</span>
-                    <span className={styles.metricLabel}>{t.thisMonth}</span>
-                    <span className={styles.metricNote}>
-                      {t.finishedAllTime(metrics.finished)}
-                    </span>
-                  </Box>
-                  <Box
-                    className={cx(
-                      styles.metric,
-                      metricTone(metrics.onBudgetStreak > 0 ? 'streak' : null),
-                    )}
-                  >
-                    <span className={styles.metricValue}>
-                      {metrics.onBudgetStreak > 0 ? `${metrics.onBudgetStreak} 🔥` : '—'}
-                    </span>
-                    <span className={styles.metricLabel}>{t.streak}</span>
-                    <span className={styles.metricNote}>
-                      {metrics.totalSpentMs > 0
-                        ? t.spentTotal(formatDuration(metrics.totalSpentMs))
-                        : t.streakEmpty}
-                    </span>
-                  </Box>
-                </div>
+                <MetricsGrid metrics={metrics} />
 
                 <section className={styles.recentSection}>
                   <div className={styles.sectionHead}>
@@ -374,42 +201,7 @@ export function Home() {
                   ) : (
                     <div className={styles.list}>
                       {metrics.recent.map((meeting) => (
-                        <Box
-                          key={meeting.id}
-                          className={`${styles.item} ${itemLinkContainer}`}
-                        >
-                          <div>
-                            <ItemLink onClick={() => void onReopen(meeting.id)}>
-                              <strong>{meeting.name}</strong>
-                            </ItemLink>
-                            <div className={styles.meta}>
-                              {t.recentMeta(
-                                formatLong(meeting.realEndTime),
-                                meeting.goals.length,
-                              )}
-                            </div>
-                          </div>
-                          <div className={`${styles.actions} ${itemLinkAbove}`}>
-                            <Menu
-                              label={tt.common.actionsFor(meeting.name)}
-                              items={[
-                                {
-                                  label: t.viewReport,
-                                  onSelect: () => void onReopen(meeting.id),
-                                },
-                                {
-                                  label: t.clone,
-                                  onSelect: () => void onClone(meeting.id),
-                                },
-                                {
-                                  label: t.deleteEvent,
-                                  danger: true,
-                                  onSelect: () => void onDelete(meeting),
-                                },
-                              ]}
-                            />
-                          </div>
-                        </Box>
+                        <RecentEvent key={meeting.id} meeting={meeting} />
                       ))}
                     </div>
                   )}

@@ -177,13 +177,6 @@
   flex-direction: column;
   gap: var(--tw-space-3);
 }
-.item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--tw-space-3);
-  flex-wrap: wrap;
-}
 .meta {
   color: var(--tw-text-muted);
   font-size: var(--tw-font-size-sm);
@@ -214,19 +207,6 @@
   gap: var(--tw-space-2);
 }
 
-/* List rows keep their ⋮ (and badges) on the right; the text wraps instead. */
-.item {
-  flex-wrap: nowrap;
-}
-.item > :first-child {
-  flex: 1;
-  min-width: 0;
-}
-.item > .actions {
-  flex-shrink: 0;
-  justify-content: flex-end;
-}
-
 @media (max-width: 640px) {
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -245,9 +225,5 @@
   .template {
     flex: none;
     scroll-snap-align: start;
-  }
-  /* Shared events carry two badges; let them sit under the menu if needed. */
-  .item > .actions {
-    max-width: 50%;
   }
 }

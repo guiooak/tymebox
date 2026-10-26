@@ -2,28 +2,18 @@ import { useMemo, useState } from 'react';
 import {
   Badge,
   BlankSlate,
-  Box,
   Button,
   Container,
   Heading,
   Loader,
-  Menu,
   type MenuItem,
   Page,
   Select,
   type SelectOption,
-  ItemLink,
-  itemLinkAbove,
-  itemLinkContainer,
 } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
-import {
-  paths,
-  useNavigation,
-  eventPath,
-  eventReportPath,
-} from '../../../common/services/router';
-import { useDeleteEvent } from '../components';
+import { paths, useNavigation } from '../../../common/services/router';
+import { EventRow, useEventActions } from '../components';
 import { useT } from '../../../common/services/i18n';
 import { summarizeMeeting } from '../domain/metrics';
 import type { Meeting, MeetingStatus } from '../domain/types';
@@ -47,6 +37,51 @@ function whenLabel(meeting: Meeting, notScheduled: string): string {
   return stamp ? formatLong(stamp) : notScheduled;
 }
 
+/** One of your events in the history list. */
+function HistoryEvent({ meeting }: { meeting: Meeting }) {
+  const tt = useT();
+  const t = tt.history;
+  const actions = useEventActions(meeting);
+  const summary = summarizeMeeting(meeting);
+
+  // The board action does what reopenInDashboard does to each kind of event.
+  const board = meeting.realEndTime
+    ? t.reopen
+    : meeting.status === 'cancelled'
+      ? t.runAgain
+      : tt.home.openBoard;
+  const menu: MenuItem[] = [
+    ...(meeting.realEndTime
+      ? [{ label: tt.home.viewReport, onSelect: () => void actions.openReport() }]
+      : []),
+    { label: board, onSelect: () => void actions.runOnBoard() },
+    { label: tt.home.clone, onSelect: () => void actions.clone() },
+    { label: tt.home.deleteEvent, danger: true, onSelect: () => void actions.remove() },
+  ];
+
+  return (
+    <EventRow
+      name={meeting.name}
+      onOpen={() => void actions.open()}
+      badges={
+        <>
+          <Badge theme={summary.status.theme}>{summary.status.label}</Badge>
+          {summary.outcome && (
+            <Badge theme={summary.outcome.theme}>{summary.outcome.label}</Badge>
+          )}
+        </>
+      }
+      meta={
+        <>
+          {t.meta(whenLabel(meeting, t.notScheduled), meeting.goals.length)}
+          {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
+        </>
+      }
+      menu={menu}
+    />
+  );
+}
+
 export function MeetingsHistory() {
   const navigation = useNavigation();
   const tt = useT();
@@ -57,10 +92,6 @@ export function MeetingsHistory() {
   }));
   const meetings = useMeetingStore((state) => state.meetings);
   const loading = useMeetingStore((state) => state.loading);
-  const reopen = useMeetingStore((state) => state.reopen);
-  const reopenInDashboard = useMeetingStore((state) => state.reopenInDashboard);
-  const clone = useMeetingStore((state) => state.clone);
-  const onDelete = useDeleteEvent();
 
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
@@ -98,53 +129,6 @@ export function MeetingsHistory() {
         return sort === 'oldest' ? diff : -diff;
       });
   }, [meetings, filter, query, sort]);
-
-  const onOpenReport = async (id: string) => {
-    await reopen(id);
-    navigation.go(eventReportPath(id));
-  };
-
-  const onOpenDashboard = async (id: string) => {
-    await reopenInDashboard(id);
-    navigation.go(eventPath(id));
-  };
-
-  // A click on the item: finished events open their report, the rest their
-  // board, without reopening anything.
-  const onOpen = async (meeting: Meeting) => {
-    await reopen(meeting.id);
-    navigation.go(
-      meeting.realEndTime ? eventReportPath(meeting.id) : eventPath(meeting.id),
-    );
-  };
-
-  const onClone = async (id: string) => {
-    const newId = await clone(id);
-    if (newId) {
-      navigation.go(eventPath(newId));
-    }
-  };
-
-  // The board action does what reopenInDashboard does to each kind of event.
-  const actionsFor = (meeting: Meeting): MenuItem[] => {
-    const board = meeting.realEndTime
-      ? t.reopen
-      : meeting.status === 'cancelled'
-        ? t.runAgain
-        : tt.home.openBoard;
-    return [
-      ...(meeting.realEndTime
-        ? [{ label: tt.home.viewReport, onSelect: () => void onOpenReport(meeting.id) }]
-        : []),
-      { label: board, onSelect: () => void onOpenDashboard(meeting.id) },
-      { label: tt.home.clone, onSelect: () => void onClone(meeting.id) },
-      {
-        label: tt.home.deleteEvent,
-        danger: true,
-        onSelect: () => void onDelete(meeting),
-      },
-    ];
-  };
 
   return (
     <Container className={styles.history}>
@@ -204,46 +188,9 @@ export function MeetingsHistory() {
               />
             ) : (
               <div className={styles.list}>
-                {visible.map((meeting) => {
-                  const summary = summarizeMeeting(meeting);
-                  return (
-                    <Box
-                      key={meeting.id}
-                      className={`${styles.item} ${itemLinkContainer}`}
-                    >
-                      <div className={styles.info}>
-                        <div className={styles.titleRow}>
-                          <ItemLink onClick={() => void onOpen(meeting)}>
-                            <strong>{meeting.name || tt.common.untitledEvent}</strong>
-                          </ItemLink>
-                          <Badge theme={summary.status.theme}>
-                            {summary.status.label}
-                          </Badge>
-                          {summary.outcome && (
-                            <Badge theme={summary.outcome.theme}>
-                              {summary.outcome.label}
-                            </Badge>
-                          )}
-                        </div>
-                        <div className={styles.meta}>
-                          {t.meta(
-                            whenLabel(meeting, t.notScheduled),
-                            meeting.goals.length,
-                          )}
-                          {summary.durationLabel ? ` · ${summary.durationLabel}` : ''}
-                        </div>
-                      </div>
-                      <div className={`${styles.actions} ${itemLinkAbove}`}>
-                        <Menu
-                          label={tt.common.actionsFor(
-                            meeting.name || tt.common.thisEvent,
-                          )}
-                          items={actionsFor(meeting)}
-                        />
-                      </div>
-                    </Box>
-                  );
-                })}
+                {visible.map((meeting) => (
+                  <HistoryEvent key={meeting.id} meeting={meeting} />
+                ))}
               </div>
             )}
           </>

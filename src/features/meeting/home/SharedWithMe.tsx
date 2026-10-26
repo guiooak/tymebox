@@ -1,13 +1,4 @@
-import {
-  Badge,
-  BlankSlate,
-  Box,
-  Heading,
-  ItemLink,
-  itemLinkAbove,
-  itemLinkContainer,
-  Menu,
-} from '../../../common/components';
+import { Badge, BlankSlate, Heading } from '../../../common/components';
 import { formatLong } from '../../../common/services/datetime';
 import {
   eventPath,
@@ -15,6 +6,7 @@ import {
   useNavigation,
 } from '../../../common/services/router';
 import { useT } from '../../../common/services/i18n';
+import { EventRow } from '../components';
 import { useMeetingStore, type SharedEventSummary } from '../store';
 import styles from './Home.module.css';
 
@@ -63,38 +55,37 @@ export function SharedWithMe() {
             const open = () =>
               navigation.go(finished ? eventReportPath(event.id) : eventPath(event.id));
             return (
-              <Box key={event.id} className={`${styles.item} ${itemLinkContainer}`}>
-                <div>
-                  <ItemLink onClick={open}>
-                    <strong>{event.name || t.common.untitledEvent}</strong>
-                  </ItemLink>
-                  <div className={styles.meta}>
+              <EventRow
+                key={event.id}
+                name={event.name}
+                meta={
+                  <>
                     {t.home.shared.by(event.ownerName || t.home.shared.someone)}
                     {finished && event.realEndTime
                       ? ` · ${formatLong(event.realEndTime)}`
                       : ''}
-                  </div>
-                </div>
-                <div className={`${styles.actions} ${itemLinkAbove}`}>
-                  <Badge theme={STATUS_THEME[event.status]}>
-                    {t.status[event.status]}
-                  </Badge>
-                  <Badge>
-                    {event.via === 'public'
-                      ? t.home.shared.publicLink
-                      : t.roles[event.via]}
-                  </Badge>
-                  <Menu
-                    label={t.common.actionsFor(event.name || t.common.thisEvent)}
-                    items={[
-                      {
-                        label: finished ? t.home.viewReport : t.home.openBoard,
-                        onSelect: open,
-                      },
-                    ]}
-                  />
-                </div>
-              </Box>
+                  </>
+                }
+                onOpen={open}
+                aside={
+                  <>
+                    <Badge theme={STATUS_THEME[event.status]}>
+                      {t.status[event.status]}
+                    </Badge>
+                    <Badge>
+                      {event.via === 'public'
+                        ? t.home.shared.publicLink
+                        : t.roles[event.via]}
+                    </Badge>
+                  </>
+                }
+                menu={[
+                  {
+                    label: finished ? t.home.viewReport : t.home.openBoard,
+                    onSelect: open,
+                  },
+                ]}
+              />
             );
           })}
         </div>

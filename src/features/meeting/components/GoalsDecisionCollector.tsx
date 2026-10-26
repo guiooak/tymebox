@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import {
   BlankSlate,
   Box,
@@ -15,6 +15,7 @@ import { cx } from '../../../common/components/cx';
 import { formatTime, nowISO } from '../../../common/services/datetime';
 import { FIELD_LIMITS, type Goal } from '../domain/types';
 import { GoalEditModal } from './GoalEditModal';
+import { useGoalDragAndDrop } from './useGoalDragAndDrop';
 import styles from './GoalsDecisionCollector.module.css';
 
 export type GoalsDecisionCollectorProps = {
@@ -34,32 +35,6 @@ export type GoalsDecisionCollectorProps = {
   /** Asked before dropping a milestone that already holds notes. */
   onConfirmRemove?: (goal: Goal) => Promise<boolean>;
 };
-
-/**
- * The drag image is a snapshot the browser takes of the dragged element, and
- * it can pick up the rows around it. Hand it a copy of just this row instead:
- * same width, off-screen, removed once the browser has taken the picture.
- */
-function setDragGhost(event: DragEvent<HTMLDivElement>) {
-  const row = event.currentTarget;
-  const rect = row.getBoundingClientRect();
-  const ghost = row.cloneNode(true) as HTMLElement;
-  Object.assign(ghost.style, {
-    position: 'fixed',
-    top: '-10000px',
-    left: '-10000px',
-    width: `${rect.width}px`,
-    pointerEvents: 'none',
-  });
-  document.body.appendChild(ghost);
-  event.dataTransfer.setDragImage(
-    ghost,
-    event.clientX - rect.left,
-    event.clientY - rect.top,
-  );
-  event.dataTransfer.effectAllowed = 'move';
-  window.setTimeout(() => ghost.remove(), 0);
-}
 
 export function GoalsDecisionCollector({
   goals,
@@ -84,15 +59,13 @@ export function GoalsDecisionCollector({
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [adding, setAdding] = useState(false);
   const [draftName, setDraftName] = useState('');
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [handleArmed, setHandleArmed] = useState<string | null>(null);
   const [celebrating, setCelebrating] = useState<string | null>(null);
   const celebrateTimer = useRef<number | undefined>(undefined);
   const addRef = useRef<HTMLInputElement>(null);
 
   const isOpen = (goalId: string) => allOpen || openId === goalId;
   const canEdit = !!editable;
+  const drag = useGoalDragAndDrop({ enabled: canEdit, onReorder: onReorderGoals });
   const notesEditable = !(disabled && !canEdit);
 
   // Opening a milestone puts the cursor in its notes, ready to type. The
@@ -190,15 +163,6 @@ export function GoalsDecisionCollector({
     { label: t.delete, danger: true, onSelect: () => void onDelete(goal) },
   ];
 
-  const onDrop = (index: number) => {
-    if (dragIndex != null && dragIndex !== index) {
-      onReorderGoals?.(dragIndex, index);
-    }
-    setDragIndex(null);
-    setDragOverIndex(null);
-    setHandleArmed(null);
-  };
-
   return (
     <Box className={styles.collector}>
       <div className={styles.toolbar}>
@@ -228,31 +192,11 @@ export function GoalsDecisionCollector({
         {goals.map((goal, index) => (
           <div
             key={goal.id}
-            draggable={canEdit && handleArmed === goal.id}
+            {...drag.rowProps(goal.id, index)}
             className={cx(
-              dragOverIndex === index && styles.dropTarget,
+              drag.isDropTarget(index) && styles.dropTarget,
               celebrating === goal.id && styles.celebrate,
             )}
-            onDragStart={(event) => {
-              setDragIndex(index);
-              setDragGhost(event);
-            }}
-            onDragOver={(event) => {
-              if (dragIndex == null) {
-                return;
-              }
-              event.preventDefault();
-              setDragOverIndex(index);
-            }}
-            onDragEnd={() => {
-              setDragIndex(null);
-              setDragOverIndex(null);
-              setHandleArmed(null);
-            }}
-            onDrop={(event) => {
-              event.preventDefault();
-              onDrop(index);
-            }}
           >
             <Collapse
               title={goal.name}
@@ -264,8 +208,7 @@ export function GoalsDecisionCollector({
                     className={styles.dragHandle}
                     aria-hidden="true"
                     title={t.dragToReorder}
-                    onMouseDown={() => setHandleArmed(goal.id)}
-                    onMouseUp={() => setHandleArmed(null)}
+                    {...drag.handleProps(goal.id)}
                   >
                     ⠿
                   </span>

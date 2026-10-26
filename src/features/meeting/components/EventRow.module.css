@@ -1,0 +1,41 @@
+/* Rows keep their ⋮ (and badges) on the right; the text wraps instead. */
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tw-space-3);
+  flex-wrap: nowrap;
+}
+.info {
+  flex: 1;
+  min-width: 0;
+}
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+  flex-wrap: wrap;
+}
+.meta {
+  color: var(--tw-text-muted);
+  font-size: var(--tw-font-size-sm);
+}
+/* Badges make the name's line taller; keep the details clear of them. */
+.metaSpaced {
+  margin-top: var(--tw-space-1);
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--tw-space-2);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  /* Shared events carry two badges; let them sit under the menu if needed. */
+  .actions {
+    max-width: 50%;
+  }
+}
