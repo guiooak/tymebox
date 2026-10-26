@@ -1,5 +1,5 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { makeAuthUser } from '../../test/fixtures';
 import { renderWithApp } from '../../test/render';
@@ -23,7 +23,9 @@ let setOpen: (open: boolean) => void = () => {};
 /** Lets a test open and close the modal the way its parent would. */
 function Harness({ initial }: { initial: boolean }) {
   const [open, set] = useState(initial);
-  setOpen = set;
+  useEffect(() => {
+    setOpen = set;
+  }, []);
   return <PrivacyAndData open={open} onClose={onClose} />;
 }
 
