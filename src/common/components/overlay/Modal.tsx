@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useId, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { CloseButton } from '../buttons';
 import { cx } from '../cx';
@@ -25,6 +25,7 @@ export function Modal({
   disableCloseButton,
   closeOnOverlayClick,
 }: ModalProps) {
+  const titleId = useId();
   useEffect(() => {
     if (!open) {
       return;
@@ -60,6 +61,7 @@ export function Modal({
         style={{ maxWidth: width }}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
         onClick={(event) => event.stopPropagation()}
       >
         {!disableCloseButton && (
@@ -71,7 +73,9 @@ export function Modal({
         )}
         {title && (
           <div className={cx(styles.header, !disableCloseButton && styles.clearClose)}>
-            <h3 className={styles.title}>{title}</h3>
+            <h3 id={titleId} className={styles.title}>
+              {title}
+            </h3>
           </div>
         )}
         <div
