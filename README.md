@@ -297,12 +297,24 @@ Tymebox follows Brazil's LGPD.
 
 **`.github/workflows/ci.yml`** runs on Node 24 for every push/PR to `main`:
 
-- lint, typecheck, test (+ coverage to Codecov), rules tests, production
-  audit, format check, and build;
-- then, only if all of those pass, **deploy** to **Firebase Hosting** (live
-  channel on `main`, preview channel on PRs from this repo; fork PRs are
-  skipped). Requires repo secrets: `FIREBASE_SERVICE_ACCOUNT`,
-  `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*` build vars.
+- lint (+ knip), typecheck, test (+ coverage to Codecov), rules and
+  integration tests, end-to-end tests, production audit, format check, and
+  build;
+- then, only if all of those pass, **deploy** that build to **Firebase
+  Hosting** (live channel from `main` only, preview channel on PRs from this
+  repo; fork PRs are skipped). Requires repo secrets:
+  `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*`
+  build vars.
+
+### Releases
+
+Every live deploy is a version, tagged `vX.Y.Z` on the deployed commit with a
+[GitHub Release](https://github.com/guiooak/tymebox/releases) that lists its
+commits. The number comes from the commit messages since the last release
+(`scripts/release-version.ts`): a breaking change (`feat!:` or a
+`BREAKING CHANGE:` footer) bumps the major, a `feat` the minor, anything else
+the patch. The first release is `package.json`'s version, `1.0.0`; after that
+the tags decide, and `package.json` isn't bumped.
 
 ## Languages
 
