@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   Container,
   Footer,
@@ -29,6 +29,8 @@ export function MeetingForm() {
   const [description, setDescription] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const prefilled = useRef(false);
+  const nameId = useId();
+  const descriptionId = useId();
 
   // A finished meeting is over: clear the pointer so the form starts fresh.
   // A still-running meeting takes over the live view instead.
@@ -81,8 +83,9 @@ export function MeetingForm() {
           </Heading>
           <Paragraph className={styles.lede}>{t.lede}</Paragraph>
 
-          <FormField label={t.name}>
+          <FormField label={t.name} htmlFor={nameId}>
             <FormInput
+              id={nameId}
               name="name"
               value={name}
               onChange={setName}
@@ -91,8 +94,9 @@ export function MeetingForm() {
             {nameError && <span className={styles.error}>{nameError}</span>}
           </FormField>
 
-          <FormField label={t.description}>
+          <FormField label={t.description} htmlFor={descriptionId}>
             <FormTextarea
+              id={descriptionId}
               name="description"
               value={description}
               onChange={setDescription}
