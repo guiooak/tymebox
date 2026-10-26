@@ -41,7 +41,7 @@ The README's Architecture section now states the dependency direction:
 - Features import `common/` and each other's public `index.ts`, never
   another feature's internal folders.
 
-ESLint doesn't enforce these yet; only the wrapped libraries are checked.
+ESLint now enforces these too (see `eslint.config.js`).
 
 ## Checks
 

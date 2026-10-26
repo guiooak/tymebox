@@ -22,13 +22,77 @@ const WRAPPED = {
 const message =
   'Import this library only through its common/services/* abstraction, never directly.';
 
-/** Build a no-restricted-imports rule banning every wrapped lib except `exceptKey`. */
-function restrictImports(exceptKey) {
+/**
+ * Dependency direction (see the README's Architecture section):
+ * - `common/` is app-agnostic: it never imports a feature or the shell.
+ * - Nothing imports the shell (`src/app/`).
+ * - A feature uses another feature only through its public `index.ts`
+ *   (meeting's `store` and `alerts` folders are public too).
+ */
+const FEATURES = [
+  'account',
+  'auth',
+  'brand',
+  'landing',
+  'legal',
+  'meeting',
+  'preferences',
+];
+/** Sub-folders of a feature that others may import, besides its index. */
+const PUBLIC_FOLDERS = { meeting: ['store', 'alerts'] };
+
+const UP = '^(\\.\\./)+';
+const COMMON_BOUNDARY = [
+  {
+    regex: `${UP}(features|app)(/|$)`,
+    message: 'common/ is shared code: it must not import a feature or the app shell.',
+  },
+];
+const SHELL_BOUNDARY = {
+  regex: `${UP}app(/|$)`,
+  message: 'Nothing imports the app shell (src/app/).',
+};
+
+/** Matches a deep import into `feature`, past its public surface. */
+function deepImport(feature, prefix = UP) {
+  const open = PUBLIC_FOLDERS[feature] ?? [];
+  const allowed = open.length > 0 ? `(?!(${open.join('|')})(/index)?$)` : '';
+  return {
+    regex: `${prefix}${feature}/${allowed}(?!index$).+`,
+    message: `Import ${feature} through its public index.ts, not its internal folders.`,
+  };
+}
+
+/** The boundary for files inside `feature`: other features' internals and the shell. */
+function featureBoundary(feature) {
+  return [
+    SHELL_BOUNDARY,
+    ...FEATURES.filter((f) => f !== feature).map((f) => deepImport(f)),
+  ];
+}
+
+/** The shell may import any feature, through its public surface. */
+const APP_BOUNDARY = FEATURES.map((f) => deepImport(f, '^\\.\\./features/'));
+
+/**
+ * Build a no-restricted-imports rule banning every wrapped lib except
+ * `exceptKey`, plus the given boundary patterns.
+ */
+function restrictImports(exceptKey, boundary = []) {
   const patterns = Object.entries(WRAPPED)
     .filter(([key]) => key !== exceptKey)
     .flatMap(([, globs]) => globs);
-  return ['error', { patterns: [{ group: patterns, message }] }];
+  return ['error', { patterns: [{ group: patterns, message }, ...boundary] }];
 }
+
+/** Per-abstraction exceptions: exactly one wrapped library in its own folder. */
+const LIBRARY_HOMES = [
+  [['src/common/services/datetime/**'], 'date-fns'],
+  [['src/common/services/auth/**', 'src/common/services/database/**'], 'firebase'],
+  [['src/common/services/chart/**', 'src/common/components/chart/**'], 'recharts'],
+  [['src/common/services/state/**'], 'zustand'],
+  [['src/common/services/router/**'], 'react-router'],
+];
 
 export default tseslint.config(
   {
@@ -66,27 +130,25 @@ export default tseslint.config(
     },
   },
 
+  // ── Dependency direction between common, features and the shell ──
+  {
+    files: ['src/common/**'],
+    rules: { 'no-restricted-imports': restrictImports(null, COMMON_BOUNDARY) },
+  },
+  ...FEATURES.map((feature) => ({
+    files: [`src/features/${feature}/**`],
+    rules: { 'no-restricted-imports': restrictImports(null, featureBoundary(feature)) },
+  })),
+  {
+    files: ['src/app/**'],
+    rules: { 'no-restricted-imports': restrictImports(null, APP_BOUNDARY) },
+  },
+
   // ── Per-abstraction overrides: re-enable exactly one library in its folder ──
-  {
-    files: ['src/common/services/datetime/**'],
-    rules: { 'no-restricted-imports': restrictImports('date-fns') },
-  },
-  {
-    files: ['src/common/services/auth/**', 'src/common/services/database/**'],
-    rules: { 'no-restricted-imports': restrictImports('firebase') },
-  },
-  {
-    files: ['src/common/services/chart/**', 'src/common/components/chart/**'],
-    rules: { 'no-restricted-imports': restrictImports('recharts') },
-  },
-  {
-    files: ['src/common/services/state/**'],
-    rules: { 'no-restricted-imports': restrictImports('zustand') },
-  },
-  {
-    files: ['src/common/services/router/**'],
-    rules: { 'no-restricted-imports': restrictImports('react-router') },
-  },
+  ...LIBRARY_HOMES.map(([files, library]) => ({
+    files,
+    rules: { 'no-restricted-imports': restrictImports(library, COMMON_BOUNDARY) },
+  })),
 
   // Tests may use any helper import freely.
   {

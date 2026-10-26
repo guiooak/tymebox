@@ -145,8 +145,9 @@ Two layers, with a build‑time boundary between them:
 (`date-fns`, `firebase`, `recharts`, `zustand`, `react-router*`) across `src/**`,
 re‑enabling each one only inside the folder that owns it. A feature that imports a
 library directly fails `yarn lint`.
-The dependency direction between `app`, features and their internals is a
-convention, checked in review rather than by lint.
+The dependency direction is enforced the same way: `yarn lint` fails when
+`common/` imports a feature or the shell, when anything imports `src/app/`, or
+when code outside a feature reaches past its public `index.ts`.
 
 ### Glossary
 
