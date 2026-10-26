@@ -25,6 +25,9 @@ type Times = Pick<
  */
 export function timeCards(meeting: Times): TimeCard[] {
   const t = getT().report;
+  // Events from before the schedule was required can lack planned times.
+  const clock = (value: string) => (value ? formatTime(value) : '—');
+  const length = (ms: number) => (Number.isNaN(ms) ? '—' : formatDuration(Math.abs(ms)));
   const expectedDuration = diffMs(meeting.expectedEndTime, meeting.expectedStartTime);
   const realDuration = diffMs(meeting.realEndTime, meeting.realStartTime);
 
@@ -49,22 +52,22 @@ export function timeCards(meeting: Times): TimeCard[] {
   return [
     card(
       t.start,
-      formatTime(meeting.expectedStartTime),
-      formatTime(meeting.realStartTime),
+      clock(meeting.expectedStartTime),
+      clock(meeting.realStartTime),
       diffMs(meeting.expectedStartTime, meeting.realStartTime),
       'moment',
     ),
     card(
       t.end,
-      formatTime(meeting.expectedEndTime),
-      formatTime(meeting.realEndTime),
+      clock(meeting.expectedEndTime),
+      clock(meeting.realEndTime),
       diffMs(meeting.expectedEndTime, meeting.realEndTime),
       'moment',
     ),
     card(
       t.totalDuration,
-      formatDuration(Math.abs(expectedDuration)),
-      formatDuration(Math.abs(realDuration)),
+      length(expectedDuration),
+      length(realDuration),
       expectedDuration - realDuration,
       'duration',
     ),

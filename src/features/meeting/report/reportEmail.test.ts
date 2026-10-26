@@ -97,4 +97,37 @@ describe('reportEmail', () => {
     expect(reportText(even)).toContain('• Wins — done at 10:20h');
     expect(reportText(even)).not.toMatch(/weight \d/);
   });
+
+  it('dates an event that ran past midnight by its start and its end', () => {
+    const overnight = {
+      ...meeting,
+      realStartTime: '2026-10-17T23:30:00',
+      realEndTime: '2026-10-18T00:20:00',
+    };
+    const html = reportEmailFragment(overnight, options);
+    expect(html).toContain('Started ');
+    expect(html).toContain('Finished ');
+  });
+
+  it('lists a topic with no milestone plainly, and a timing card with no plan bare', () => {
+    const unplanned = {
+      ...meeting,
+      expectedStartTime: '',
+      expectedEndTime: '',
+      sideTopics: [{ id: 't2', value: 'Loose end', goalName: '' }],
+    };
+    const html = reportEmailFragment(unplanned, options);
+    expect(html).toContain('Loose end</li>');
+    // No plan to compare with: a dash, and no feedback line.
+    expect(html).toContain('planned —');
+    expect(reportText(unplanned)).toContain('• Loose end');
+  });
+
+  it('keeps the text version short when there is little to say', () => {
+    const bare = { ...meeting, description: '', sideTopics: [] };
+    const text = reportText(bare);
+    expect(text).not.toContain('Side topics');
+    expect(text.split('\n')[1]).toBe('');
+    expect(text).not.toContain('https://');
+  });
 });
