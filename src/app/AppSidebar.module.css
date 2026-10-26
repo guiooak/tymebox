@@ -18,11 +18,31 @@
   padding-right: var(--tw-space-2);
 }
 
+/* The last row: the version on the left, the collapse button filling the rest. */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--tw-space-2);
+}
+.version {
+  padding-left: var(--tw-space-3);
+  font-family: var(--tw-font-mono);
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+  white-space: nowrap;
+  text-decoration: none;
+}
+a.version:hover {
+  color: var(--tw-text);
+  text-decoration: underline;
+}
+
 .toggle {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   border: none;
   background: none;
   cursor: pointer;

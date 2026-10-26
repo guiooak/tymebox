@@ -7,6 +7,7 @@ import { PrivacyAndData } from '../features/account';
 import { useAuthStore } from '../features/auth';
 import { Logo, TymeboxSymbol } from '../features/brand';
 import { LanguageSelect, ThemeToggle } from '../features/preferences';
+import { appVersion } from './appVersion';
 import { useNavItems } from './useNavItems';
 import styles from './AppSidebar.module.css';
 
@@ -50,6 +51,7 @@ export function AppSidebar() {
   };
   const displayName = user?.displayName ?? user?.email ?? '';
   const initial = displayName.trim().charAt(0).toUpperCase() || '?';
+  const version = appVersion(import.meta.env.VITE_APP_VERSION);
 
   return (
     <aside
@@ -116,14 +118,33 @@ export function AppSidebar() {
         </button>
       </div>
 
-      <button
-        className={styles.toggle}
-        onClick={toggle}
-        aria-label={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
-        title={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
-      >
-        {collapsed ? '»' : '«'}
-      </button>
+      <div className={styles.footer}>
+        {/* The running version, small and quiet; no room for it on the rail. */}
+        {!collapsed &&
+          (version.href ? (
+            <a
+              className={styles.version}
+              href={version.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={t.shell.versionNotes}
+            >
+              {version.label}
+            </a>
+          ) : (
+            <span className={styles.version} title={t.shell.version}>
+              {version.label}
+            </span>
+          ))}
+        <button
+          className={styles.toggle}
+          onClick={toggle}
+          aria-label={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
+          title={collapsed ? t.shell.expandMenu : t.shell.collapseMenu}
+        >
+          {collapsed ? '»' : '«'}
+        </button>
+      </div>
     </aside>
   );
 }

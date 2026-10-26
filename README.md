@@ -316,6 +316,10 @@ commits. The number comes from the commit messages since the last release
 the patch. The first release is `package.json`'s version, `1.0.0`; after that
 the tags decide, and `package.json` isn't bumped.
 
+The build carries its version as `VITE_APP_VERSION`. The expanded sidebar
+shows it at its foot, linked to the release: `v1.4.0` live, `v1.4.0-pr.12` on
+a PR preview, `dev` locally.
+
 ## Languages
 
 The interface is in English (US) and Brazilian Portuguese. Strings live in

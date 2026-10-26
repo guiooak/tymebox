@@ -74,6 +74,8 @@ export const ptBR: Messages = {
     signOut: 'Sair',
     expandMenu: 'Expandir menu',
     collapseMenu: 'Recolher menu',
+    version: 'Versão do Tymebox',
+    versionNotes: 'Notas da versão no GitHub',
     theme: {
       system: 'Tema do sistema',
       light: 'Tema claro',

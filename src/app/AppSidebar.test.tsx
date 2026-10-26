@@ -94,4 +94,27 @@ describe('AppSidebar', () => {
     });
     expect(signOut).toHaveBeenCalled();
   });
+
+  it('shows the version at its foot only while expanded', () => {
+    sidebar();
+    expect(screen.getByTitle('Tymebox version')).toHaveTextContent('dev');
+    fireEvent.click(collapseButton());
+    expect(screen.queryByTitle('Tymebox version')).not.toBeInTheDocument();
+  });
+
+  it('links a released version to its notes on GitHub', () => {
+    vi.stubEnv('VITE_APP_VERSION', '1.2.0');
+    try {
+      sidebar();
+      const link = screen.getByRole('link', { name: 'v1.2.0' });
+      expect(link).toHaveAttribute(
+        'href',
+        'https://github.com/guiooak/tymebox/releases/tag/v1.2.0',
+      );
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('title', 'Release notes on GitHub');
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
 });
