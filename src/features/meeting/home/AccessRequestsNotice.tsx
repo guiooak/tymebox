@@ -18,9 +18,11 @@ export function AccessRequestsNotice() {
   const t = useT();
   const meetings = useMeetingStore((state) => state.meetings);
 
-  const pending = Object.entries(counts)
-    .map(([id, count]) => ({ meeting: meetings.find((item) => item.id === id), count }))
-    .filter((entry) => entry.meeting && entry.count > 0);
+  // Requests on your own events only, and only the events with any waiting.
+  const pending = Object.entries(counts).flatMap(([id, count]) => {
+    const meeting = meetings.find((item) => item.id === id);
+    return meeting && count > 0 ? [{ meeting, count }] : [];
+  });
   const total = pending.reduce((sum, entry) => sum + entry.count, 0);
 
   if (total === 0) {
@@ -31,25 +33,21 @@ export function AccessRequestsNotice() {
     <Box className={styles.requests}>
       <strong>{t.home.requests.asking(total)}</strong>
       <div className={styles.requestList}>
-        {pending.map(({ meeting, count }) =>
-          meeting ? (
-            <Button
-              key={meeting.id}
-              size="sm"
-              theme="secondary"
-              outline
-              onClick={() =>
-                navigation.go(
-                  meeting.realEndTime
-                    ? eventReportPath(meeting.id)
-                    : eventPath(meeting.id),
-                )
-              }
-            >
-              {meeting.name || t.common.untitledEvent} ({count})
-            </Button>
-          ) : null,
-        )}
+        {pending.map(({ meeting, count }) => (
+          <Button
+            key={meeting.id}
+            size="sm"
+            theme="secondary"
+            outline
+            onClick={() =>
+              navigation.go(
+                meeting.realEndTime ? eventReportPath(meeting.id) : eventPath(meeting.id),
+              )
+            }
+          >
+            {meeting.name || t.common.untitledEvent} ({count})
+          </Button>
+        ))}
       </div>
       <span className={styles.meta}>{t.home.requests.hint}</span>
     </Box>

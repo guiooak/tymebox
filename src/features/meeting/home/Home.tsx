@@ -138,7 +138,7 @@ export function Home() {
           to: eventReportPath(current.id),
           hint: t.resume.reportHint,
         }
-      : current?.realStartTime
+      : current.realStartTime
         ? {
             label: t.resume.liveLabel,
             to: eventPath(current.id),

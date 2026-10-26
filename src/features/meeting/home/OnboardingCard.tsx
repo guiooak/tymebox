@@ -16,7 +16,7 @@ export type OnboardingCardProps = {
 export function OnboardingCard({ onTrySample }: OnboardingCardProps) {
   const t = useT().home.onboarding;
   const [dismissed, setDismissed] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === '1',
+    () => localStorage.getItem(STORAGE_KEY) === '1',
   );
 
   if (dismissed) {
