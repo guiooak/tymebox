@@ -138,6 +138,18 @@ Two layers, with a build‑time boundary between them:
 re‑enabling each one only inside the folder that owns it. A feature that imports a
 library directly fails `yarn lint`.
 
+### Glossary
+
+The code keeps its original names; the interface uses newer ones. Database
+paths keep the code names too, so stored data needs no migration.
+
+| In code (and the database) | In the interface |
+| -------------------------- | ---------------- |
+| `meeting`                  | event            |
+| `goal`                     | milestone        |
+| `decisions`                | notes            |
+| `sideTopics`               | parking lot      |
+
 ## Getting started
 
 Needs Node 24.12 or newer (Vitest and the Firebase testing library don't run
