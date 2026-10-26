@@ -37,10 +37,8 @@ export function GoalEditModal({ goal, onClose, onSave }: GoalEditModalProps) {
       ? t.weightError
       : null;
 
+  // Save is disabled while the weight is invalid.
   const onConfirm = () => {
-    if (weightError) {
-      return;
-    }
     onSave({ finishedAt, weight: parsedWeight });
     onClose();
   };

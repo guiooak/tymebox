@@ -189,7 +189,8 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
     {
       key: 'd',
       description: t.shortcuts.done,
-      disabled: !canRun || !active || !currentGoal,
+      // With nothing open, completeCurrentGoal itself does nothing.
+      disabled: !canRun || !active,
       onTrigger: completeCurrentGoal,
     },
     {
@@ -356,19 +357,11 @@ function DashboardBoard({ meeting, role }: { meeting: Meeting; role: Role }) {
         )}
         {canRun &&
           (active ? (
-            <Button
-              theme="success"
-
-              onClick={() => void onFinish()}
-            >
+            <Button theme="success" onClick={() => void onFinish()}>
               {t.finishEvent}
             </Button>
           ) : (
-            <Button
-              theme="success"
-
-              onClick={() => void onStart()}
-            >
+            <Button theme="success" onClick={() => void onStart()}>
               {t.startEvent}
             </Button>
           ))}
