@@ -9,9 +9,12 @@ export type SwitchProps = {
 
 export function Switch({ checked, disabled, onChange, label }: SwitchProps) {
   return (
-    <label className={styles.switch} aria-label={label}>
+    <label className={styles.switch}>
+      {/* The name goes on the control itself: a <label>'s aria-label names nothing. */}
       <input
         type="checkbox"
+        role="switch"
+        aria-label={label}
         checked={checked}
         disabled={disabled}
         onChange={(event) => onChange(event.target.checked)}
