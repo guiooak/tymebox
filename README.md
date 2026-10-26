@@ -206,10 +206,13 @@ their owner signs in.
 | `yarn preview`                          | Preview the production build                                  |
 | `yarn lint`                             | ESLint (incl. the import‑boundary rules)                      |
 | `yarn typecheck`                        | `tsc -b` only                                                 |
-| `yarn test` / `yarn test:coverage`      | Vitest                                                        |
-| `yarn test:rules`                       | Security-rules tests against the Database emulator (Java 21+) |
+| `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                            |
+| `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)        |
 | `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
 | `yarn format` / `yarn format:check`     | Prettier                                                      |
+
+How the tests are organised, and the rules for adding to them, are in
+[docs/testing.md](docs/testing.md).
 
 ## Brand
 

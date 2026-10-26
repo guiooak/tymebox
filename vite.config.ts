@@ -42,11 +42,9 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/features/legal/content/types.ts',
       ],
-      // A ratchet on the way to 100%: each run that does better raises these
-      // numbers in this file, and a run that does worse fails. See
-      // docs/testing.md.
+      // Everything is covered, and CI fails below 100%. Untestable lines are
+      // rare and listed with their reason in docs/testing.md.
       thresholds: {
-        autoUpdate: true,
         lines: 100,
         statements: 100,
         functions: 100,
