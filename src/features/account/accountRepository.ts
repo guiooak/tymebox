@@ -57,10 +57,9 @@ export async function summarizeAccount(uid: string): Promise<AccountSummary> {
 function browserSettings(): Record<string, string> {
   const settings: Record<string, string> = {};
   try {
-    for (let index = 0; index < localStorage.length; index += 1) {
-      const name = localStorage.key(index);
-      if (name?.startsWith('tw-')) {
-        settings[name] = localStorage.getItem(name) ?? '';
+    for (const [name, value] of Object.entries(localStorage)) {
+      if (name.startsWith('tw-')) {
+        settings[name] = String(value);
       }
     }
   } catch {
