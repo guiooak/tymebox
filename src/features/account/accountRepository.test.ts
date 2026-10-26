@@ -117,6 +117,35 @@ describe('exportAccount', () => {
   });
 });
 
+describe('exportAccount with nothing saved', () => {
+  it('returns empty sections instead of missing ones', async () => {
+    for (const name of Object.keys(tree)) {
+      delete tree[name];
+    }
+    localStorage.clear();
+    const data = await exportAccount(ME);
+    expect(data).toMatchObject({
+      profile: {},
+      events: [],
+      sharedWithMe: {},
+      requestsFiled: [],
+      browser: {},
+    });
+    expect(await summarizeAccount('me')).toEqual({ events: 0, sharedEvents: 0 });
+  });
+
+  it('leaves out requests that were since answered, and public events count as shared', async () => {
+    tree.users = { me: { requested: { asked: true, answered: true } } };
+    (tree.meetingAccess as Record<string, unknown>).mine2 = {
+      owner: 'me',
+      visibility: 'public',
+    };
+    const data = await exportAccount(ME);
+    expect(data.requestsFiled.map((entry) => entry.eventId)).toEqual(['asked']);
+    expect(await summarizeAccount('me')).toEqual({ events: 2, sharedEvents: 2 });
+  });
+});
+
 describe('deleteAccount', () => {
   it('signs in again, erases everything, and deletes the sign-in last', async () => {
     await deleteAccount(ME, () => calls.push('release listeners'));
@@ -134,6 +163,37 @@ describe('deleteAccount', () => {
     ]);
     expect(localStorage.getItem('tw-theme')).toBeNull();
     expect(localStorage.getItem('unrelated')).toBe('keep');
+  });
+
+  it('copes with an account that has nothing anywhere', async () => {
+    for (const name of Object.keys(tree)) {
+      delete tree[name];
+    }
+    // A request whose event is already gone: no owner to tidy up after.
+    tree.users = { me: { requested: { gone: true } } };
+    await deleteAccount(ME);
+    expect(calls).toEqual([
+      'reauthenticate',
+      `remove accessRequests/gone/${MY_KEY}`,
+      'remove users/me',
+      'deleteUser',
+    ]);
+  });
+
+  it('deletes a user who never filed a request', async () => {
+    tree.users = {};
+    await deleteAccount(ME);
+    expect(calls).not.toContain(`remove accessRequests/asked/${MY_KEY}`);
+    expect(calls.at(-1)).toBe('deleteUser');
+  });
+
+  it('still deletes when the browser storage is blocked', async () => {
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    await deleteAccount(ME);
+    expect(calls.at(-1)).toBe('deleteUser');
+    vi.restoreAllMocks();
   });
 
   it('deletes nothing when the Google sign-in is closed', async () => {
