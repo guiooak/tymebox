@@ -46,6 +46,24 @@ describe('alertThresholds', () => {
       alertThresholds({ goals: [], expectedStartTime: '', expectedEndTime: '' }),
     ).toEqual({ warnAfterTs: null, endTs: null });
   });
+
+  it('warns once the current milestone runs past its share, and ends at the planned end', () => {
+    const goal = (id: string, finishedAt = '') => ({
+      id,
+      name: id,
+      weight: 1,
+      finishedAt,
+      decisions: '',
+    });
+    const start = new Date(START).toISOString();
+    expect(
+      alertThresholds({
+        goals: [goal('a', start), goal('b'), goal('c')],
+        expectedStartTime: start,
+        expectedEndTime: new Date(END).toISOString(),
+      }),
+    ).toEqual({ warnAfterTs: START + 40 * MIN, endTs: END });
+  });
 });
 
 describe('alertState', () => {

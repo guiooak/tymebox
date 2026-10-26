@@ -90,6 +90,21 @@ describe('summarizeMeeting', () => {
     });
   });
 
+  it('warns for a small overrun and says exactly on budget when it was', () => {
+    expect(summarizeMeeting(finished('a', 1, 66)).outcome).toEqual({
+      label: '10% over budget',
+      theme: 'warning',
+    });
+    expect(summarizeMeeting(finished('a', 1, 60)).outcome).toEqual({
+      label: 'On budget',
+      theme: 'success',
+    });
+  });
+
+  it('has no duration at all for an unscheduled draft', () => {
+    expect(summarizeMeeting(meeting({})).durationLabel).toBe('');
+  });
+
   it('has no outcome for an event that never ran, and falls back to planned duration', () => {
     const draft = meeting({
       expectedStartTime: '2026-08-01T09:00:00.000Z',
@@ -137,6 +152,40 @@ describe('computeMeetingMetrics', () => {
 
     expect(metrics.recent).toHaveLength(5);
     expect(metrics.recent[0].id).toBe('m6');
+  });
+
+  it('counts time spent without a plan, and nothing for an event with no real start', () => {
+    const unplanned = meeting({
+      id: 'u',
+      status: 'finished',
+      realStartTime: '2026-08-04T09:00:00.000Z',
+      realEndTime: '2026-08-04T09:20:00.000Z',
+    });
+    const noStart = meeting({
+      id: 'n',
+      status: 'finished',
+      realEndTime: '2026-08-04T09:20:00.000Z',
+    });
+    const metrics = computeMeetingMetrics([unplanned, noStart], now);
+    expect(metrics.budgetRatio).toBeNull();
+    expect(metrics.totalSpentMs).toBe(20 * 60_000);
+  });
+
+  it('counts a goal without a weight as weighing 1', () => {
+    const event = meeting({
+      ...finished('w', 4, 50),
+      goals: [
+        {
+          id: 'a',
+          name: 'A',
+          weight: 0,
+          finishedAt: '2026-08-04T09:10:00.000Z',
+          decisions: '',
+        },
+        { id: 'b', name: 'B', weight: 1, finishedAt: '', decisions: '' },
+      ],
+    });
+    expect(computeMeetingMetrics([event], now).goalCompletion).toBe(0.5);
   });
 
   it('weights goal completion and tracks the streak', () => {

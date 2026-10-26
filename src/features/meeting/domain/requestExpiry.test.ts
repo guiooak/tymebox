@@ -70,6 +70,18 @@ describe('access request expiry', () => {
     expect(count).toBe(4);
   });
 
+  it('treats a request without a date as expired, and an event with nothing as clean', async () => {
+    Object.assign(tree, {
+      accessRequests: { e2: { 'nodate@x,com': { email: 'nodate@x.com' } } },
+      requestsByOwner: { me: {} },
+    });
+    expect(await expireRequests('me', ['e2', 'empty'])).toBe(2);
+    expect(written).toEqual({
+      'accessRequests/e2/nodate@x,com': null,
+      'requestsByOwner/me/e2/nodate@x,com': null,
+    });
+  });
+
   it('writes nothing when everything is current', async () => {
     expect(await expireRequests('me', [])).toBe(0);
     expect(written).toBeNull();

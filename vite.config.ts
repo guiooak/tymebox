@@ -26,7 +26,7 @@ export default defineConfig({
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov', 'json-summary', 'html'],
+      reporter: ['text-summary', 'lcov', 'json', 'json-summary', 'html'],
       clean: true,
       include: ['src/**/*.{ts,tsx}'],
       // Only what has no runtime code: tests and their helpers, the entry
@@ -43,10 +43,10 @@ export default defineConfig({
       // docs/testing.md.
       thresholds: {
         autoUpdate: true,
-        lines: 54.29,
-        statements: 53.62,
-        functions: 50.38,
-        branches: 46.58,
+        lines: 58.81,
+        statements: 58.2,
+        functions: 57.63,
+        branches: 51.32,
       },
     },
   },

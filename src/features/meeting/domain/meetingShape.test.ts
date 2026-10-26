@@ -1,4 +1,10 @@
-import { fromLegacy, goalsToRecord, normalizeMeeting, toGoals } from './meetingShape';
+import {
+  fromLegacy,
+  goalsToRecord,
+  normalizeMeeting,
+  toGoals,
+  toStoredMeeting,
+} from './meetingShape';
 
 const goal = (id: string, extra: Record<string, unknown> = {}) => ({
   id,
@@ -86,5 +92,64 @@ describe('fromLegacy', () => {
     expect(stored.name).toHaveLength(200);
     expect(stored.goals.g1.name).toHaveLength(500);
     expect(stored.goals.g1.weight).toBe(100);
+  });
+});
+
+describe('reading partial data', () => {
+  it('fills every missing goal field', () => {
+    expect(toGoals({ k: {} })).toEqual([
+      { id: 'k', name: '', weight: 1, finishedAt: '', decisions: '' },
+    ]);
+  });
+
+  it('breaks an `order` tie by key, in either direction', () => {
+    const tied = toGoals({
+      b: goal('b', { order: 1 }),
+      a: goal('a', { order: 1 }),
+      c: goal('c', { order: 1 }),
+    });
+    expect(tied.map((item) => item.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('turns an empty node into a blank draft', () => {
+    expect(normalizeMeeting({})).toEqual({
+      id: '',
+      owner: '',
+      ownerName: '',
+      name: '',
+      description: '',
+      expectedStartTime: '',
+      expectedEndTime: '',
+      realStartTime: '',
+      realEndTime: '',
+      goals: [],
+      sideTopics: [],
+      status: 'draft',
+      createdAt: '',
+      updatedAt: '',
+    });
+    expect(normalizeMeeting({ id: 'own-id', status: 'archived' as never })).toMatchObject(
+      {
+        id: 'own-id',
+        status: 'draft',
+      },
+    );
+  });
+});
+
+describe('toStoredMeeting', () => {
+  it('stores topics under their key, or their position when new', () => {
+    const stored = toStoredMeeting(
+      normalizeMeeting({
+        sideTopics: { k1: { id: 't1', value: 'Kept', goalName: '' } } as never,
+      }),
+    );
+    expect(stored.sideTopics).toEqual({ k1: { id: 't1', value: 'Kept', goalName: '' } });
+
+    const fresh = toStoredMeeting({
+      ...normalizeMeeting({}),
+      sideTopics: [{ id: 't2', value: 'New', goalName: '' }],
+    });
+    expect(fresh.sideTopics).toEqual({ 0: { id: 't2', value: 'New', goalName: '' } });
   });
 });

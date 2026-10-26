@@ -1,4 +1,4 @@
-import { toSideTopics } from './sideTopics';
+import { compareKeys, toSideTopics } from './sideTopics';
 
 const topic = (id: string) => ({ id, value: id, goalName: '' });
 
@@ -27,5 +27,31 @@ describe('toSideTopics', () => {
       { id: 'x', value: '', goalName: '', key: 'k' },
     ]);
     expect(toSideTopics(null)).toEqual([]);
+    expect(toSideTopics({ k: {} })).toEqual([
+      { id: '', value: '', goalName: '', key: 'k' },
+    ]);
+  });
+});
+
+describe('toSideTopics key order', () => {
+  it('sorts push keys as text, after the numeric ones, whatever the input order', () => {
+    const topics = toSideTopics({
+      '-Nb': topic('b'),
+      '-Na': topic('a'),
+      '10': topic('ten'),
+      '2': topic('two'),
+      '-Nc': topic('c'),
+    });
+    expect(topics.map((item) => item.key)).toEqual(['2', '10', '-Na', '-Nb', '-Nc']);
+  });
+});
+
+describe('compareKeys', () => {
+  it('puts integer keys first, in number order, then the rest as text', () => {
+    expect(compareKeys('2', '10')).toBeLessThan(0);
+    expect(compareKeys('1', '-Na')).toBe(-1);
+    expect(compareKeys('-Na', '1')).toBe(1);
+    expect(compareKeys('-Na', '-Nb')).toBe(-1);
+    expect(compareKeys('-Nb', '-Na')).toBe(1);
   });
 });
