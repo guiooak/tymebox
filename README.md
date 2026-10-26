@@ -128,15 +128,25 @@ Two layers, with a build‑time boundary between them:
   - `services/<lib>/` — one folder per wrapped external library, each exposing
     **our own interface**. A feature imports `common/services/datetime`, never
     `date-fns`. Browser APIs get the same treatment where they're worth
-    isolating (`notifications`, `download`).
+    isolating (`notifications`, `download`, `clipboard`).
   - `tokens/` — design‑system CSS custom properties.
-- **`src/features/`** + **`src/app/`** — the Tymebox application, depending
-  only on `common/`.
+- **`src/features/`** — the Tymebox application, one folder per feature
+  (`meeting`, `account`, `auth`, `landing`, `legal`, `brand`, `preferences`).
+  Features depend on `common/` and on each other, never on `src/app/`.
+  Each feature has an `index.ts` that is its public surface: another feature
+  imports `features/meeting`, not `features/meeting/domain/…`. Meeting's
+  sub-folders with their own index (`meeting/store`, `meeting/alerts`) are
+  public too.
+- **`src/app/`** — the shell: routes, sidebar, mobile nav and footer. It
+  wires the features together, so it may import any of them. Nothing imports
+  `src/app/`.
 
 **Enforcement:** ESLint `no-restricted-imports` bans every wrapped library
 (`date-fns`, `firebase`, `recharts`, `zustand`, `react-router*`) across `src/**`,
 re‑enabling each one only inside the folder that owns it. A feature that imports a
 library directly fails `yarn lint`.
+The dependency direction between `app`, features and their internals is a
+convention, checked in review rather than by lint.
 
 ### Glossary
 
