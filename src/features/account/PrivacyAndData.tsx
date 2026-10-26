@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, FormInput, Modal, useDialog } from '../../common/components';
+import { downloadJson } from '../../common/services/download';
 import { useLocale, useT } from '../../common/services/i18n';
 import { Link, privacyPath } from '../../common/services/router';
 import { useAuthStore } from '../auth';
@@ -14,17 +15,6 @@ import {
 import styles from './PrivacyAndData.module.css';
 
 export type PrivacyAndDataProps = { open: boolean; onClose: () => void };
-
-/** Hands the export to the browser as a file download. */
-function download(data: unknown, filename: string) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-}
 
 const isPopupClosed = (error: unknown) =>
   typeof error === 'object' &&
@@ -94,7 +84,7 @@ export function PrivacyAndData({ open, onClose }: PrivacyAndDataProps) {
     setError(null);
     try {
       const data = await exportAccount(user);
-      download(data, `tymebox-${data.exportedAt.slice(0, 10)}.json`);
+      downloadJson(data, `tymebox-${data.exportedAt.slice(0, 10)}.json`);
     } catch {
       setError(t.exportError);
     } finally {
