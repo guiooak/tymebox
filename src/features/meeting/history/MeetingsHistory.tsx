@@ -75,7 +75,7 @@ export function MeetingsHistory() {
       finished: 0,
     };
     for (const meeting of meetings) {
-      result[meeting.status] = (result[meeting.status] ?? 0) + 1;
+      result[meeting.status] += 1;
     }
     return result;
   }, [meetings]);
@@ -174,7 +174,7 @@ export function MeetingsHistory() {
                     onClick={() => setFilter(key)}
                   >
                     {t.filters[key]}
-                    <span className={styles.count}>{counts[key] ?? 0}</span>
+                    <span className={styles.count}>{counts[key]}</span>
                   </button>
                 ))}
               </div>
