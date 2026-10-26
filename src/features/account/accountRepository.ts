@@ -4,9 +4,12 @@ import {
   type AuthUser,
 } from '../../common/services/auth';
 import { read, readWhere, removeAt, writeMany } from '../../common/services/database';
-import { emailKey } from '../meeting/domain/access';
-import { deleteMeetingEverywhere } from '../meeting/domain/meetingRepository';
-import { normalizeMeeting, type RawMeeting } from '../meeting/domain/meetingShape';
+import {
+  deleteMeetingEverywhere,
+  emailKey,
+  normalizeMeeting,
+  type RawMeeting,
+} from '../meeting';
 
 /*
  * The data subject's rights (LGPD art. 18) for one account: see everything we
