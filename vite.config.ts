@@ -26,7 +26,12 @@ export default defineConfig({
       VITE_FIREBASE_APP_ID: 'test-app-id',
     },
     // Rules tests need the database emulator: `yarn test:rules`.
-    exclude: ['**/node_modules/**', 'src/test/rules/**', 'src/test/integration/**'],
+    exclude: [
+      '**/node_modules/**',
+      'e2e/**',
+      'src/test/rules/**',
+      'src/test/integration/**',
+    ],
     css: true,
     coverage: {
       provider: 'v8',
