@@ -70,8 +70,9 @@ export function DatePicker({
   };
 
   const onTimeChange = (raw: string) => {
+    // A cleared field sends '', which splits into a single part: no minutes.
     const [h, m] = raw.split(':').map(Number);
-    if (Number.isNaN(h) || Number.isNaN(m)) {
+    if (!Number.isFinite(h) || !Number.isFinite(m)) {
       return;
     }
     const base = selected ?? new Date();
