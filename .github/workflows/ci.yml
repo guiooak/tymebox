@@ -96,9 +96,6 @@ jobs:
           name: dist
           path: dist/
 
-  # Only ships once every check above has passed. Pushes to main go to the live
-  # channel; PRs get an ephemeral preview channel. PRs from forks are skipped,
-  # since they don't receive the Firebase secrets.
   # Security rules against the Realtime Database emulator (needs Java).
   test-rules:
     runs-on: ubuntu-latest
@@ -116,14 +113,51 @@ jobs:
       - run: yarn install --immutable
       - run: yarn test:rules
 
+  # The app in Chromium (desktop and phone) against the Auth and Database
+  # emulators: the main flows end to end, including sharing between people.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: yarn
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: yarn install --immutable
+      - name: Cache Playwright's Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+      - run: npx playwright install --with-deps chromium
+      - run: yarn test:e2e
+      - name: Keep the report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  # Only ships once every check above has passed. Pushes to main go to the live
+  # channel; PRs get an ephemeral preview channel. PRs from forks are skipped,
+  # since they don't receive the Firebase secrets.
   deploy:
     # Hosting waits for the rules on main: a new client against old rules (or
     # the reverse) would fail its reads and writes until both are live.
-    needs: [lint, typecheck, test, test-rules, audit, format, build, deploy-rules]
+    needs: [lint, typecheck, test, test-rules, e2e, audit, format, build, deploy-rules]
     if: >-
       always() && !cancelled()
       && needs.lint.result == 'success' && needs.typecheck.result == 'success'
       && needs.test.result == 'success' && needs.test-rules.result == 'success'
+      && needs.e2e.result == 'success'
       && needs.audit.result == 'success'
       && needs.format.result == 'success' && needs.build.result == 'success'
       && (needs.deploy-rules.result == 'success' || needs.deploy-rules.result == 'skipped')
@@ -181,7 +215,7 @@ jobs:
   # Consumer and API Keys Viewer. Never use the firebase-adminsdk account here:
   # it can read and delete every user's data.
   deploy-rules:
-    needs: [lint, typecheck, test, test-rules, audit, format, build]
+    needs: [lint, typecheck, test, test-rules, e2e, audit, format, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

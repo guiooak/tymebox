@@ -208,6 +208,7 @@ their owner signs in.
 | `yarn typecheck`                        | `tsc -b` only                                                 |
 | `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                            |
 | `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)        |
+| `yarn test:e2e`                         | Playwright, desktop and phone, on the emulators (Java 21+)    |
 | `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
 | `yarn format` / `yarn format:check`     | Prettier                                                      |
 

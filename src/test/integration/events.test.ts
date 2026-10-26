@@ -53,7 +53,10 @@ describe('an event’s lifecycle', () => {
     await setSideTopicValue(event.id, key, 'Budget 2027');
     await resetProgress(event.id, [makeGoal({ id: 'g9' })], { realStartTime: '' });
 
-    const stored = await peek<Record<string, any>>(`meetings/${event.id}`);
+    const stored = await peek<{
+      goals: Record<string, Record<string, unknown>>;
+      sideTopics: Record<string, { value: string }>;
+    }>(`meetings/${event.id}`);
     expect(stored).toMatchObject({ name: 'Renamed', status: 'active' });
     expect(stored?.goals.g9).toMatchObject({
       order: 0,

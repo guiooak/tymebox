@@ -3,8 +3,9 @@
 Tymebox is tested in layers. The first three run in Vitest under jsdom and
 count towards coverage, which is held at **100%** of lines, statements,
 functions and branches: CI fails below it, and the deploy waits for CI. The
-others hit the real Firebase emulators, so they run apart and don't count
-towards the number.
+others hit the real Firebase emulators or a real browser, so they run apart
+and don't count towards the number. All of them run in CI on every push and
+pull request.
 
 | Layer | What it tests | Where | Run with |
 | --- | --- | --- | --- |
@@ -13,9 +14,10 @@ towards the number.
 | Store | `meetingStore` with its logic real and the repository mocked | `src/features/meeting/store` | `yarn test` |
 | Rules | `database.rules.json` alone, by raw paths | `src/test/rules` | `yarn test:rules` |
 | Integration | The real repositories against the emulators with the real rules, signed in as made-up users | `src/test/integration` | `yarn test:rules` |
+| End to end | The app in Chromium, desktop and phone, on the emulators | `e2e/` | `yarn test:e2e` |
 
 `yarn test:coverage` writes the report to `coverage/` (`index.html` shows
-every uncovered line and branch). `yarn test:rules` needs
+every uncovered line and branch). `yarn test:rules` and `yarn test:e2e` need
 Java 21+ for the emulators (`brew install openjdk@21`, then put it first in
 `PATH`).
 
@@ -43,6 +45,26 @@ Java 21+ for the emulators (`brew install openjdk@21`, then put it first in
 - **`src/test/integration/harness.ts`**: `signInAs(email)` signs the app in
   through the Auth emulator; `peek` and `plant` read and write with the rules
   off; `createEventAs` creates an event through the app's own code.
+
+## End to end
+
+`yarn test:e2e` starts the Auth and Database emulators, then Playwright
+starts the app against them (`yarn dev:local` on port 5300) and runs
+`e2e/*.spec.ts` in two projects, desktop (1280×800) and phone (iPhone 13).
+Each test signs in through the emulator-only "Test sign-in" field on the
+landing with a fresh address (`uniqueEmail`), so tests never share data.
+Several people at once (sharing, requests) are separate browser contexts
+(`personIn`). The first run needs `npx playwright install chromium`.
+
+| Spec | Flow |
+| --- | --- |
+| `event-lifecycle` | Create from a template, start, tick milestones, park a topic, finish, read the report, reopen |
+| `sharing` | Share with a viewer (read-only), a stranger requests access, the owner approves as contributor, who then runs the event |
+| `account` | Export the data as JSON, delete the account, sign in again to an empty account (desktop) |
+| `responsive` | Home, board and report on a phone: tab bar shown, no sideways scroll |
+
+A failed run in CI keeps the Playwright report and traces as the
+`playwright-report` artifact.
 
 ## Rules for tests
 

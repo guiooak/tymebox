@@ -18,3 +18,7 @@ coverage
 .yarn/*
 !.yarn/releases
 .pnp.*
+
+# Playwright
+playwright-report/
+test-results/
