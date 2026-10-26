@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '../../../common/components';
+import { copyText } from '../../../common/services/clipboard';
 import { useT } from '../../../common/services/i18n';
 import { useMeetingStore } from '../store';
 import { eventLink, ShareModal } from './ShareModal';
@@ -26,7 +27,7 @@ export function ShareButton() {
   if (role !== 'owner') {
     const copy = async () => {
       try {
-        await navigator.clipboard.writeText(eventLink(event.id));
+        await copyText(eventLink(event.id));
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       } catch {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Modal } from '../../../common/components';
-import { copyRich } from '../../../common/services/clipboard';
+import { copyRich, copyText } from '../../../common/services/clipboard';
 import { useT } from '../../../common/services/i18n';
 import { eventReportPath } from '../../../common/services/router';
 import type { Meeting } from '../domain/types';
@@ -65,7 +65,7 @@ export function TemplatePreviewModal({
   const onCopyEmails = async (emails: string[]) => {
     setFailed(false);
     try {
-      await navigator.clipboard.writeText(emails.join(', '));
+      await copyText(emails.join(', '));
       setCopiedEmails(emails.length);
       setTimeout(() => setCopiedEmails(0), 2000);
     } catch {

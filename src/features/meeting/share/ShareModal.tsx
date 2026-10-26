@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Button, Modal, Select, type SelectOption } from '../../../common/components';
+import { copyText } from '../../../common/services/clipboard';
 import { useT, type Messages } from '../../../common/services/i18n';
 import { eventPath } from '../../../common/services/router';
 import {
@@ -203,7 +204,7 @@ export function ShareModal({ open, onClose }: ShareModalProps) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(link);
+      await copyText(link);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

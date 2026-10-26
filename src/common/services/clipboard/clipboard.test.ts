@@ -1,8 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { copyRich } from '.';
+import { copyRich, copyText } from '.';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('copyText', () => {
+  it('puts plain text on the clipboard', async () => {
+    await copyText('Hello');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Hello');
+  });
 });
 
 describe('copyRich', () => {

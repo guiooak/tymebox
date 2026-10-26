@@ -1,3 +1,8 @@
+/** Put plain text on the clipboard. */
+export async function copyText(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
+}
+
 /**
  * Put rich content on the clipboard: HTML for mail and docs, plain text for
  * everything else. Browsers without ClipboardItem get the text only.
@@ -18,5 +23,5 @@ export async function copyRich({
     ]);
     return;
   }
-  await navigator.clipboard.writeText(text);
+  await copyText(text);
 }
