@@ -43,10 +43,10 @@ export default defineConfig({
       // docs/testing.md.
       thresholds: {
         autoUpdate: true,
-        lines: 45.21,
-        statements: 44.82,
-        functions: 44.24,
-        branches: 39.08,
+        lines: 54.29,
+        statements: 53.62,
+        functions: 50.38,
+        branches: 46.58,
       },
     },
   },
