@@ -142,13 +142,10 @@ export function Select<T extends string>({
   // Keep the highlighted option in view while moving through a long list.
   useEffect(() => {
     if (open) {
-      (document.getElementById(optionId(active)) as HTMLElement).scrollIntoView({
-        block: 'nearest',
-      });
+      const option = document.getElementById(`${baseId}-option-${active}`);
+      (option as HTMLElement).scrollIntoView({ block: 'nearest' });
     }
-    // optionId only depends on baseId.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, active]);
+  }, [open, active, baseId]);
 
   const jumpToLetter = (key: string) => {
     const letter = key.toLowerCase();
