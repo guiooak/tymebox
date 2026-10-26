@@ -52,7 +52,8 @@ export function setViewport(viewport: Viewport, extra: string[] = []) {
 /** Shows the router's current path, for tests that check navigation. */
 export function CurrentPath() {
   const location = useLocation();
-  return <output data-testid="path">{location.pathname + location.search}</output>;
+  // A plain span: an <output> would count as a status region in role queries.
+  return <span data-testid="path">{location.pathname + location.search}</span>;
 }
 
 export type RenderOptions = {

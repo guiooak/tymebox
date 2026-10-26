@@ -12,6 +12,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // Failed writes are meant to surface as unhandled rejections (SaveErrorToast
+    // shows them). A test that plays one marks its error "[expected]"; any
+    // other unhandled error still fails the run.
+    onUnhandledError: (error) => !String(error?.message ?? '').includes('[expected]'),
     // A made-up Firebase config, so modules that set Firebase up on import
     // (auth, database) load without mocks. Nothing here reaches the network.
     env: {
@@ -43,10 +47,10 @@ export default defineConfig({
       // docs/testing.md.
       thresholds: {
         autoUpdate: true,
-        lines: 82.71,
-        statements: 82.28,
-        functions: 81.94,
-        branches: 78.67,
+        lines: 86.93,
+        statements: 86.77,
+        functions: 86.28,
+        branches: 82.25,
       },
     },
   },

@@ -1,4 +1,6 @@
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import { makeLiveMeeting, makeViewer } from '../../../test/fixtures';
+import { renderWithApp, type RenderOptions } from '../../../test/render';
 import { MemoryRouter } from 'react-router-dom';
 import { Route, Routes } from '../../../common/services/router';
 import { useMeetingStore } from '../store';
@@ -32,5 +34,43 @@ describe('EventGate', () => {
       }),
     );
     expect(openEvent).toHaveBeenCalledWith('abc');
+  });
+});
+
+describe('EventGate states', () => {
+  const event = makeLiveMeeting();
+  const gate = (route: string, store: RenderOptions['store']) =>
+    renderWithApp(<EventGate>{(open, role) => `${open.name} as ${role}`}</EventGate>, {
+      route,
+      path: route === '/' ? '/' : '/events/:id',
+      store: { openEvent: () => () => {}, user: makeViewer(), ...store },
+    });
+
+  it('goes Home without an event id in the URL', () => {
+    const { path } = gate('/', {});
+    expect(path()).toBe('/');
+  });
+
+  it('waits while the event opens or its role is settling', () => {
+    const { unmount } = gate('/events/m1', { openId: 'other', eventView: 'ready' });
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    unmount();
+    const loading = gate('/events/m1', { openId: 'm1', eventView: 'loading' });
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    loading.unmount();
+    gate('/events/m1', { openId: 'm1', eventView: 'ready', event, role: null });
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  it('shows the request page when access is denied', () => {
+    gate('/events/m1', { openId: 'm1', eventView: 'denied', access: null });
+    expect(
+      screen.getByRole('heading', { name: /don’t have access/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows the page once the event and your role are known', () => {
+    gate('/events/m1', { openId: 'm1', eventView: 'ready', event, role: 'viewer' });
+    expect(screen.getByText('Weekly planning as viewer')).toBeInTheDocument();
   });
 });
