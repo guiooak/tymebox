@@ -13,8 +13,6 @@ export type FormInputProps = {
   minLength?: number;
   maxLength?: number;
   validate?: FieldValidator;
-  groupKey?: string;
-  subGroupKey?: string;
   id?: string;
   className?: string;
 };

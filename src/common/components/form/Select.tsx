@@ -89,21 +89,18 @@ export function Select<T extends string>({
   const close = () => setOpen(false);
 
   const choose = (index: number) => {
-    const option = options[index];
     close();
-    if (option && option.value !== value) {
-      onChange(option.value);
+    if (options[index].value !== value) {
+      onChange(options[index].value);
     }
   };
 
   // Place the list under the button (or above, when it would run off the
   // bottom), at least as wide as the button and kept inside the viewport.
   const place = useCallback(() => {
-    const trigger = triggerRef.current;
-    const list = listRef.current;
-    if (!trigger || !list) {
-      return;
-    }
+    // Only runs while the list is open, so both elements are mounted.
+    const trigger = triggerRef.current as HTMLButtonElement;
+    const list = listRef.current as HTMLUListElement;
     const rect = trigger.getBoundingClientRect();
     const height = list.offsetHeight;
     const width = Math.max(rect.width, list.offsetWidth);
@@ -126,7 +123,9 @@ export function Select<T extends string>({
     }
     const onPointerDown = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (!triggerRef.current?.contains(target) && !listRef.current?.contains(target)) {
+      const trigger = triggerRef.current as HTMLButtonElement;
+      const list = listRef.current as HTMLUListElement;
+      if (!trigger.contains(target) && !list.contains(target)) {
         close();
       }
     };
@@ -143,7 +142,9 @@ export function Select<T extends string>({
   // Keep the highlighted option in view while moving through a long list.
   useEffect(() => {
     if (open) {
-      document.getElementById(optionId(active))?.scrollIntoView?.({ block: 'nearest' });
+      (document.getElementById(optionId(active)) as HTMLElement).scrollIntoView({
+        block: 'nearest',
+      });
     }
     // optionId only depends on baseId.
     // eslint-disable-next-line react-hooks/exhaustive-deps

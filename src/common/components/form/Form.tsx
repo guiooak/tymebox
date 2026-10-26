@@ -12,34 +12,14 @@ import { FormContext, type FieldRecord, type FormContextValue } from './formCont
 
 export type FormProps = {
   children: ReactNode;
-  onSubmit?: (data: Record<string, unknown>) => void;
+  onSubmit?: (data: Record<string, string>) => void;
   onReset?: () => void;
   confirmReset?: boolean;
   className?: string;
 };
 
-function buildOutput(records: FieldRecord[]): Record<string, unknown> {
-  const out: Record<string, unknown> = {};
-  for (const record of records) {
-    const value = record.getValue();
-    if (record.groupKey) {
-      const arr = (out[record.groupKey] as Array<Record<string, unknown>>) ?? [];
-      out[record.groupKey] = arr;
-      if (record.subGroupKey) {
-        let obj = arr.find((item) => item.id === record.subGroupKey);
-        if (!obj) {
-          obj = { id: record.subGroupKey };
-          arr.push(obj);
-        }
-        obj[record.name] = value;
-      } else {
-        arr.push({ [record.name]: value });
-      }
-    } else {
-      out[record.name] = value;
-    }
-  }
-  return out;
+function buildOutput(records: FieldRecord[]): Record<string, string> {
+  return Object.fromEntries(records.map((record) => [record.name, record.getValue()]));
 }
 
 export function Form({

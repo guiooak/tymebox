@@ -15,13 +15,10 @@ export type UseFormFieldOptions = {
   minLength?: number;
   maxLength?: number;
   validate?: FieldValidator;
-  groupKey?: string;
-  subGroupKey?: string;
 };
 
 function computeError(value: string, options: UseFormFieldOptions): string | null {
-  const trimmed = value?.trim?.() ?? '';
-  if (options.required && !trimmed) {
+  if (options.required && !value.trim()) {
     return getT().common.required;
   }
   if (options.minLength && value.length < options.minLength) {
@@ -80,8 +77,6 @@ export function useFormField(options: UseFormFieldOptions): UseFormFieldResult {
     form.register({
       id,
       name: optionsRef.current.name,
-      groupKey: optionsRef.current.groupKey,
-      subGroupKey: optionsRef.current.subGroupKey,
       getValue: () => valueRef.current,
       isValid: () => computeError(valueRef.current, optionsRef.current) === null,
       markTouched: () => setTouched(true),
