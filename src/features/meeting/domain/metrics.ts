@@ -118,8 +118,8 @@ export function summarizeMeeting(meeting: Meeting): MeetingSummary {
 
   return {
     status: {
-      label: t.status[meeting.status] ?? t.status.draft,
-      theme: STATUS_THEMES[meeting.status] ?? STATUS_THEMES.draft,
+      label: t.status[meeting.status],
+      theme: STATUS_THEMES[meeting.status],
     },
     durationLabel: duration > 0 ? formatDuration(duration) : '',
     outcome,

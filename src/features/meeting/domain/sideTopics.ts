@@ -34,7 +34,7 @@ export function toSideTopics(
 }
 
 /** The database's key order: integer keys first, numerically; then the rest as strings. */
-function compareKeys(a: string, b: string): number {
+export function compareKeys(a: string, b: string): number {
   const intA = /^\d+$/.test(a);
   const intB = /^\d+$/.test(b);
   if (intA && intB) {
@@ -43,5 +43,6 @@ function compareKeys(a: string, b: string): number {
   if (intA !== intB) {
     return intA ? -1 : 1;
   }
-  return a < b ? -1 : a > b ? 1 : 0;
+  // Keys are unique: two different strings always compare one way or the other.
+  return a < b ? -1 : 1;
 }

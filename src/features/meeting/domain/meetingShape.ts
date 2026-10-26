@@ -54,11 +54,14 @@ export function toGoals(raw: RawList<StoredGoal>): Goal[] {
   const entries: Array<[string, Partial<StoredGoal> | null]> = Array.isArray(raw)
     ? raw.map((goal, index) => [String(index), goal])
     : Object.entries(raw);
-  return entries
-    .filter((entry): entry is [string, Partial<StoredGoal>] => entry[1] != null)
-    .map(([key, goal], index) => ({ key, goal, order: Number(goal.order ?? index) }))
-    .sort((a, b) => a.order - b.order || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0))
-    .map(({ key, goal }) => normalizeGoal(goal, key));
+  return (
+    entries
+      .filter((entry): entry is [string, Partial<StoredGoal>] => entry[1] != null)
+      .map(([key, goal], index) => ({ key, goal, order: Number(goal.order ?? index) }))
+      // Keys are unique, so a tie on order always has a strict key order.
+      .sort((a, b) => a.order - b.order || (a.key < b.key ? -1 : 1))
+      .map(({ key, goal }) => normalizeGoal(goal, key))
+  );
 }
 
 export function goalsToRecord(goals: Goal[]): Record<string, StoredGoal> {
