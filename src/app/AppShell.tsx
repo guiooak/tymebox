@@ -20,11 +20,13 @@ import { Landing, LocalizedLanding } from '../features/landing';
 import { LegalPage } from '../features/legal';
 import { ThresholdAlertsWatcher } from '../features/meeting/alerts';
 import { useMeetingStore } from '../features/meeting/store';
-import { Home } from '../features/meeting/home/Home';
-import { MeetingForm } from '../features/meeting/form/MeetingForm';
-import { MeetingDashboard } from '../features/meeting/dashboard/MeetingDashboard';
-import { MeetingReport } from '../features/meeting/report/MeetingReport';
-import { MeetingsHistory } from '../features/meeting/history/MeetingsHistory';
+import {
+  Home,
+  MeetingDashboard,
+  MeetingForm,
+  MeetingReport,
+  MeetingsHistory,
+} from '../features/meeting';
 import { AppFooter } from './AppFooter';
 import { AppSidebar } from './AppSidebar';
 import { BottomTabBar, MobileTopBar } from './MobileNav';
