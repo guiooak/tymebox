@@ -225,16 +225,21 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
+      - run: corepack enable
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          cache: yarn
+      # The firebase-tools version locked in yarn.lock, the one the emulator
+      # tests ran with, not whatever 15.x npm serves today.
+      - run: yarn install --immutable
       - name: Deploy Realtime Database rules
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
           creds="$RUNNER_TEMP/firebase-sa.json"
+          trap 'rm -f "$creds"' EXIT
           printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$creds"
           export GOOGLE_APPLICATION_CREDENTIALS="$creds"
-          npx --yes firebase-tools@15 deploy --only database --project "$FIREBASE_PROJECT_ID" --non-interactive
-          rm -f "$creds"
+          yarn firebase deploy --only database --project "$FIREBASE_PROJECT_ID" --non-interactive
