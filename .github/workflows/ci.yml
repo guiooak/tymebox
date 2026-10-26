@@ -90,7 +90,21 @@ jobs:
           node-version: 24
           cache: yarn
       - run: yarn install --immutable
-      - run: yarn build
+      # The bundle that ships: deploy takes this artifact instead of building
+      # again. The Firebase web config isn't secret (it ends up in the bundle)
+      # but lives in secrets to stay out of the repo; PRs from forks get none,
+      # and they don't deploy.
+      - name: Build
+        run: yarn build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY }}
       - uses: actions/upload-artifact@v7
         with:
           name: dist
@@ -168,24 +182,13 @@ jobs:
       checks: write
       pull-requests: write
     steps:
+      # firebase.json (headers, rewrites) comes from the checkout; the files
+      # from the build job.
       - uses: actions/checkout@v7
-      - run: corepack enable
-      - uses: actions/setup-node@v7
+      - uses: actions/download-artifact@v7
         with:
-          node-version: 24
-          cache: yarn
-      - run: yarn install --immutable
-      - name: Build
-        run: yarn build
-        env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-          VITE_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ secrets.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          name: dist
+          path: dist/
 
       - name: Deploy to Firebase Hosting (live)
         if: github.event_name != 'pull_request'
