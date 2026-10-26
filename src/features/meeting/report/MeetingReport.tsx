@@ -33,7 +33,6 @@ import { TimeCardsGrid } from './TimeCardsGrid';
 import { weightsVary } from './weights';
 import styles from './MeetingReport.module.css';
 
-/** The report of the finished event in the URL, for anyone allowed to open it. */
 /** Everyone the event is shared with, minus you (you're the one sending). */
 function participantEmails(members: { email: string }[], myEmail: string): string[] {
   const mine = myEmail.trim().toLowerCase();
@@ -50,6 +49,7 @@ function participantEmails(members: { email: string }[], myEmail: string): strin
     });
 }
 
+/** The report of the finished event in the URL, for anyone allowed to open it. */
 export function MeetingReport() {
   return <EventGate>{(event, role) => <Report meeting={event} role={role} />}</EventGate>;
 }

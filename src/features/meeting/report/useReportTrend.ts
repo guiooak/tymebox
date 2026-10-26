@@ -9,11 +9,11 @@ import { useMeetingStore } from '../store';
  * Connects a single report to the landing-page metrics so progress reads as a
  * trend, not an isolated number.
  */
-export function useReportTrend(meeting: Meeting | null): number {
+export function useReportTrend(meeting: Meeting): number {
   const meetings = useMeetingStore((state) => state.meetings);
 
   return useMemo(() => {
-    if (!meeting?.realEndTime) {
+    if (!meeting.realEndTime) {
       return 0;
     }
     const endTs = toTimestamp(meeting.realEndTime);

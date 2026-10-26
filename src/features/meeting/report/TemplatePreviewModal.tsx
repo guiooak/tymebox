@@ -61,14 +61,12 @@ export function TemplatePreviewModal({
     }
   };
 
-  const onCopyEmails = async () => {
-    if (!participantEmails?.length) {
-      return;
-    }
+  // Only reachable with someone to copy: the button is disabled otherwise.
+  const onCopyEmails = async (emails: string[]) => {
     setFailed(false);
     try {
-      await navigator.clipboard.writeText(participantEmails.join(', '));
-      setCopiedEmails(participantEmails.length);
+      await navigator.clipboard.writeText(emails.join(', '));
+      setCopiedEmails(emails.length);
       setTimeout(() => setCopiedEmails(0), 2000);
     } catch {
       setFailed(true);
@@ -96,7 +94,7 @@ export function TemplatePreviewModal({
                   ? tt.report.noParticipants
                   : tt.report.participantsHint
               }
-              onClick={() => void onCopyEmails()}
+              onClick={() => void onCopyEmails(participantEmails)}
             >
               {copiedEmails > 0
                 ? tt.report.copiedParticipants(copiedEmails)
