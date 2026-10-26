@@ -20,7 +20,7 @@ export type NavItem = {
 export function useNavItems(): NavItem[] {
   const t = useT().shell;
   const current = useMeetingStore((state) => state.currentMeeting);
-  const live = !!current?.realStartTime && !current?.realEndTime;
+  const live = current?.realStartTime && !current.realEndTime ? current : null;
 
   const items: NavItem[] = [
     { to: paths.home, label: t.home, short: t.home, icon: 'home', end: true },
@@ -33,9 +33,9 @@ export function useNavItems(): NavItem[] {
       end: true,
     },
   ];
-  if (live && current) {
+  if (live) {
     items.push({
-      to: eventPath(current.id),
+      to: eventPath(live.id),
       label: t.liveEvent,
       short: t.tabLive,
       icon: 'timer',

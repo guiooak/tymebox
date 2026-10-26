@@ -15,9 +15,6 @@ const STORAGE_KEY = 'tw-sidebar-collapsed';
 
 /** The user's last choice, else collapsed on tablets (room for the board) and open on desktop. */
 function initialCollapsed(): boolean {
-  if (typeof window === 'undefined') {
-    return false;
-  }
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored !== null) {
@@ -26,9 +23,7 @@ function initialCollapsed(): boolean {
   } catch {
     // Storage blocked: fall through to the size-based default.
   }
-  return (
-    typeof window.matchMedia === 'function' && window.matchMedia(TABLET_QUERY).matches
-  );
+  return window.matchMedia(TABLET_QUERY).matches;
 }
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
