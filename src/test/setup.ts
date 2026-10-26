@@ -13,9 +13,14 @@ class ResizeObserverStub {
   disconnect() {}
 }
 
-const nativeMatchMedia = window.matchMedia;
+// Some test files run in Node (no browser); everything below is browser-only.
+const browser = typeof window !== 'undefined';
+const nativeMatchMedia = browser ? window.matchMedia : undefined;
 
 beforeEach(() => {
+  if (!browser) {
+    return;
+  }
   vi.stubGlobal('ResizeObserver', ResizeObserverStub);
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
@@ -32,8 +37,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  cleanup();
   vi.unstubAllGlobals();
-  window.matchMedia = nativeMatchMedia;
+  if (!browser) {
+    return;
+  }
+  cleanup();
+  window.matchMedia = nativeMatchMedia as typeof window.matchMedia;
   localStorage.clear();
 });

@@ -58,4 +58,11 @@ describe('theme store', () => {
 
     stop();
   });
+
+  it('starts in the mode remembered on this device', async () => {
+    localStorage.setItem('tw-theme', 'dark');
+    vi.resetModules();
+    const { useThemeStore: fresh } = await import('./themeStore');
+    expect(fresh.getState()).toMatchObject({ mode: 'dark', theme: 'dark' });
+  });
 });
