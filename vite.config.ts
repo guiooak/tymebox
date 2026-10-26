@@ -12,14 +12,42 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // A made-up Firebase config, so modules that set Firebase up on import
+    // (auth, database) load without mocks. Nothing here reaches the network.
+    env: {
+      VITE_FIREBASE_API_KEY: 'test-api-key',
+      VITE_FIREBASE_AUTH_DOMAIN: 'demo-tymebox.firebaseapp.com',
+      VITE_FIREBASE_DATABASE_URL: 'http://127.0.0.1:9000?ns=demo-tymebox-default-rtdb',
+      VITE_FIREBASE_PROJECT_ID: 'demo-tymebox',
+      VITE_FIREBASE_APP_ID: 'test-app-id',
+    },
     // Rules tests need the database emulator: `yarn test:rules`.
     exclude: ['**/node_modules/**', 'src/test/rules/**'],
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
+      reporter: ['text', 'lcov', 'json-summary', 'html'],
+      clean: true,
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/test/**', 'src/main.tsx'],
+      // Only what has no runtime code: tests and their helpers, the entry
+      // point, and files that only declare types.
+      exclude: [
+        'src/**/*.test.{ts,tsx}',
+        'src/test/**',
+        'src/main.tsx',
+        'src/**/*.d.ts',
+        'src/features/legal/content/types.ts',
+      ],
+      // A ratchet on the way to 100%: each run that does better raises these
+      // numbers in this file, and a run that does worse fails. See
+      // docs/testing.md.
+      thresholds: {
+        autoUpdate: true,
+        lines: 44.4,
+        statements: 44.01,
+        functions: 43.1,
+        branches: 38.45,
+      },
     },
   },
 });
