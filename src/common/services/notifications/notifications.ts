@@ -3,7 +3,7 @@ export type NotificationPermissionState =
   'unsupported' | 'default' | 'granted' | 'denied';
 
 export function notificationsSupported(): boolean {
-  return typeof window !== 'undefined' && 'Notification' in window;
+  return 'Notification' in window;
 }
 
 export function notificationPermission(): NotificationPermissionState {

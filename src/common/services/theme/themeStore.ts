@@ -39,9 +39,6 @@ function readStoredMode(): ThemeMode {
  * boot script in index.html, before first paint, to avoid a flash.
  */
 function applyTheme(theme: ResolvedTheme): void {
-  if (typeof document === 'undefined') {
-    return;
-  }
   document.documentElement.dataset.theme = theme;
 }
 

@@ -27,7 +27,6 @@ export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(
     subscribe,
     () => supported() && window.matchMedia(query).matches,
-    () => false,
   );
 }
 

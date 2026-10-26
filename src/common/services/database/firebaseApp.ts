@@ -25,7 +25,7 @@ export const usingEmulators = import.meta.env.VITE_USE_EMULATORS === '1';
  * site key is configured; enforcement is switched on in the Firebase console.
  */
 const appCheckKey = import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY;
-if (appCheckKey && !usingEmulators && typeof window !== 'undefined') {
+if (appCheckKey && !usingEmulators) {
   if (import.meta.env.DEV) {
     // Local dev on a real project: Firebase prints a debug token to register.
     (self as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN =
