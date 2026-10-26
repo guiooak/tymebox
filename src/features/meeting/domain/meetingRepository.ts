@@ -567,13 +567,12 @@ export async function expireRequests(owner: string, eventIds: string[]): Promise
   const changes: Record<string, null> = {};
   for (const id of eventIds) {
     const indexPath = `requestsByOwner/${owner}/${id}`;
-    let requests: Record<string, RawRequest>;
+    let requests: Record<string, RawRequest> = {};
     try {
       requests = (await read<Record<string, RawRequest>>(`accessRequests/${id}`)) ?? {};
     } catch {
-      // The event is gone (or no longer yours): only its index entry is left.
-      changes[indexPath] = null;
-      continue;
+      // The event is gone (or no longer yours): every index entry left is
+      // stale. They go one key at a time, the only deletion the rules allow.
     }
     for (const [key, raw] of Object.entries(requests)) {
       if (isExpiredRequest(toRequest(key, raw), now)) {

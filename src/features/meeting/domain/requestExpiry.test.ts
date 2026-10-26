@@ -65,7 +65,7 @@ describe('access request expiry', () => {
       'accessRequests/e1/old@x,com': null,
       'requestsByOwner/me/e1/old@x,com': null,
       'requestsByOwner/me/e1/gone@x,com': null,
-      'requestsByOwner/me/deleted-event': null,
+      'requestsByOwner/me/deleted-event/a@x,com': null,
     });
     expect(count).toBe(4);
   });
