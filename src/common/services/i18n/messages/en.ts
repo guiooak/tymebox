@@ -73,6 +73,8 @@ export const en = {
     signOut: 'Sign out',
     expandMenu: 'Expand menu',
     collapseMenu: 'Collapse menu',
+    version: 'Tymebox version',
+    versionNotes: 'Release notes on GitHub',
     theme: {
       system: 'System theme',
       light: 'Light theme',

@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   /** '1' to use the local Firebase emulators (see .env.emulators). */
   readonly VITE_USE_EMULATORS?: string;
   readonly VITE_RECAPTCHA_ENTERPRISE_SITE_KEY?: string;
+  /** Set by CI: the release (`1.4.0`) or PR preview (`1.4.0-pr.12`) this build is. */
+  readonly VITE_APP_VERSION?: string;
 }
 
 interface ImportMeta {

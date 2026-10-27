@@ -136,7 +136,9 @@ Two layers, with a build‑time boundary between them:
   Each feature has an `index.ts` that is its public surface: another feature
   imports `features/meeting`, not `features/meeting/domain/…`. Meeting's
   sub-folders with their own index (`meeting/store`, `meeting/alerts`) are
-  public too.
+  public too, and so is `meeting/screens`, the screens the shell routes to
+  (kept out of the index so code that only needs meeting's data doesn't load
+  its UI).
 - **`src/app/`** — the shell: routes, sidebar, mobile nav and footer. It
   wires the features together, so it may import any of them. Nothing imports
   `src/app/`.
@@ -145,8 +147,9 @@ Two layers, with a build‑time boundary between them:
 (`date-fns`, `firebase`, `recharts`, `zustand`, `react-router*`) across `src/**`,
 re‑enabling each one only inside the folder that owns it. A feature that imports a
 library directly fails `yarn lint`.
-The dependency direction between `app`, features and their internals is a
-convention, checked in review rather than by lint.
+The dependency direction is enforced the same way: `yarn lint` fails when
+`common/` imports a feature or the shell, when anything imports `src/app/`, or
+when code outside a feature reaches past its public `index.ts`.
 
 ### Glossary
 
@@ -221,18 +224,18 @@ their owner signs in.
 
 ## Scripts
 
-| Script                                  | Purpose                                                       |
-| --------------------------------------- | ------------------------------------------------------------- |
-| `yarn dev`                              | Start the dev server                                          |
-| `yarn build`                            | Type‑check (`tsc -b`) and build for production                |
-| `yarn preview`                          | Preview the production build                                  |
-| `yarn lint`                             | ESLint (incl. the import‑boundary rules)                      |
-| `yarn typecheck`                        | `tsc -b` only                                                 |
-| `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                            |
-| `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)        |
-| `yarn test:e2e`                         | Playwright, desktop and phone, on the emulators (Java 21+)    |
-| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
-| `yarn format` / `yarn format:check`     | Prettier                                                      |
+| Script                                  | Purpose                                                    |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `yarn dev`                              | Start the dev server                                       |
+| `yarn build`                            | Type‑check (`tsc -b`) and build for production             |
+| `yarn preview`                          | Preview the production build                               |
+| `yarn lint`                             | ESLint (incl. the import‑boundary rules)                   |
+| `yarn typecheck`                        | `tsc -b` only                                              |
+| `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                         |
+| `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)     |
+| `yarn test:e2e`                         | Playwright, desktop and phone, on the emulators (Java 21+) |
+| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them            |
+| `yarn format` / `yarn format:check`     | Prettier                                                   |
 
 How the tests are organised, and the rules for adding to them, are in
 [docs/testing.md](docs/testing.md).
@@ -296,12 +299,28 @@ Tymebox follows Brazil's LGPD.
 
 **`.github/workflows/ci.yml`** runs on Node 24 for every push/PR to `main`:
 
-- lint, typecheck, test (+ coverage to Codecov), rules tests, production
-  audit, format check, and build;
-- then, only if all of those pass, **deploy** to **Firebase Hosting** (live
-  channel on `main`, preview channel on PRs from this repo; fork PRs are
-  skipped). Requires repo secrets: `FIREBASE_SERVICE_ACCOUNT`,
-  `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*` build vars.
+- lint (+ knip), typecheck, test (+ coverage to Codecov), rules and
+  integration tests, end-to-end tests, production audit, format check, and
+  build;
+- then, only if all of those pass, **deploy** that build to **Firebase
+  Hosting** (live channel from `main` only, preview channel on PRs from this
+  repo; fork PRs are skipped). Requires repo secrets:
+  `FIREBASE_SERVICE_ACCOUNT`, `FIREBASE_PROJECT_ID`, and the `VITE_FIREBASE_*`
+  build vars.
+
+### Releases
+
+Every live deploy is a version, tagged `vX.Y.Z` on the deployed commit with a
+[GitHub Release](https://github.com/guiooak/tymebox/releases) that lists its
+commits. The number comes from the commit messages since the last release
+(`scripts/release-version.ts`): a breaking change (`feat!:` or a
+`BREAKING CHANGE:` footer) bumps the major, a `feat` the minor, anything else
+the patch. The first release is `package.json`'s version, `1.0.0`; after that
+the tags decide, and `package.json` isn't bumped.
+
+The build carries its version as `VITE_APP_VERSION`. The expanded sidebar
+shows it at its foot, linked to the release: `v1.4.0` live, `v1.4.0-pr.12` on
+a PR preview, `dev` locally.
 
 ## Languages
 
