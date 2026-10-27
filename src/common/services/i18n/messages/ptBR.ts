@@ -70,6 +70,7 @@ export const ptBR: Messages = {
     tabLive: 'Ao vivo',
     account: 'Conta',
     openAccount: 'Abrir menu da conta',
+    accountHint: 'Conta e preferências',
     mainNav: 'Principal',
     signOut: 'Sair',
     expandMenu: 'Expandir menu',

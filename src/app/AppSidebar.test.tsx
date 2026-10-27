@@ -1,4 +1,4 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { makeAuthUser, makeLiveMeeting } from '../test/fixtures';
 import { renderWithApp, type RenderOptions } from '../test/render';
@@ -77,22 +77,36 @@ describe('AppSidebar', () => {
     expect(screen.getByText('?')).toBeInTheDocument();
   });
 
-  it('opens privacy and data, cycles the theme and signs out', () => {
+  it('keeps the account settings behind one row', () => {
     sidebar();
-    fireEvent.click(screen.getByRole('button', { name: 'Privacy and data' }));
-    expect(screen.getByRole('dialog', { name: 'Privacy and data' })).toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole('button', { name: 'Close' })[0]);
-    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Sign out' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Ana/ }));
+    const menu = screen.getByRole('dialog', { name: 'Account' });
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'System theme. Switch to light theme' }),
+      within(menu).getByRole('button', { name: 'System theme. Switch to light theme' }),
     );
     expect(useThemeStore.getState().mode).toBe('light');
 
+    fireEvent.click(within(menu).getByRole('button', { name: 'Privacy and data' }));
+    expect(screen.getByRole('dialog', { name: 'Privacy and data' })).toBeInTheDocument();
+    expect(screen.queryByRole('dialog', { name: 'Account' })).toBeNull();
+    fireEvent.click(screen.getAllByRole('button', { name: 'Close' })[0]);
+    expect(screen.queryByRole('dialog')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: /Ana/ }));
     act(() => {
       fireEvent.click(screen.getByRole('button', { name: 'Sign out' }));
     });
     expect(signOut).toHaveBeenCalled();
+    expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('opens the account menu from the collapsed rail too', () => {
+    sidebar();
+    fireEvent.click(collapseButton());
+    fireEvent.click(screen.getByRole('button', { name: 'Open account menu' }));
+    expect(screen.getByRole('dialog', { name: 'Account' })).toBeInTheDocument();
   });
 
   it('shows the version at its foot only while expanded', () => {

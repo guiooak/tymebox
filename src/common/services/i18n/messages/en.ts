@@ -69,6 +69,7 @@ export const en = {
     tabLive: 'Live',
     account: 'Account',
     openAccount: 'Open account menu',
+    accountHint: 'Account and preferences',
     mainNav: 'Main',
     signOut: 'Sign out',
     expandMenu: 'Expand menu',
