@@ -27,7 +27,7 @@ const message =
  * - `common/` is app-agnostic: it never imports a feature or the shell.
  * - Nothing imports the shell (`src/app/`).
  * - A feature uses another feature only through its public `index.ts`
- *   (meeting's `store` and `alerts` folders are public too).
+ *   (meeting's `store` and `alerts` folders and its `screens` are public too).
  */
 const FEATURES = [
   'account',
@@ -38,8 +38,8 @@ const FEATURES = [
   'meeting',
   'preferences',
 ];
-/** Sub-folders of a feature that others may import, besides its index. */
-const PUBLIC_FOLDERS = { meeting: ['store', 'alerts'] };
+/** Entry points of a feature that others may import, besides its index. */
+const PUBLIC_FOLDERS = { meeting: ['store', 'alerts', 'screens'] };
 
 const UP = '^(\\.\\./)+';
 const COMMON_BOUNDARY = [

@@ -26,7 +26,7 @@ import {
   MeetingForm,
   MeetingReport,
   MeetingsHistory,
-} from '../features/meeting';
+} from '../features/meeting/screens';
 import { AppFooter } from './AppFooter';
 import { AppSidebar } from './AppSidebar';
 import { BottomTabBar, MobileTopBar } from './MobileNav';

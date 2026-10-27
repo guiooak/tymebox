@@ -136,7 +136,9 @@ Two layers, with a build‑time boundary between them:
   Each feature has an `index.ts` that is its public surface: another feature
   imports `features/meeting`, not `features/meeting/domain/…`. Meeting's
   sub-folders with their own index (`meeting/store`, `meeting/alerts`) are
-  public too.
+  public too, and so is `meeting/screens`, the screens the shell routes to
+  (kept out of the index so code that only needs meeting's data doesn't load
+  its UI).
 - **`src/app/`** — the shell: routes, sidebar, mobile nav and footer. It
   wires the features together, so it may import any of them. Nothing imports
   `src/app/`.
@@ -222,18 +224,18 @@ their owner signs in.
 
 ## Scripts
 
-| Script                                  | Purpose                                                       |
-| --------------------------------------- | ------------------------------------------------------------- |
-| `yarn dev`                              | Start the dev server                                          |
-| `yarn build`                            | Type‑check (`tsc -b`) and build for production                |
-| `yarn preview`                          | Preview the production build                                  |
-| `yarn lint`                             | ESLint (incl. the import‑boundary rules)                      |
-| `yarn typecheck`                        | `tsc -b` only                                                 |
-| `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                            |
-| `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)        |
-| `yarn test:e2e`                         | Playwright, desktop and phone, on the emulators (Java 21+)    |
-| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them               |
-| `yarn format` / `yarn format:check`     | Prettier                                                      |
+| Script                                  | Purpose                                                    |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `yarn dev`                              | Start the dev server                                       |
+| `yarn build`                            | Type‑check (`tsc -b`) and build for production             |
+| `yarn preview`                          | Preview the production build                               |
+| `yarn lint`                             | ESLint (incl. the import‑boundary rules)                   |
+| `yarn typecheck`                        | `tsc -b` only                                              |
+| `yarn test` / `yarn test:coverage`      | Vitest, with coverage held at 100%                         |
+| `yarn test:rules`                       | Rules and repository tests on the emulators (Java 21+)     |
+| `yarn test:e2e`                         | Playwright, desktop and phone, on the emulators (Java 21+) |
+| `yarn dev:emulators` / `yarn dev:local` | Local Firebase emulators / the app against them            |
+| `yarn format` / `yarn format:check`     | Prettier                                                   |
 
 How the tests are organised, and the rules for adding to them, are in
 [docs/testing.md](docs/testing.md).
