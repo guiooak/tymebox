@@ -72,8 +72,7 @@ a.version:hover {
   flex-direction: column;
   gap: var(--tw-space-1);
 }
-.link,
-.signOut {
+.link {
   display: flex;
   align-items: center;
   gap: var(--tw-space-2);
@@ -88,29 +87,7 @@ a.version:hover {
   font-size: var(--tw-font-size-sm);
   transition: var(--tw-transition);
 }
-.signOut {
-  color: var(--tw-primary-text);
-}
-.language {
-  width: 100%;
-}
-/* Too narrow for the selector and the theme switch; expand the menu to change
- * either. */
-.collapsed .language,
-.collapsed .themeToggle,
-.collapsed .privacy {
-  display: none;
-}
-.themeToggle {
-  composes: signOut;
-  color: var(--tw-text-muted);
-}
-.privacy {
-  composes: signOut;
-  color: var(--tw-text-muted);
-}
 .link:hover,
-.signOut:hover,
 .brand:hover {
   background: var(--tw-surface-sunken);
   text-decoration: none;
@@ -132,24 +109,28 @@ a.version:hover {
   flex-shrink: 0;
 }
 
-.user {
+/* The account row: avatar, name and what it opens, pushed to the bottom. */
+.account {
   margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--tw-space-1);
-  padding-top: var(--tw-space-3);
-  border-top: var(--tw-border);
-}
-
-/* Avatar + name share the rows' grid: same padding as the links, the avatar
- * centred on the 1.25rem icon column, the name lined up with the labels. */
-.identity {
   display: flex;
   align-items: center;
   gap: var(--tw-space-2);
-  padding: var(--tw-space-2) var(--tw-space-3);
+  width: 100%;
   min-width: 0;
+  padding: var(--tw-space-2) var(--tw-space-3);
+  border: none;
+  border-radius: var(--tw-radius);
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--tw-text);
+  cursor: pointer;
+  transition: var(--tw-transition);
 }
+.account:hover {
+  background: var(--tw-surface-sunken);
+}
+/* The avatar is wider than the icons: centre it on their column. */
 .avatarSlot {
   display: flex;
   align-items: center;
@@ -158,47 +139,34 @@ a.version:hover {
   height: 1.25rem;
   flex-shrink: 0;
 }
-.avatar,
-.avatarFallback {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  border-radius: 50%;
-}
-.avatar {
-  object-fit: cover;
-  box-shadow: 0 0 0 1px var(--tw-border-color);
-}
-.avatarFallback {
-  display: grid;
-  place-items: center;
-  background: var(--tw-surface-sunken);
-  color: var(--tw-primary-text);
-  font-size: var(--tw-font-size-xs);
-  font-weight: var(--tw-font-weight-bold);
-}
-.name {
+.who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   min-width: 0;
-  font-size: var(--tw-font-size-sm);
-  font-weight: var(--tw-font-weight-medium);
-  color: var(--tw-text);
+}
+.name,
+.hint {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.name {
+  font-size: var(--tw-font-size-sm);
+  font-weight: var(--tw-font-weight-medium);
+}
+.hint {
+  font-size: var(--tw-font-size-xs);
+  color: var(--tw-text-muted);
+}
 
 /* Collapsed rail: icons only. */
 .collapsed .label,
-.collapsed .name {
+.collapsed .who {
   display: none;
 }
 .collapsed .link,
-.collapsed .signOut {
-  justify-content: center;
-  padding-left: var(--tw-space-2);
-  padding-right: var(--tw-space-2);
-}
-.collapsed .identity {
+.collapsed .account {
   justify-content: center;
   padding-left: var(--tw-space-2);
   padding-right: var(--tw-space-2);

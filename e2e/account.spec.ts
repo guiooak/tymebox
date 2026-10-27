@@ -10,7 +10,11 @@ test('export your data, delete the account, and come back to nothing', async ({
   await signIn(page, email);
   await createFromTemplate(page, 'Weekly planning');
 
-  await page.getByRole('button', { name: 'Privacy and data' }).click();
+  await page.getByRole('button', { name: /Account and preferences/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Account' })
+    .getByRole('button', { name: 'Privacy and data' })
+    .click();
   const privacy = page.getByRole('dialog', { name: 'Privacy and data' });
   await expect(privacy.getByText('1 event')).toBeVisible();
 

@@ -3,10 +3,9 @@ import { Icon } from '../common/components';
 import { useT } from '../common/services/i18n';
 import { NavLink, paths } from '../common/services/router';
 import { TABLET_QUERY } from '../common/services/viewport';
-import { PrivacyAndData } from '../features/account';
 import { useAuthStore } from '../features/auth';
 import { Logo, TymeboxSymbol } from '../features/brand';
-import { LanguageSelect, ThemeToggle } from '../features/preferences';
+import { AccountMenu, Avatar } from './AccountMenu';
 import { appVersion } from './appVersion';
 import { useNavItems } from './useNavItems';
 import styles from './AppSidebar.module.css';
@@ -31,12 +30,11 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 
 export function AppSidebar() {
   const user = useAuthStore((state) => state.user);
-  const signOut = useAuthStore((state) => state.signOut);
   const t = useT();
   const items = useNavItems();
 
   const [collapsed, setCollapsed] = useState(initialCollapsed);
-  const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   // Remembered only once the user picks, so a tablet's default doesn't stick
   // to the desktop.
@@ -50,7 +48,6 @@ export function AppSidebar() {
     }
   };
   const displayName = user?.displayName ?? user?.email ?? '';
-  const initial = displayName.trim().charAt(0).toUpperCase() || '?';
   const version = appVersion(import.meta.env.VITE_APP_VERSION);
 
   return (
@@ -76,47 +73,25 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <div className={styles.user}>
-        <LanguageSelect className={styles.language} />
-        <ThemeToggle
-          className={styles.themeToggle}
-          iconClassName={styles.icon}
-          labelClassName={styles.label}
-        />
-        <button
-          type="button"
-          className={styles.privacy}
-          onClick={() => setPrivacyOpen(true)}
-        >
-          <Icon name="shield" className={styles.icon} />
-          <span className={styles.label}>{t.account.open}</span>
-        </button>
-        <PrivacyAndData open={privacyOpen} onClose={() => setPrivacyOpen(false)} />
-        <div className={styles.identity} title={displayName}>
-          <span className={styles.avatarSlot} aria-hidden="true">
-            {user?.photoURL ? (
-              <img
-                className={styles.avatar}
-                src={user.photoURL}
-                alt=""
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <span className={styles.avatarFallback}>{initial}</span>
-            )}
-          </span>
+      {/* Everything about the account (language, theme, privacy, sign out)
+          lives behind this one row, as on phones. */}
+      <button
+        type="button"
+        className={styles.account}
+        onClick={() => setAccountOpen(true)}
+        aria-haspopup="dialog"
+        aria-label={collapsed ? t.shell.openAccount : undefined}
+        title={t.shell.openAccount}
+      >
+        <span className={styles.avatarSlot}>
+          <Avatar size={24} />
+        </span>
+        <span className={styles.who}>
           <span className={styles.name}>{displayName}</span>
-        </div>
-        <button
-          className={styles.signOut}
-          onClick={() => void signOut()}
-          title={t.shell.signOut}
-          aria-label={t.shell.signOut}
-        >
-          <Icon name="signOut" className={styles.icon} />
-          <span className={styles.label}>{t.shell.signOut}</span>
-        </button>
-      </div>
+          <span className={styles.hint}>{t.shell.accountHint}</span>
+        </span>
+      </button>
+      <AccountMenu open={accountOpen} onClose={() => setAccountOpen(false)} />
 
       <div className={styles.footer}>
         {/* The running version, small and quiet; no room for it on the rail. */}
