@@ -220,7 +220,7 @@ jobs:
       # firebase.json (headers, rewrites) comes from the checkout; the files
       # from the build job.
       - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         with:
           name: dist
           path: dist/
@@ -238,7 +238,7 @@ jobs:
       # Every live deploy is a GitHub Release, tagged on the deployed commit.
       # Only after the deploy succeeds: a failed one leaves no tag, and the
       # next run takes the same version.
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v8
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         with:
           name: release-notes
